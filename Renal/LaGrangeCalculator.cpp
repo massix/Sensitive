@@ -24,29 +24,9 @@
 namespace Renal {
 
 	bool LaGrangeCalculator::BuildFunction() {
-		std::map<std::string, double> temp_map;
-
 		std::vector<std::pair<double, double> >::iterator ite = coords->begin();
 
-		/* Cascade style switch, I love it. */
-		switch(coords->size()) {
-		case 0:
-		case 1:
-			throw NextException("Too few interpolation points.");
-			break;
-		case 4:
-			temp_map.insert(std::pair<std::string, double>("x3", 0.));
-		case 3:
-			temp_map.insert(std::pair<std::string, double>("x2", 0.));
-		case 2:
-			temp_map.insert(std::pair<std::string, double>("x1", 0.));
-			temp_map.insert(std::pair<std::string, double>("x0", 0.));
-			break;
-		default:
-			throw NextException("Too many interpolation points.");
-		}
-
-		DPRINTF("Interpolation points: %d\n", temp_map.size());
+		DPRINTF("Interpolation points: %d\n", coords->size());
 
 		/* Calculate partial Lagrange's elementary polynoms */
 		for (ite = coords->begin(); ite != coords->end(); ++ite) {
@@ -95,6 +75,7 @@ namespace Renal {
 			int exponent = polynom->size() - 1;
 			for (std::vector<double>::iterator p_iter = polynom->begin(); p_iter != polynom->end(); ++p_iter, --exponent) {
 				*p_iter = *p_iter * (multiplier / fractor);
+
 				if (*p_iter != 0) {
 
 					if (exponent == 1) {
