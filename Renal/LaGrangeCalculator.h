@@ -22,6 +22,7 @@ namespace Renal {
 			bool	BuildFunction();
 
 		private:
+			std::vector<double>*	MultiplyVectors(std::vector<double> & first, std::vector<double> & second);
 	};
 
 }
