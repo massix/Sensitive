@@ -15,13 +15,11 @@ namespace Renal {
 	NextCalculator::NextCalculator() {
 		coords = new std::vector<std::pair<double, double> >();
 		coeffs = new std::vector<double>();
-		function = new std::string();
 	}
 
 	NextCalculator::~NextCalculator() {
 		delete(coords);
 		delete(coeffs);
-		delete(function);
 	}
 
 	bool NextCalculator::InsertCoords(double x, double y) {
@@ -41,5 +39,14 @@ namespace Renal {
 		coords->push_back(std::pair<double, double>(x, y));
 
 		return (coords->size() > old_size);
+	}
+
+	std::vector<double> NextCalculator::GetPolynom() {
+		return std::vector<double>(*coeffs);
+	}
+
+	void NextCalculator::Clear() {
+		coords->clear();
+		coeffs->clear();
 	}
 }

@@ -28,6 +28,11 @@ namespace Renal {
 
 		DPRINTF("Interpolation points: %d\n", coords->size());
 
+		this->coeffs->clear();
+
+		for (int i = 0; i < coords->size(); i++)
+			this->coeffs->push_back(0);
+
 		/* Calculate partial Lagrange's elementary polynoms */
 		for (ite = coords->begin(); ite != coords->end(); ++ite) {
 			std::vector<std::pair<double, double> >::iterator temp_iterator = coords->begin();
@@ -73,8 +78,11 @@ namespace Renal {
 			}
 
 			int exponent = polynom->size() - 1;
-			for (std::vector<double>::iterator p_iter = polynom->begin(); p_iter != polynom->end(); ++p_iter, --exponent) {
+			int i = 0;
+			for (std::vector<double>::iterator p_iter = polynom->begin(); p_iter != polynom->end(); ++p_iter, --exponent, ++i) {
 				*p_iter = *p_iter * (multiplier / fractor);
+
+				coeffs->data()[i] += *p_iter;
 
 				if (*p_iter != 0) {
 
