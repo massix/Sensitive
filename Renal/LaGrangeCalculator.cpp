@@ -120,7 +120,7 @@ namespace Renal {
 			}
 
 			delete(polynom);
-			DPRINTF("\nPivoting with %0.f, multiplier is %0.f, fractor is %0.f, polynom's grade is %d\n\n",
+			DPRINTF("\nPivoting with %0.f, multiplier is %0.f, fractor is %0.f, polynom's degree is %d\n\n",
 						pivot, multiplier, fractor, x_points.size());
 		}
 
