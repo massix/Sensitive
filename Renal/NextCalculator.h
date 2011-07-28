@@ -38,6 +38,7 @@ namespace Renal {
 			size_t					CountCoords();
 			std::vector<double>		GetPolynom();
 			void					Clear();
+			double					CalculateInPoint(double x);
 
 		protected:
 			std::vector<std::pair<double, double> > 	*coords;

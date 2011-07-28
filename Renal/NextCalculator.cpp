@@ -23,6 +23,7 @@
 #include "NextException.h"
 
 #include <vector>
+#include <cmath>
 
 namespace Renal {
 
@@ -62,5 +63,19 @@ namespace Renal {
 	void NextCalculator::Clear() {
 		coords->clear();
 		coeffs->clear();
+	}
+
+	double NextCalculator::CalculateInPoint(double x) {
+		if (coeffs->size() < 1)
+			throw NextException("I have no coefficients.");
+
+		double result = 0;
+		int exponent = coeffs->size()-1;
+		for (std::vector<double>::iterator ite = coeffs->begin(); ite != coeffs->end()-1; ++ite, --exponent)
+			result += (*ite * pow(x, exponent));
+
+		result += coeffs->data()[coeffs->size()-1];
+
+		return result;
 	}
 }
