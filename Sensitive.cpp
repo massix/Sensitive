@@ -27,6 +27,9 @@
 #include <Renal/NextException.h>
 #include <Renal/LaGrangeCalculator.h>
 
+#include <Graphics/MainUI.h>
+#include <Graphics/MainApplication.h>
+
 Renal::NextCalculator *generic_calculator;
 
 void TestWithCoords(std::vector<std::pair<double, double> > coords_vector) {
@@ -59,7 +62,7 @@ void PrintOut(double x) {
 }
 
 
-int main() {
+int main(int argc, char *argv[]) {
 	generic_calculator = new Renal::LaGrangeCalculator();
 
 	std::vector<std::pair<double, double> > coords;
@@ -129,5 +132,10 @@ int main() {
 
 	delete(generic_calculator);
 
-	return 0;
+	Graphics::MainApplication run(argc, argv);
+
+	Graphics::MainUI *window = new Graphics::MainUI();
+	window->show();
+
+	return run.exec();
 }
