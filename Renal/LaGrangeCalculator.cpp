@@ -43,12 +43,14 @@ namespace Renal {
 			double multiplier = ite->second; /* y */
 			double fractor = 1;
 
+			/* x_points will contain the abscissas of the sinusoidal Lagrange's polynom */
 			while (temp_iterator != coords->end()) {
 				if (temp_iterator != ite)
 					x_points.push_back(temp_iterator->first);
 				temp_iterator++;
 			}
 
+			/* calculate the lower part of the Lagrange's polynom */
 			for (x_points_iterator = x_points.begin(); x_points_iterator != x_points.end(); ++x_points_iterator) {
 				DPRINTF("(x - %0.f) ", *x_points_iterator);
 				fractor = fractor * (pivot - *x_points_iterator);
@@ -56,24 +58,28 @@ namespace Renal {
 
 			DPRINTF("= ");
 
-			x_points_iterator = x_points.begin();
+			/* Here the magic happens */
+			std::vector<std::vector<double> > *container = new std::vector<std::vector<double> >();
 
-			std::vector<double> first;
-			first.push_back(1);
-			first.push_back(x_points.data()[0] * -1);
+			for (int i = 0; i < x_points.size(); i++) {
+				std::vector<double> points;
+				points.push_back(1);
+				points.push_back(x_points.data()[i] * -1);
 
-			std::vector<double> second;
-			second.push_back(1);
-			second.push_back(x_points.data()[1] * -1);
+				container->push_back(points);
+			}
 
-			std::vector<double> *polynom;
+			std::vector<double> *polynom = new std::vector<double>();
 
 			try {
-				polynom = MultiplyVectors(first, second);
+				for (std::vector<std::vector<double> >::iterator ite = container->begin(); ite != container->end(); ++ite)
+					polynom = MultiplyVectors(*polynom, *ite);
+				delete(container);
 			}
 
 			catch (NextException & e) {
 				e.PrintMessage();
+				delete(container);
 				return false;
 			}
 
@@ -81,11 +87,9 @@ namespace Renal {
 			int i = 0;
 			for (std::vector<double>::iterator p_iter = polynom->begin(); p_iter != polynom->end(); ++p_iter, --exponent, ++i) {
 				*p_iter = *p_iter * (multiplier / fractor);
-
 				coeffs->data()[i] += *p_iter;
-
+#ifdef DEBUG
 				if (*p_iter != 0) {
-
 					if (exponent == 1) {
 						DPRINTF("%s%0.fx ", *p_iter > 0? "+" : "",*p_iter);
 					}
@@ -98,6 +102,7 @@ namespace Renal {
 						DPRINTF("%s%0.fx^%d ", *p_iter > 0? "+" : "",*p_iter, exponent);
 					}
 				}
+#endif
 			}
 
 			delete(polynom);
@@ -111,37 +116,35 @@ namespace Renal {
 
 	std::vector<double>* LaGrangeCalculator::MultiplyVectors(std::vector<double> & first, std::vector<double> & second) {
 		std::vector<double> coeffs_tmp;
-		std::vector<double> *ret = new std::vector<double>();
-		double tmp[4] = {0, 0, 0, 0};
+		std::vector<double> *ret;
+
+		if (first.size() < 1) {
+			ret = new std::vector<double>(second);
+			return ret;
+		}
+
+		ret = new std::vector<double>();
 
 		if (second.size() != 2)
 			throw NextException("Second vector's size is not 2.");
-
-		size_t elements = first.size() * second.size();
 
 		for (std::vector<double>::iterator first_ite = first.begin(); first_ite != first.end(); ++first_ite)
 			for (std::vector<double>::iterator second_ite = second.begin(); second_ite != second.end(); ++second_ite)
 				coeffs_tmp.push_back(*first_ite * *second_ite);
 
-		int i = 0;
-		int j = 0;
-		for (std::vector<double>::iterator coeffs_ite = coeffs_tmp.begin(); coeffs_ite != coeffs_tmp.end(); ++coeffs_ite) {
-			if (coeffs_ite == coeffs_tmp.begin())
-				ret->push_back(*coeffs_ite);
+		ret->push_back(coeffs_tmp.data()[0]);
 
-			else if (coeffs_ite == coeffs_tmp.end()-1) {
-				for (int k = 0; k < 4; k++)
-					if (tmp[k] != 0)
-						ret->push_back(tmp[k]);
-				ret->push_back(*coeffs_ite);
-			}
+		double tmp = 0;
+		for (int i = 1; i < coeffs_tmp.size()-1; i++) {
+			tmp += coeffs_tmp.data()[i];
 
-			else {
-				if (i++ > 2)
-					j++;
-				tmp[j] += *coeffs_ite;
+			if (i % 2 == 0) {
+				ret->push_back(tmp);
+				tmp = 0;
 			}
 		}
+
+		ret->push_back(coeffs_tmp.data()[coeffs_tmp.size()-1]);
 
 		return ret;
 	}

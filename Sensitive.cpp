@@ -15,14 +15,12 @@
 
 Renal::NextCalculator *generic_calculator;
 
-
-void TestWithCoords(std::pair<double, double> pair1, std::pair<double, double> pair2, std::pair<double, double> pair3)
+void TestWithCoords(std::vector<std::pair<double, double> > coords_vector)
 {
 	generic_calculator->Clear();
 
-	generic_calculator->InsertCoords(pair1);
-	generic_calculator->InsertCoords(pair2);
-	generic_calculator->InsertCoords(pair3);
+	for (std::vector<std::pair<double, double> >::iterator ite = coords_vector.begin(); ite != coords_vector.end(); ++ite)
+		generic_calculator->InsertCoords(*ite);
 
 	try {
 		if (generic_calculator->BuildFunction()) {
@@ -46,11 +44,44 @@ int main()
 {
 	generic_calculator = new Renal::LaGrangeCalculator();
 
-	TestWithCoords(std::pair<double, double> (1., 2.), std::pair<double, double> (2., 3.), std::pair<double, double> (3., 4.)); /* 0 1 1 = x + 1 */
-	TestWithCoords(std::pair<double, double> (1., 7.), std::pair<double, double> (3., 31.), std::pair<double, double> (5., 71.)); /* 2 4 1 = 2x^2 + 4x + 1 */
-	TestWithCoords(std::pair<double, double> (2., 1.), std::pair<double, double> (4., 2.), std::pair<double, double> (8., 4.)); /* 0 0.05 0 = x/2 */
-	TestWithCoords(std::pair<double, double> (1., 3.), std::pair<double, double> (2., 7.), std::pair<double, double> (3., 13.)); /* 1 1 1 = x^2 + x + 1 */
-	TestWithCoords(std::pair<double, double> (1., 30.), std::pair<double, double> (3., 296.), std::pair<double, double> (4., 525.)); /* 32 5 -7 = 32x^2 + 5x - 7 */
+	std::vector<std::pair<double, double> > coords;
+
+	coords.clear();
+	coords.push_back(std::pair<double, double>(1., 2.));
+	coords.push_back(std::pair<double, double>(2., 3.));
+	coords.push_back(std::pair<double, double>(3., 4.));
+	TestWithCoords(coords); /* 0 1 1 = x + 1 */
+
+	coords.clear();
+	coords.push_back(std::pair<double, double>(1., 7.));
+	coords.push_back(std::pair<double, double>(3., 31.));
+	coords.push_back(std::pair<double, double>(5., 71.));
+	TestWithCoords(coords); /* 2 4 1 = 2x^2 + 4x + 1 */
+
+	coords.clear();
+	coords.push_back(std::pair<double, double>(2., 1.));
+	coords.push_back(std::pair<double, double>(4., 2.));
+	coords.push_back(std::pair<double, double>(8., 4.));
+	TestWithCoords(coords); /* 0 0.50 0 = x/2 */
+
+	coords.clear();
+	coords.push_back(std::pair<double, double>(1., 3.));
+	coords.push_back(std::pair<double, double>(2., 7.));
+	coords.push_back(std::pair<double, double>(3., 13.));
+	TestWithCoords(coords); /* 1 1 1 = x^2 + x + 1 */
+
+	coords.clear();
+	coords.push_back(std::pair<double, double>(1., 30.));
+	coords.push_back(std::pair<double, double>(3., 296.));
+	coords.push_back(std::pair<double, double>(4., 525.));
+	TestWithCoords(coords); /* 32 5 -7 = 32x^2 + 5x - 7 */
+
+	coords.clear();
+	coords.push_back(std::pair<double, double>(1., 2.));
+	coords.push_back(std::pair<double, double>(2., 4.));
+	coords.push_back(std::pair<double, double>(3., 6.));
+	coords.push_back(std::pair<double, double>(4., 8.));
+	TestWithCoords(coords); /* 0 0 2 0 = 2x */
 
 	delete(generic_calculator);
 
