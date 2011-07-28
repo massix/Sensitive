@@ -1,0 +1,20 @@
+Sensitive is a Software to calculate and plot data statistics using LaGrange or Newton.
+
+It is far from being complete, final version will have a Graphical User Interface for the plots.
+
+
+COMPILE ON WINDOWS
+------------------
+
+You need to have MinGW installed, after that is just as simple as cd'ing in the directory where you
+have downloaded the sources and type "make". No installation process is required up to now.
+
+
+COMPILE ON LINUX
+----------------
+
+You need to tune up the Makefiles a little to reflect the Unix's hierarchy and standard extensions for
+libraries and executables (s/.dll/.so/g, for example).
+After that, to execute the compiled binary you have to manually specify the LD_LIBRARY_PATH environment
+variable. For example, using Bash:
+LD_LIBRARY_PATH=. ./Sensitive

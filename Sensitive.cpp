@@ -21,7 +21,7 @@
 
 #include <iostream>
 #include <cstdio>
-
+#include <vector>
 
 #include <Renal/NextCalculator.h>
 #include <Renal/NextException.h>
