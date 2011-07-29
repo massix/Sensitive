@@ -37,13 +37,16 @@ public:
 
 
 private:
-	QGridLayout 	*layout;
-	QPushButton 	*button;
-	QLabel 			*label;
-	bool			button_hit;
+	QGridLayout 		*layout;
+	QPushButton 		*button;
+	QLabel 				*label;
+	bool				button_hit;
+	QTreeView			*coords_view;
+	QStandardItemModel	*model;
 
 public slots:
 	void			ButtonClicked();
+	void			CheckData(QStandardItem* data);
 
 signals:
 

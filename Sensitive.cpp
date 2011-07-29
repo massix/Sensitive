@@ -27,7 +27,6 @@
 #include <Renal/NextException.h>
 #include <Renal/LaGrangeCalculator.h>
 
-#include <Graphics/MainUI.h>
 #include <Graphics/MainApplication.h>
 
 Renal::NextCalculator *generic_calculator;
@@ -133,9 +132,5 @@ int main(int argc, char *argv[]) {
 	delete(generic_calculator);
 
 	Graphics::MainApplication run(argc, argv);
-
-	Graphics::MainUI *window = new Graphics::MainUI();
-	window->show();
-
 	return run.exec();
 }

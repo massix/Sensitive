@@ -20,17 +20,31 @@
  */
 
 #include "MainApplication.h"
+#include "MainUI.h"
 
 #include <QApplication>
+#include <iostream>
 
 namespace Graphics {
 
 MainApplication::MainApplication(int argc, char *argv[]) : QApplication(argc, argv) {
-
+	QObject::connect(this, SIGNAL(aboutToQuit()), this, SLOT(CleanUp()));
 }
 
 MainApplication::~MainApplication() {
-	// TODO Auto-generated destructor stub
+	/* This is not called by Windows */
+}
+
+int MainApplication::exec() {
+	main_window = new Graphics::MainUI();
+	main_window->show();
+
+	return QApplication::exec();
+}
+
+void MainApplication::CleanUp() {
+	std::cout << "Tidying things up a little bit.." << std::endl;
+//	delete(main_window);
 }
 
 }

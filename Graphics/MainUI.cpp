@@ -21,7 +21,18 @@
 
 #include "MainUI.h"
 
-#include <QtGui>
+#include <iostream>
+
+#include <QWidget>
+#include <QGridLayout>
+#include <QPushButton>
+#include <QLabel>
+#include <QTreeView>
+#include <QScrollArea>
+#include <QStandardItemModel>
+#include <QStandardItem>
+#include <QStringList>
+#include <QStringListModel>
 
 namespace Graphics {
 
@@ -34,15 +45,32 @@ MainUI::MainUI() : QWidget() {
 	layout = new QGridLayout(this);
 	button = new QPushButton("Click me");
 	label = new QLabel("Click him!");
+	coords_view = new QTreeView();
 
 	layout->addWidget(label, 0, 0);
 	layout->addWidget(button, 0, 1);
-	
+	layout->addWidget(coords_view, 1, 0);
+
+	model = new QStandardItemModel();
+
+	model->setHorizontalHeaderItem(0, new QStandardItem("x"));
+	model->setHorizontalHeaderItem(1, new QStandardItem("y"));
+
+	model->setItem(0, 0, new QStandardItem("coord 1"));
+	model->setItem(0, 1, new QStandardItem("coord 2"));
+
+	coords_view->setModel(model);
+
 	QObject::connect(button, SIGNAL(clicked()), this, SLOT(ButtonClicked()));
+	QObject::connect(model, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(CheckData(QStandardItem*)));
 }
 
 MainUI::~MainUI() {
-
+	delete(label);
+	delete(button);
+	delete(model);
+	delete(coords_view);
+	delete(layout);
 }
 
 void MainUI::ButtonClicked() {
@@ -51,7 +79,18 @@ void MainUI::ButtonClicked() {
 	else
 		label->setText("Click him!");
 
+	int row = model->rowCount();
+
+	model->setItem(row, 0, new QStandardItem("added"));
+	model->setItem(row, 1, new QStandardItem("clicking"));
+
+	label->setText(QString("%0").arg(model->rowCount()));
+
 	button_hit = !button_hit;
+}
+
+void MainUI::CheckData(QStandardItem * data) {
+	std::cout << data->text().toStdString() << std::endl;
 }
 
 }

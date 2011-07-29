@@ -23,13 +23,25 @@
 #define MAINAPPLICATION_H_
 
 #include <QApplication>
+#include "MainUI.h"
 
 namespace Graphics {
 
 class MainApplication : public QApplication {
+	Q_OBJECT
+
 public:
 	MainApplication(int argc, char *argv[]);
 	virtual ~MainApplication();
+
+	/* Overrides the default exec() methods of QCoreApplication */
+	int		exec();
+
+public slots:
+	void	CleanUp();
+
+private:
+	MainUI	*main_window;
 };
 
 }

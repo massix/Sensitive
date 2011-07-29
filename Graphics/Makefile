@@ -11,9 +11,9 @@ LIBS		=	-L$(QT_LIBS) -lQtGui4 -lQtCore4
 CXXFLAGS	= 	-O3 -ggdb -DDEBUG
 LDFLAGS		=
 
-MOCFILES	= 	moc_MainUI.cpp
+MOCFILES	= 	moc_MainUI.cpp moc_MainApplication.cpp
 
-OBJECTS		= 	moc_MainUI.o MainUI.o MainApplication.o
+OBJECTS		= 	moc_MainUI.o moc_MainApplication.o MainUI.o MainApplication.o
 
 TARGET		= 	libgraphics.dll
 
@@ -24,6 +24,9 @@ all: $(TARGET)
 
 moc_MainUI.cpp: MainUI.h
 	$(QT_MOC) -o $@ $<
+	
+moc_MainApplication.cpp: MainApplication.h
+	$(QT_MOC) -o $@ $<
 
 .cpp.o: $(MOCFILES)
 	$(CC) $(CXXFLAGS) $(INCLUDES) -o $@ -c $<
@@ -33,4 +36,4 @@ $(TARGET): $(OBJECTS)
 	cp $(TARGET) ..\
 	
 clean:
-	rm -fr $(TARGET) $(OBJECTS) moc_*.cpp 
+	rm -fr $(TARGET) $(OBJECTS) $(MOCFILES) 
