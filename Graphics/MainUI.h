@@ -25,28 +25,53 @@
 #include <QObject>
 #include <QtGui>
 
+#include <Renal/NextCalculator.h>
+
 namespace Graphics {
 
-class MainUI : public QWidget {
+enum InnerRoles {
+	COORD
+};
+
+class MainUI : public QMainWindow {
 
 	Q_OBJECT
 
 public:
-	MainUI();
+	MainUI(Renal::NextCalculator *calculator);
 	virtual ~MainUI();
+
+private:
+	QWidget				*central_widget;
+
+	/* Main Layout elements */
+	QHBoxLayout 		*central_layout;
+	QVBoxLayout			*left_part;
+	QVBoxLayout			*right_part;
+	QHBoxLayout			*bottom_buttons;
+
+	/* Table fullfilled with coordinates */
+	QTableWidget		*coords_table;
+
+	/* Coordinates management buttons */
+	QPushButton			*reset_coords;
+	QPushButton			*add_coord;
+	QPushButton			*delete_coord;
+	QPushButton			*interpole;
+
+	/* Calculator */
+	Renal::NextCalculator *calculator;
+
+public slots:
+	void			AddCoord();
+	void			DeleteCoord();
+	void			Interpole();
+	void			CheckData(QTableWidgetItem* data);
 
 
 private:
-	QGridLayout 		*layout;
-	QPushButton 		*button;
-	QLabel 				*label;
-	bool				button_hit;
-	QTreeView			*coords_view;
-	QStandardItemModel	*model;
+	void			CreateMenus();
 
-public slots:
-	void			ButtonClicked();
-	void			CheckData(QStandardItem* data);
 
 signals:
 

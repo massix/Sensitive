@@ -25,10 +25,12 @@
 #include <QApplication>
 #include <iostream>
 
+#include <Renal/LaGrangeCalculator.h>
+
 namespace Graphics {
 
 MainApplication::MainApplication(int argc, char *argv[]) : QApplication(argc, argv) {
-	QObject::connect(this, SIGNAL(aboutToQuit()), this, SLOT(CleanUp()));
+//	QObject::connect(this, SIGNAL(aboutToQuit()), this, SLOT(CleanUp()));
 }
 
 MainApplication::~MainApplication() {
@@ -36,7 +38,7 @@ MainApplication::~MainApplication() {
 }
 
 int MainApplication::exec() {
-	main_window = new Graphics::MainUI();
+	main_window = new Graphics::MainUI(new Renal::LaGrangeCalculator());
 	main_window->show();
 
 	return QApplication::exec();

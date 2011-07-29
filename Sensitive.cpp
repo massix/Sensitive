@@ -54,10 +54,8 @@ void TestWithCoords(std::vector<std::pair<double, double> > coords_vector) {
 
 }
 
-void PrintOut(double x) {
-	double result = generic_calculator->CalculateInPoint(x);
-
-	printf("\t\tf(%.f) = %.f\n\n\n\n", x, result);
+inline void PrintOut(double x) {
+	printf("\t\tf(%.f) = %.f\n\n\n\n", x, generic_calculator->CalculateInPoint(x));
 }
 
 
@@ -66,68 +64,68 @@ int main(int argc, char *argv[]) {
 
 	std::vector<std::pair<double, double> > coords;
 
-	coords.clear();
-	coords.push_back(std::pair<double, double>(1., 2.));
-	coords.push_back(std::pair<double, double>(2., 3.));
-	coords.push_back(std::pair<double, double>(3., 4.));
-	TestWithCoords(coords); /* 0 1 1 = x + 1 */
-	PrintOut(8); /* 9 */
-
-	coords.clear();
-	coords.push_back(std::pair<double, double>(1., 7.));
-	coords.push_back(std::pair<double, double>(3., 31.));
-	coords.push_back(std::pair<double, double>(5., 71.));
-	TestWithCoords(coords); /* 2 4 1 = 2x^2 + 4x + 1 */
-	PrintOut(7); /* 127 */
-
-	coords.clear();
-	coords.push_back(std::pair<double, double>(2., 1.));
-	coords.push_back(std::pair<double, double>(4., 2.));
-	coords.push_back(std::pair<double, double>(8., 4.));
-	TestWithCoords(coords); /* 0 0.50 0 = x/2 */
-	PrintOut(14); /* 7 */
-
-	coords.clear();
-	coords.push_back(std::pair<double, double>(1., 3.));
-	coords.push_back(std::pair<double, double>(2., 7.));
-	coords.push_back(std::pair<double, double>(3., 13.));
-	TestWithCoords(coords); /* 1 1 1 = x^2 + x + 1 */
-	PrintOut(5); /* 31 */
-
-	coords.clear();
-	coords.push_back(std::pair<double, double>(1., 30.));
-	coords.push_back(std::pair<double, double>(3., 296.));
-	coords.push_back(std::pair<double, double>(4., 525.));
-	TestWithCoords(coords); /* 32 5 -7 = 32x^2 + 5x - 7 */
-	PrintOut(2); /* 131 */
-
-	coords.clear();
-	coords.push_back(std::pair<double, double>(1., 2.));
-	coords.push_back(std::pair<double, double>(2., 4.));
-	coords.push_back(std::pair<double, double>(3., 6.));
-	coords.push_back(std::pair<double, double>(4., 8.));
-	TestWithCoords(coords); /* 0 0 2 0 = 2x */
-	PrintOut(16); /* 32 */
-
-	coords.clear();
-	coords.push_back(std::pair<double, double>(1., 1.));
-	coords.push_back(std::pair<double, double>(2., 2.));
-	TestWithCoords(coords); /* 1 0 = x */
-	PrintOut(9); /* 9 */
-
-	coords.clear();
-	coords.push_back(std::pair<double, double>(2., 4.));
-	coords.push_back(std::pair<double, double>(4., 8.));
-	coords.push_back(std::pair<double, double>(8., 16.));
-	coords.push_back(std::pair<double, double>(3., 6.));
-	coords.push_back(std::pair<double, double>(5., 10.));
-	coords.push_back(std::pair<double, double>(25., 50.));
-	coords.push_back(std::pair<double, double>(9., 18.));
-	coords.push_back(std::pair<double, double>(11., 22.));
-	coords.push_back(std::pair<double, double>(1., 2.));
-	coords.push_back(std::pair<double, double>(7., 14.));
-	TestWithCoords(coords); /* 0 .. 0 2 0 = 2x */
-	PrintOut(15); /* 30 */
+//	coords.clear();
+//	coords.push_back(std::pair<double, double>(1., 2.));
+//	coords.push_back(std::pair<double, double>(2., 3.));
+//	coords.push_back(std::pair<double, double>(3., 4.));
+//	TestWithCoords(coords); /* 0 1 1 = x + 1 */
+//	PrintOut(8); /* 9 */
+//
+//	coords.clear();
+//	coords.push_back(std::pair<double, double>(1., 7.));
+//	coords.push_back(std::pair<double, double>(3., 31.));
+//	coords.push_back(std::pair<double, double>(5., 71.));
+//	TestWithCoords(coords); /* 2 4 1 = 2x^2 + 4x + 1 */
+//	PrintOut(7); /* 127 */
+//
+//	coords.clear();
+//	coords.push_back(std::pair<double, double>(2., 1.));
+//	coords.push_back(std::pair<double, double>(4., 2.));
+//	coords.push_back(std::pair<double, double>(8., 4.));
+//	TestWithCoords(coords); /* 0 0.50 0 = x/2 */
+//	PrintOut(14); /* 7 */
+//
+//	coords.clear();
+//	coords.push_back(std::pair<double, double>(1., 3.));
+//	coords.push_back(std::pair<double, double>(2., 7.));
+//	coords.push_back(std::pair<double, double>(3., 13.));
+//	TestWithCoords(coords); /* 1 1 1 = x^2 + x + 1 */
+//	PrintOut(5); /* 31 */
+//
+//	coords.clear();
+//	coords.push_back(std::pair<double, double>(1., 30.));
+//	coords.push_back(std::pair<double, double>(3., 296.));
+//	coords.push_back(std::pair<double, double>(4., 525.));
+//	TestWithCoords(coords); /* 32 5 -7 = 32x^2 + 5x - 7 */
+//	PrintOut(2); /* 131 */
+//
+//	coords.clear();
+//	coords.push_back(std::pair<double, double>(1., 2.));
+//	coords.push_back(std::pair<double, double>(2., 4.));
+//	coords.push_back(std::pair<double, double>(3., 6.));
+//	coords.push_back(std::pair<double, double>(4., 8.));
+//	TestWithCoords(coords); /* 0 0 2 0 = 2x */
+//	PrintOut(16); /* 32 */
+//
+//	coords.clear();
+//	coords.push_back(std::pair<double, double>(1., 1.));
+//	coords.push_back(std::pair<double, double>(2., 2.));
+//	TestWithCoords(coords); /* 1 0 = x */
+//	PrintOut(9); /* 9 */
+//
+//	coords.clear();
+//	coords.push_back(std::pair<double, double>(2., 4.));
+//	coords.push_back(std::pair<double, double>(4., 8.));
+//	coords.push_back(std::pair<double, double>(8., 16.));
+//	coords.push_back(std::pair<double, double>(3., 6.));
+//	coords.push_back(std::pair<double, double>(5., 10.));
+//	coords.push_back(std::pair<double, double>(25., 50.));
+//	coords.push_back(std::pair<double, double>(9., 18.));
+//	coords.push_back(std::pair<double, double>(11., 22.));
+//	coords.push_back(std::pair<double, double>(1., 2.));
+//	coords.push_back(std::pair<double, double>(7., 14.));
+//	TestWithCoords(coords); /* 0 .. 0 2 0 = 2x */
+//	PrintOut(15); /* 30 */
 
 	delete(generic_calculator);
 

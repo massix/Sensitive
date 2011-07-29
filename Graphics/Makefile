@@ -5,8 +5,8 @@ QT_INCLUDE	=	$(QT_PATH)\include
 QT_LIBS		=	$(QT_PATH)\lib
 QT_MOC		=	$(QT_PATH)\bin\moc.exe
 
-INCLUDES	=	-I$(QT_INCLUDE) -I$(QT_INCLUDE)\QtGui -I$(QT_INCLUDE)\QtCore
-LIBS		=	-L$(QT_LIBS) -lQtGui4 -lQtCore4
+INCLUDES	=	-I$(QT_INCLUDE) -I$(QT_INCLUDE)\QtGui -I$(QT_INCLUDE)\QtCore -I..
+LIBS		=	-L$(QT_LIBS) -lQtGui4 -lQtCore4 -L..\Renal -lrenal
 
 CXXFLAGS	= 	-O3 -ggdb -DDEBUG
 LDFLAGS		=

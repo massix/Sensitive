@@ -22,75 +22,137 @@
 #include "MainUI.h"
 
 #include <iostream>
+#include <vector>
+#include <cstdio>
 
-#include <QWidget>
-#include <QGridLayout>
-#include <QPushButton>
-#include <QLabel>
-#include <QTreeView>
-#include <QScrollArea>
-#include <QStandardItemModel>
-#include <QStandardItem>
-#include <QStringList>
-#include <QStringListModel>
+#include <QtGui>
+
+#include <Renal/NextCalculator.h>
 
 namespace Graphics {
 
-MainUI::MainUI() : QWidget() {
+MainUI::MainUI(Renal::NextCalculator *calculator) : QMainWindow() {
 	setWindowTitle("Sensitive UI");
 	setWindowIcon(QIcon("Icon.svg"));
 
-	button_hit = false;
+	this->calculator = calculator;
 
-	layout = new QGridLayout(this);
-	button = new QPushButton("Click me");
-	label = new QLabel("Click him!");
-	coords_view = new QTreeView();
+	/* Defining layout */
+	central_widget = new QWidget();
 
-	layout->addWidget(label, 0, 0);
-	layout->addWidget(button, 0, 1);
-	layout->addWidget(coords_view, 1, 0);
+	central_layout = new QHBoxLayout(central_widget);
+	left_part = new QVBoxLayout();
+	right_part = new QVBoxLayout();
+	bottom_buttons = new QHBoxLayout();
 
-	model = new QStandardItemModel();
+	central_layout->addLayout(left_part);
+	central_layout->addLayout(right_part);
 
-	model->setHorizontalHeaderItem(0, new QStandardItem("x"));
-	model->setHorizontalHeaderItem(1, new QStandardItem("y"));
 
-	model->setItem(0, 0, new QStandardItem("coord 1"));
-	model->setItem(0, 1, new QStandardItem("coord 2"));
+	/* Table Widget that will contain the coordinates */
+	coords_table = new QTableWidget(1, 2);
 
-	coords_view->setModel(model);
+	/* Headers for the table */
+	QStringList headers;
+	headers.push_back("x");
+	headers.push_back("y");
 
-	QObject::connect(button, SIGNAL(clicked()), this, SLOT(ButtonClicked()));
-	QObject::connect(model, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(CheckData(QStandardItem*)));
+	coords_table->setHorizontalHeaderLabels(headers);
+
+	left_part->addWidget(coords_table);
+
+	/* Buttons for the coordinates management */
+	reset_coords = new QPushButton("Reset");
+	add_coord = new QPushButton("Add");
+	delete_coord = new QPushButton("Remove");
+	interpole = new QPushButton("Interpole!");
+
+	bottom_buttons->addWidget(add_coord);
+	bottom_buttons->addWidget(delete_coord);
+	bottom_buttons->addWidget(reset_coords);
+	bottom_buttons->addWidget(interpole);
+
+	left_part->addLayout(bottom_buttons);
+
+	/* Connecting signals */
+	QObject::connect(add_coord, SIGNAL(clicked()), this, SLOT(AddCoord()));
+	QObject::connect(delete_coord, SIGNAL(clicked()), this, SLOT(DeleteCoord()));
+	QObject::connect(reset_coords, SIGNAL(clicked()), coords_table, SLOT(clearContents()));
+	QObject::connect(interpole, SIGNAL(clicked()), this, SLOT(Interpole()));
+
+	CreateMenus();
+	setCentralWidget(central_widget);
+
 }
 
 MainUI::~MainUI() {
-	delete(label);
-	delete(button);
-	delete(model);
-	delete(coords_view);
-	delete(layout);
+	delete(calculator);
 }
 
-void MainUI::ButtonClicked() {
-	if (!button_hit)
-		label->setText("Clicked him, huh?");
-	else
-		label->setText("Click him!");
+void MainUI::CheckData(QTableWidgetItem * data) {
 
-	int row = model->rowCount();
-
-	model->setItem(row, 0, new QStandardItem("added"));
-	model->setItem(row, 1, new QStandardItem("clicking"));
-
-	label->setText(QString("%0").arg(model->rowCount()));
-
-	button_hit = !button_hit;
 }
 
-void MainUI::CheckData(QStandardItem * data) {
-	std::cout << data->text().toStdString() << std::endl;
+void MainUI::AddCoord() {
+	coords_table->setRowCount(coords_table->rowCount() + 1);
+}
+
+void MainUI::DeleteCoord() {
+	coords_table->removeRow(coords_table->currentRow());
+}
+
+void MainUI::Interpole() {
+	if (calculator == 0)
+		return;
+
+	calculator->Clear();
+
+	for (int row = 0; row < coords_table->rowCount(); row++) {
+		if (coords_table->item(row, 0) != 0) {
+			QDoubleValidator dValidator;
+			QValidator::State validation;
+			QString input(coords_table->item(row, 0)->text());
+			int pos;
+
+			bool result_x, result_y;
+
+			validation = dValidator.validate(input, pos);
+
+			switch (validation) {
+			case QValidator::Intermediate:
+			case QValidator::Acceptable:
+				double x, y;
+				x = coords_table->item(row, 0)->text().toDouble(&result_x);
+				y = coords_table->item(row, 1)->text().toDouble(&result_y);
+				if (result_x && result_y)
+					calculator->InsertCoords(x, y);
+				break;
+			default:
+				std::cout << "Item is not valid." << std::endl;
+			}
+		}
+	}
+
+	std::cout << "Interpolation requested" << std::endl;
+	if (calculator->BuildFunction()) {
+		std::vector<double> polynom = calculator->GetPolynom();
+
+		printf("\t\tf(x) = ");
+		for (std::vector<double>::iterator ite = polynom.begin(); ite != polynom.end(); ++ite)
+			printf("%.2f ", *ite);
+		printf("\n");
+	}
+
+	fflush(stdout);
+}
+
+void MainUI::CreateMenus() {
+	QMenuBar *menubar = menuBar();
+	QMenu *fileMenu = menubar->addMenu("File");
+
+	QAction *exit = fileMenu->addAction("Exit");
+
+	QObject::connect(exit, SIGNAL(triggered()), this, SLOT(close()));
 }
 
 }
