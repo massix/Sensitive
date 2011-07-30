@@ -4,16 +4,24 @@ QT_PATH		= 	C:\Qt\4.7.3
 QT_INCLUDE	=	$(QT_PATH)\include
 QT_LIBS		=	$(QT_PATH)\lib
 QT_MOC		=	$(QT_PATH)\bin\moc.exe
+QT_RCC		=	$(QT_PATH)\bin\rcc.exe
 
-INCLUDES	=	-I$(QT_INCLUDE) -I$(QT_INCLUDE)\QtGui -I$(QT_INCLUDE)\QtCore -I..
-LIBS		=	-L$(QT_LIBS) -lQtGui4 -lQtCore4 -L..\Renal -lrenal
+QWT_PATH	=	C:\Qwt-6.0.0
+QWT_INCLUDE	=	$(QWT_PATH)\include
+QWT_LIBS	=	$(QWT_PATH)\lib
 
-CXXFLAGS	= 	-O3 -ggdb -DDEBUG
+INCLUDES	=	-I$(QT_INCLUDE) -I$(QT_INCLUDE)\QtGui -I$(QT_INCLUDE)\QtCore -I$(QWT_INCLUDE) -I..
+LIBS		=	-L$(QT_LIBS) -lQtGui4 -lQtCore4 -L$(QWT_LIBS) -lqwt -L..\Renal -lrenal
+
+CXXFLAGS	= 	-O3 -ggdb
 LDFLAGS		=
 
 MOCFILES	= 	moc_MainUI.cpp moc_MainApplication.cpp
 
-OBJECTS		= 	moc_MainUI.o moc_MainApplication.o MainUI.o MainApplication.o
+OBJECTS		= 	moc_MainUI.o moc_MainApplication.o MainUI.o MainApplication.o Resources.o
+
+RESOURCES	=	Resources.cpp
+RESOURCES_SRC = Sensitive.qrc
 
 TARGET		= 	libgraphics.dll
 
@@ -28,12 +36,15 @@ moc_MainUI.cpp: MainUI.h
 moc_MainApplication.cpp: MainApplication.h
 	$(QT_MOC) -o $@ $<
 
-.cpp.o: $(MOCFILES)
+Resources.cpp:
+	$(QT_RCC) -o $(RESOURCES) $(RESOURCES_SRC)
+
+.cpp.o: $(MOCFILES) $(RESOURCES)
 	$(CC) $(CXXFLAGS) $(INCLUDES) -o $@ -c $<
 	
-$(TARGET): $(OBJECTS)
+$(TARGET): $(OBJECTS) $(RESOURCES)
 	$(CC) -shared $(LDFLAGS) -o $(TARGET) $(OBJECTS) $(LIBS)
 	cp $(TARGET) ..\
 	
 clean:
-	rm -fr $(TARGET) $(OBJECTS) $(MOCFILES) 
+	rm -fr $(TARGET) $(OBJECTS) $(MOCFILES) $(RESOURCES) 

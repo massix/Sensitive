@@ -21,33 +21,43 @@
 
 #include "MainUI.h"
 
-#include <iostream>
 #include <vector>
-#include <cstdio>
+#include <cmath>
 
 #include <QtGui>
 
+#include <qwt.h>
+#include <qwt_plot.h>
+#include <qwt_plot_curve.h>
+
 #include <Renal/NextCalculator.h>
+#include <Renal/NextException.h>
+
+#define MAX_ERROR 0.00000001
 
 namespace Graphics {
 
 MainUI::MainUI(Renal::NextCalculator *calculator) : QMainWindow() {
 	setWindowTitle("Sensitive UI");
-	setWindowIcon(QIcon("Icon.svg"));
+	setWindowIcon(QIcon(":/bundle/icon.svg"));
 
 	this->calculator = calculator;
 
 	/* Defining layout */
-	central_widget = new QWidget();
+	fixed_widget = new QWidget();
+	docked_widget = new QWidget();
 
-	central_layout = new QHBoxLayout(central_widget);
-	left_part = new QVBoxLayout();
-	right_part = new QVBoxLayout();
+	coords_dock = new QDockWidget("Coordinates");
+
+	docked_layout = new QVBoxLayout(docked_widget);
+	central_layout = new QVBoxLayout(fixed_widget);
+
 	bottom_buttons = new QHBoxLayout();
 
-	central_layout->addLayout(left_part);
-	central_layout->addLayout(right_part);
+	addDockWidget(Qt::LeftDockWidgetArea, coords_dock);
+	coords_dock->setWidget(docked_widget);
 
+	/* ++++ BUILDING UP THE DOCKED WIDGET WHICH WILL CONTAIN THE COORDINATES TABLE ++++ */
 
 	/* Table Widget that will contain the coordinates */
 	coords_table = new QTableWidget(1, 2);
@@ -58,8 +68,10 @@ MainUI::MainUI(Renal::NextCalculator *calculator) : QMainWindow() {
 	headers.push_back("y");
 
 	coords_table->setHorizontalHeaderLabels(headers);
+	coords_table->resizeColumnsToContents();
+	coords_dock->setMaximumWidth(coords_table->width());
 
-	left_part->addWidget(coords_table);
+	docked_layout->addWidget(coords_table);
 
 	/* Buttons for the coordinates management */
 	reset_coords = new QPushButton("Reset");
@@ -72,7 +84,7 @@ MainUI::MainUI(Renal::NextCalculator *calculator) : QMainWindow() {
 	bottom_buttons->addWidget(reset_coords);
 	bottom_buttons->addWidget(interpole);
 
-	left_part->addLayout(bottom_buttons);
+	docked_layout->addLayout(bottom_buttons);
 
 	/* Connecting signals */
 	QObject::connect(add_coord, SIGNAL(clicked()), this, SLOT(AddCoord()));
@@ -80,8 +92,52 @@ MainUI::MainUI(Renal::NextCalculator *calculator) : QMainWindow() {
 	QObject::connect(reset_coords, SIGNAL(clicked()), coords_table, SLOT(clearContents()));
 	QObject::connect(interpole, SIGNAL(clicked()), this, SLOT(Interpole()));
 
+
+
+	/* ++++ BUILDING UP THE FIXED PART OF THE WINDOW, WHICH WILL CONTAIN THE PLOT AND THE RESULTS ++++ */
+	results_grid = new QGridLayout();
+	polynom_line = new QTextEdit();
+	input_point = new QLineEdit();
+	output_point = new QLineEdit();
+
+	input_point->setMaxLength(20);
+	input_point->setMaximumWidth(100);
+
+//	polynom_line->setPlaceholderText("Here the magic will happen...");
+	polynom_line->setReadOnly(true);
+	polynom_line->setMaximumHeight(25);
+
+	input_point->setPlaceholderText("point");
+
+	output_point->setPlaceholderText("f(point) = ");
+	output_point->setReadOnly(true);
+
+	results_grid->addWidget(new QLabel("Interpolating Polynom: "), 0, 0);
+	results_grid->addWidget(polynom_line, 0, 1);
+
+	results_grid->addWidget(input_point, 1, 0);
+	results_grid->addWidget(output_point, 1, 1);
+
+	plot = new QwtPlot();
+	plot->setTitle("Welcome to Sensitive");
+
+	function = new QwtPlotCurve("f(x)");
+	function->setTitle("f(x)");
+	function->setStyle(QwtPlotCurve::Lines);
+
+	plot->setAxisTitle(QwtPlot::xBottom, "x");
+	plot->setAxisTitle(QwtPlot::yLeft, "y");
+
+	central_layout->addWidget(plot);
+	central_layout->addLayout(results_grid);
+
+	/* Connecting signals */
+	QObject::connect(input_point, SIGNAL(returnPressed()), this, SLOT(CalculateInPoint()));
+
 	CreateMenus();
-	setCentralWidget(central_widget);
+
+	statusBar()->show();
+	setCentralWidget(fixed_widget);
 
 }
 
@@ -108,42 +164,66 @@ void MainUI::Interpole() {
 	calculator->Clear();
 
 	for (int row = 0; row < coords_table->rowCount(); row++) {
-		if (coords_table->item(row, 0) != 0) {
-			QDoubleValidator dValidator;
-			QValidator::State validation;
-			QString input(coords_table->item(row, 0)->text());
-			int pos;
-
+		if (coords_table->item(row, 0) != 0 && coords_table->item(row, 1) != 0) {
+			double x, y;
 			bool result_x, result_y;
 
-			validation = dValidator.validate(input, pos);
+			x = coords_table->item(row, 0)->text().toDouble(&result_x);
+			y = coords_table->item(row, 1)->text().toDouble(&result_y);
 
-			switch (validation) {
-			case QValidator::Intermediate:
-			case QValidator::Acceptable:
-				double x, y;
-				x = coords_table->item(row, 0)->text().toDouble(&result_x);
-				y = coords_table->item(row, 1)->text().toDouble(&result_y);
-				if (result_x && result_y)
-					calculator->InsertCoords(x, y);
-				break;
-			default:
-				std::cout << "Item is not valid." << std::endl;
-			}
+			if (result_x && result_y)
+				calculator->InsertCoords(x, y);
 		}
 	}
 
-	std::cout << "Interpolation requested" << std::endl;
 	if (calculator->BuildFunction()) {
-		std::vector<double> polynom = calculator->GetPolynom();
+		std::vector<double> *polynom = calculator->GetPolynom();
+		QString output("<i>f(x)</i> = ");
 
-		printf("\t\tf(x) = ");
-		for (std::vector<double>::iterator ite = polynom.begin(); ite != polynom.end(); ++ite)
-			printf("%.2f ", *ite);
-		printf("\n");
+		int pol_grade = polynom->size()-1;
+		for (std::vector<double>::iterator ite = polynom->begin(); ite != polynom->end(); ++ite, --pol_grade) {
+			if (*ite == 0)
+				continue;
+
+			double rounded = round(*ite * calculator->Express10())/calculator->Express10();
+			if (rounded == 0)
+				continue;
+
+			output.append(QString("%0 ").arg(rounded > 0? "+" : "-"));
+
+			if (rounded != 1 && rounded != -1 || pol_grade == 0)
+				output.append(QString("%1").arg(rounded < 0? rounded * -1 : rounded));
+
+			if (pol_grade > 0) {
+				output.append("x");
+				if (pol_grade > 1)
+					output.append(QString("<sup>%1</sup>").arg(pol_grade));
+			}
+
+
+			output.append(" ");
+		}
+
+		polynom_line->setText(output);
+		delete(polynom);
+
+		QVector<double> x_points;
+		QVector<double> y_points;
+		for (int i = -25; i < 25; i++) {
+			x_points.push_back(i);
+			y_points.push_back(calculator->CalculateInPoint(i));
+		}
+
+		function->setSamples(x_points, y_points);
+		function->attach(plot);
+
+		plot->replot();
 	}
 
-	fflush(stdout);
+	else {
+		polynom_line->setText("<b>I wasn't able to calculate the polynom. I'm sorry, mate :(");
+		calculator->Clear();
+	}
 }
 
 void MainUI::CreateMenus() {
@@ -153,6 +233,21 @@ void MainUI::CreateMenus() {
 	QAction *exit = fileMenu->addAction("Exit");
 
 	QObject::connect(exit, SIGNAL(triggered()), this, SLOT(close()));
+}
+
+void MainUI::CalculateInPoint() {
+	bool result;
+	double point = input_point->text().toDouble(&result);
+
+	if (result) {
+		try {
+			output_point->setText(QString("f(%0) = %1").arg(point).arg(calculator->CalculateInPoint(point)));
+		}
+		catch (Renal::NextException &e) {
+			QString message(e.GetMessage()->c_str());
+			output_point->setText(message);
+		}
+	}
 }
 
 }

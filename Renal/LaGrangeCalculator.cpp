@@ -28,6 +28,7 @@
 #include <iterator>
 #include <map>
 #include <string>
+#include <cmath>
 
 #ifdef	DEBUG
 #define		DPRINTF(x...) fprintf(stdout, x);
@@ -101,6 +102,7 @@ namespace Renal {
 			int i = 0;
 			for (std::vector<double>::iterator p_iter = polynom->begin(); p_iter != polynom->end(); ++p_iter, --exponent, ++i) {
 				*p_iter = *p_iter * (multiplier / fractor);
+
 				coeffs->data()[i] += *p_iter;
 #ifdef DEBUG
 				if (*p_iter != 0) {

@@ -5,11 +5,14 @@ QT_INCLUDE	=	$(QT_PATH)\include
 QT_LIBS		=	$(QT_PATH)\lib
 QT_MOC		=	$(QT_PATH)\bin\moc.exe
 
+QWT_PATH	=	C:\Qwt-6.0.0
+QWT_INCLUDE	=	$(QWT_PATH)\include
+
 CC			= g++
 
 CFLAGS		= -O3 -ggdb
 
-INCLUDE		= -IRenal -I. -I$(QT_INCLUDE) -I$(QT_INCLUDE)\QtGui -I$(QT_INCLUDE)\QtCore
+INCLUDE		= -IRenal -I. -I$(QT_INCLUDE) -I$(QT_INCLUDE)\QtGui -I$(QT_INCLUDE)\QtCore -I$(QWT_INCLUDE)
 LIBS		= -LRenal -LGraphics -lgraphics -lrenal -L$(QT_LIBS)  -lQtGui4 -lQtCore4
 
 TARGET		= Sensitive.exe

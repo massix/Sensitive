@@ -25,6 +25,10 @@
 #include <QObject>
 #include <QtGui>
 
+#include <qwt.h>
+#include <qwt_plot.h>
+#include <qwt_plot_curve.h>
+
 #include <Renal/NextCalculator.h>
 
 namespace Graphics {
@@ -42,12 +46,13 @@ public:
 	virtual ~MainUI();
 
 private:
-	QWidget				*central_widget;
+	QWidget				*fixed_widget;
+	QWidget				*docked_widget;
 
 	/* Main Layout elements */
-	QHBoxLayout 		*central_layout;
-	QVBoxLayout			*left_part;
-	QVBoxLayout			*right_part;
+	QDockWidget			*coords_dock;
+	QVBoxLayout			*docked_layout;
+	QVBoxLayout			*central_layout;
 	QHBoxLayout			*bottom_buttons;
 
 	/* Table fullfilled with coordinates */
@@ -59,6 +64,16 @@ private:
 	QPushButton			*delete_coord;
 	QPushButton			*interpole;
 
+	/* Results */
+	QGridLayout			*results_grid;
+	QTextEdit			*polynom_line;
+	QLineEdit			*input_point;
+	QLineEdit			*output_point;
+
+	/* Plot Canvas */
+	QwtPlot				*plot;
+	QwtPlotCurve		*function;
+
 	/* Calculator */
 	Renal::NextCalculator *calculator;
 
@@ -67,11 +82,11 @@ public slots:
 	void			DeleteCoord();
 	void			Interpole();
 	void			CheckData(QTableWidgetItem* data);
+	void			CalculateInPoint();
 
 
 private:
 	void			CreateMenus();
-
 
 signals:
 

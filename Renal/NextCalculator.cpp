@@ -27,9 +27,10 @@
 
 namespace Renal {
 
-	NextCalculator::NextCalculator() {
+	NextCalculator::NextCalculator(int precision) {
 		coords = new std::vector<std::pair<double, double> >();
 		coeffs = new std::vector<double>();
+		this->precision = precision;
 	}
 
 	NextCalculator::~NextCalculator() {
@@ -56,8 +57,8 @@ namespace Renal {
 		return (coords->size() > old_size);
 	}
 
-	std::vector<double> NextCalculator::GetPolynom() {
-		return std::vector<double>(*coeffs);
+	std::vector<double>* NextCalculator::GetPolynom() {
+		return new std::vector<double>(*coeffs);
 	}
 
 	void NextCalculator::Clear() {
@@ -77,5 +78,21 @@ namespace Renal {
 		result += coeffs->data()[coeffs->size()-1];
 
 		return result;
+	}
+
+	void NextCalculator::SetPrecision(int precision) {
+		this->precision = precision;
+	}
+
+	int NextCalculator::GetPrecision() {
+		return this->precision;
+	}
+
+	float NextCalculator::GetMaxError() {
+		return pow(10, -precision);
+	}
+
+	int NextCalculator::Express10() {
+		return pow(10, precision);
 	}
 }

@@ -29,21 +29,27 @@ namespace Renal {
 
 	class NextCalculator {
 		public:
-			NextCalculator();
+			NextCalculator(int precision = 5);
 			virtual ~NextCalculator();
 
 			bool					InsertCoords(double x, double y);
 			bool					InsertCoords(std::pair<double, double> & coords);
 			virtual bool			BuildFunction() = 0;
 			size_t					CountCoords();
-			std::vector<double>		GetPolynom();
+			std::vector<double>*	GetPolynom();
 			void					Clear();
 			double					CalculateInPoint(double x);
+			void					SetPrecision(int precision);
+			int						GetPrecision();
+			float					GetMaxError();
+			int						Express10();
 
 		protected:
 			std::vector<std::pair<double, double> > 	*coords;
 			std::vector<double> 						*coeffs;
+			int	precision;
 
+		private:
 			bool	_InsertCoords(double x, double y);
 	};
 

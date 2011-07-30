@@ -39,10 +39,10 @@ void TestWithCoords(std::vector<std::pair<double, double> > coords_vector) {
 
 	try {
 		if (generic_calculator->BuildFunction()) {
-			std::vector<double> polynom = generic_calculator->GetPolynom();
+			std::vector<double> *polynom = generic_calculator->GetPolynom();
 
 			printf("\t\tf(x) = ");
-			for (std::vector<double>::iterator ite = polynom.begin(); ite != polynom.end(); ++ite)
+			for (std::vector<double>::iterator ite = polynom->begin(); ite != polynom->end(); ++ite)
 				printf("%.2f ", *ite);
 			printf("\n");
 		}
@@ -68,9 +68,9 @@ int main(int argc, char *argv[]) {
 //	coords.push_back(std::pair<double, double>(1., 2.));
 //	coords.push_back(std::pair<double, double>(2., 3.));
 //	coords.push_back(std::pair<double, double>(3., 4.));
+//	coords.push_back(std::pair<double, double>(4., 5.));
 //	TestWithCoords(coords); /* 0 1 1 = x + 1 */
-//	PrintOut(8); /* 9 */
-//
+
 //	coords.clear();
 //	coords.push_back(std::pair<double, double>(1., 7.));
 //	coords.push_back(std::pair<double, double>(3., 31.));
