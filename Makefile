@@ -10,7 +10,7 @@ QWT_INCLUDE	=	$(QWT_PATH)\include
 
 CC			= g++
 
-CFLAGS		= -O3 -ggdb
+CFLAGS		= -O3
 
 INCLUDE		= -IRenal -I. -I$(QT_INCLUDE) -I$(QT_INCLUDE)\QtGui -I$(QT_INCLUDE)\QtCore -I$(QWT_INCLUDE)
 LIBS		= -LRenal -LGraphics -lgraphics -lrenal -L$(QT_LIBS)  -lQtGui4 -lQtCore4

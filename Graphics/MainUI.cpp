@@ -176,7 +176,8 @@ void MainUI::Interpole() {
 		}
 	}
 
-	if (calculator->BuildFunction()) {
+	try {
+		calculator->BuildFunction();
 		std::vector<double> *polynom = calculator->GetPolynom();
 		QString output("<i>f(x)</i> = ");
 
@@ -220,8 +221,8 @@ void MainUI::Interpole() {
 		plot->replot();
 	}
 
-	else {
-		polynom_line->setText("<b>I wasn't able to calculate the polynom. I'm sorry, mate :(");
+	catch(Renal::NextException &e) {
+		polynom_line->setText(e.GetMessage()->c_str());
 		calculator->Clear();
 	}
 }

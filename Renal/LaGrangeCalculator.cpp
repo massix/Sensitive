@@ -22,26 +22,16 @@
 #include "LaGrangeCalculator.h"
 #include "NextException.h"
 
-#include <cstdio>
-#include <iostream>
 #include <vector>
 #include <iterator>
 #include <map>
 #include <string>
 #include <cmath>
 
-#ifdef	DEBUG
-#define		DPRINTF(x...) fprintf(stdout, x);
-#else
-#define		DPRINTF(x...)
-#endif
-
 namespace Renal {
 
 	bool LaGrangeCalculator::BuildFunction() {
 		std::vector<std::pair<double, double> >::iterator ite = coords->begin();
-
-		DPRINTF("Interpolation points: %d\n", coords->size());
 
 		this->coeffs->clear();
 
@@ -66,12 +56,9 @@ namespace Renal {
 			}
 
 			/* calculate the lower part of the Lagrange's polynom */
-			for (x_points_iterator = x_points.begin(); x_points_iterator != x_points.end(); ++x_points_iterator) {
-				DPRINTF("(x - %0.f) ", *x_points_iterator);
+			for (x_points_iterator = x_points.begin(); x_points_iterator != x_points.end(); ++x_points_iterator)
 				fractor = fractor * (pivot - *x_points_iterator);
-			}
 
-			DPRINTF("= ");
 
 			/* Here the magic happens */
 			std::vector<std::vector<double> > *container = new std::vector<std::vector<double> >();
@@ -103,27 +90,9 @@ namespace Renal {
 			for (std::vector<double>::iterator p_iter = polynom->begin(); p_iter != polynom->end(); ++p_iter, --exponent, ++i) {
 				*p_iter = *p_iter * (multiplier / fractor);
 
-				coeffs->data()[i] += *p_iter;
-#ifdef DEBUG
-				if (*p_iter != 0) {
-					if (exponent == 1) {
-						DPRINTF("%s%0.fx ", *p_iter > 0? "+" : "",*p_iter);
-					}
-
-					else if (exponent == 0) {
-						DPRINTF("%s%0.f ", *p_iter > 0? "+" : "",*p_iter);
-					}
-
-					else {
-						DPRINTF("%s%0.fx^%d ", *p_iter > 0? "+" : "",*p_iter, exponent);
-					}
-				}
-#endif
-			}
+				coeffs->data()[i] += *p_iter;			}
 
 			delete(polynom);
-			DPRINTF("\nPivoting with %0.f, multiplier is %0.f, fractor is %0.f, polynom's degree is %d\n\n",
-						pivot, multiplier, fractor, x_points.size());
 		}
 
 		return true;

@@ -3,7 +3,7 @@ CC			=	g++
 INCLUDES	=
 LIBS		=
 
-CXXFLAGS	= -O3 -ggdb
+CXXFLAGS	= -O3
 LDFLAGS		=
 
 OBJECTS		= NextCalculator.o NextException.o LaGrangeCalculator.o

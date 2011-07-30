@@ -23,13 +23,18 @@
 #include "MainUI.h"
 
 #include <QApplication>
-#include <iostream>
 
 #include <Renal/LaGrangeCalculator.h>
+
+void initR() {
+	Q_INIT_RESOURCE(Sensitive);
+}
 
 namespace Graphics {
 
 MainApplication::MainApplication(int argc, char *argv[]) : QApplication(argc, argv) {
+	initR();
+	setWindowIcon(QIcon(":/bundle/icon.svg"));
 //	QObject::connect(this, SIGNAL(aboutToQuit()), this, SLOT(CleanUp()));
 }
 
@@ -45,7 +50,6 @@ int MainApplication::exec() {
 }
 
 void MainApplication::CleanUp() {
-	std::cout << "Tidying things up a little bit.." << std::endl;
 //	delete(main_window);
 }
 

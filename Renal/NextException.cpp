@@ -21,7 +21,6 @@
 
 #include "NextException.h"
 #include <string>
-#include <cstdio>
 
 
 namespace Renal {
@@ -40,7 +39,7 @@ namespace Renal {
 	}
 
 	void NextException::PrintMessage() {
-		fprintf(stderr, "Exception caught: [0x%p] %s\n", message, message->c_str());
+
 	}
 
 }
