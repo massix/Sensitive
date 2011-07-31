@@ -84,9 +84,12 @@ public slots:
 	void			CheckData(QTableWidgetItem* data);
 	void			CalculateInPoint();
 
+private slots:
+	void			ShowAboutDialog();
 
 private:
 	void			CreateMenus();
+
 
 signals:
 

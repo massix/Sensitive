@@ -19,32 +19,38 @@
  * THE SOFTWARE.
  */
 
-#include "MainApplication.h"
-#include "MainUI.h"
+#ifndef ABOUTDIALOG_H_
+#define ABOUTDIALOG_H_
 
-#include <QApplication>
-
-#include <Renal/LaGrangeCalculator.h>
+#include <QtGui>
 
 namespace Graphics {
 
-MainApplication::MainApplication(int argc, char *argv[]) : QApplication(argc, argv) {
-//	QObject::connect(this, SIGNAL(aboutToQuit()), this, SLOT(CleanUp()));
+class AboutDialog : public QDialog {
+
+private:
+	static	AboutDialog*	instance;
+
+	QWidget		*main_widget;
+	QVBoxLayout	*main_layout;
+	QTabWidget	*main_container;
+	QPushButton *close_button;
+
+	QLabel		*logo;
+	QLabel		*description;
+
+	QTextEdit	*license;
+	QTextEdit	*authors;
+	QTextEdit	*website;
+
+
+	AboutDialog(QWidget *parent = 0);
+
+public:
+	static	AboutDialog*	GetInstance();
+	virtual ~AboutDialog();
+};
+
 }
 
-MainApplication::~MainApplication() {
-	/* This is not called by Windows */
-}
-
-int MainApplication::exec() {
-	main_window = new Graphics::MainUI(new Renal::LaGrangeCalculator());
-	main_window->show();
-
-	return QApplication::exec();
-}
-
-void MainApplication::CleanUp() {
-//	delete(main_window);
-}
-
-}
+#endif /* ABOUTDIALOG_H_ */

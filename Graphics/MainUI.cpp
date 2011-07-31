@@ -20,10 +20,12 @@
  */
 
 #include "MainUI.h"
+#include "AboutDialog.h"
 
 #include <vector>
 #include <cmath>
 
+#include <QtCore>
 #include <QtGui>
 
 #include <qwt.h>
@@ -51,7 +53,6 @@ MainUI::MainUI(Renal::NextCalculator *calculator) : QMainWindow() {
 
 	docked_layout = new QVBoxLayout(docked_widget);
 	central_layout = new QVBoxLayout(fixed_widget);
-
 	bottom_buttons = new QHBoxLayout();
 
 	addDockWidget(Qt::LeftDockWidgetArea, coords_dock);
@@ -68,8 +69,7 @@ MainUI::MainUI(Renal::NextCalculator *calculator) : QMainWindow() {
 	headers.push_back("y");
 
 	coords_table->setHorizontalHeaderLabels(headers);
-	coords_table->resizeColumnsToContents();
-	coords_dock->setMaximumWidth(coords_table->width());
+	coords_table->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
 
 	docked_layout->addWidget(coords_table);
 
@@ -103,7 +103,6 @@ MainUI::MainUI(Renal::NextCalculator *calculator) : QMainWindow() {
 	input_point->setMaxLength(20);
 	input_point->setMaximumWidth(100);
 
-//	polynom_line->setPlaceholderText("Here the magic will happen...");
 	polynom_line->setReadOnly(true);
 	polynom_line->setMaximumHeight(25);
 
@@ -137,8 +136,11 @@ MainUI::MainUI(Renal::NextCalculator *calculator) : QMainWindow() {
 	CreateMenus();
 
 	statusBar()->show();
+	statusBar()->showMessage("Welcome to Sensitive UI. Please feel free to smoke a joint while interpolating.");
+
 	setCentralWidget(fixed_widget);
 
+	showMaximized();
 }
 
 MainUI::~MainUI() {
@@ -228,13 +230,27 @@ void MainUI::Interpole() {
 }
 
 void MainUI::CreateMenus() {
-	QMenuBar *menubar = menuBar();
-	QMenu *fileMenu = menubar->addMenu("File");
+	QMenu *fileMenu = menuBar()->addMenu("&File");
 
 	QAction *exit = fileMenu->addAction("Exit");
+	exit->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_X));
+	exit->setStatusTip(tr("Exits from Sensitive"));
+
+
+	QMenu *helpMenu = menuBar()->addMenu("&Help");
+	QAction *about = helpMenu->addAction("About");
+	about->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_H));
+	about->setStatusTip(tr("Show a dialog box with some informations about Sensitive"));
+
+	QAction *aboutQT= helpMenu->addAction("About QT");
+	aboutQT->setStatusTip(tr("About QT framework"));
 
 	QObject::connect(exit, SIGNAL(triggered()), this, SLOT(close()));
+	QObject::connect(about, SIGNAL(triggered()), AboutDialog::GetInstance(), SLOT(exec()));
+	QObject::connect(aboutQT, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
 }
+
+
 
 void MainUI::CalculateInPoint() {
 	bool result;
@@ -249,6 +265,10 @@ void MainUI::CalculateInPoint() {
 			output_point->setText(message);
 		}
 	}
+}
+
+void MainUI::ShowAboutDialog() {
+
 }
 
 }

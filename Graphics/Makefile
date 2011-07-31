@@ -11,14 +11,14 @@ QWT_INCLUDE	=	$(QWT_PATH)\include
 QWT_LIBS	=	$(QWT_PATH)\lib
 
 INCLUDES	=	-I$(QT_INCLUDE) -I$(QT_INCLUDE)\QtGui -I$(QT_INCLUDE)\QtCore -I$(QWT_INCLUDE) -I..
-LIBS		=	-L$(QT_LIBS) -lQtGui4 -lQtCore4 -L$(QWT_LIBS) -lqwt -L..\Renal -lrenal
+LIBS		=	-L$(QT_LIBS) -lQtGui4 -lQtCore4 -lQtSvg4 -L$(QWT_LIBS) -lqwt -L..\Renal -lrenal
 
 CXXFLAGS	= 	-O3
 LDFLAGS		=
 
-MOCFILES	= 	moc_MainUI.cpp moc_MainApplication.cpp
+MOCFILES	= 	moc_MainUI.cpp moc_MainApplication.cpp 
 
-OBJECTS		= 	moc_MainUI.o moc_MainApplication.o MainUI.o MainApplication.o qrc_Sensitive.o
+OBJECTS		= 	moc_MainUI.o moc_MainApplication.o AboutDialog.o MainUI.o MainApplication.o qrc_Sensitive.o 
 
 RESOURCES	=	qrc_Sensitive.cpp
 RESOURCES_SRC = Sensitive.qrc
@@ -35,7 +35,7 @@ moc_MainUI.cpp: MainUI.h
 	
 moc_MainApplication.cpp: MainApplication.h
 	$(QT_MOC) -o $@ $<
-
+	
 qrc_Sensitive.cpp:
 	$(QT_RCC) -name Sensitive -o $(RESOURCES) $(RESOURCES_SRC)
 
