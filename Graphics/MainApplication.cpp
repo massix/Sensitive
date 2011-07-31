@@ -26,14 +26,9 @@
 
 #include <Renal/LaGrangeCalculator.h>
 
-void initR() {
-	Q_INIT_RESOURCE(Sensitive);
-}
-
 namespace Graphics {
 
 MainApplication::MainApplication(int argc, char *argv[]) : QApplication(argc, argv) {
-	initR();
 	setWindowIcon(QIcon(":/bundle/icon.svg"));
 //	QObject::connect(this, SIGNAL(aboutToQuit()), this, SLOT(CleanUp()));
 }

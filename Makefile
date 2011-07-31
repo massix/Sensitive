@@ -12,6 +12,8 @@ CC			= g++
 
 CFLAGS		= -O3
 
+LDFLAGS		=  -enable-stdcall-fixup -Wl,-enable-auto-import -Wl,-enable-runtime-pseudo-reloc -Wl,-s -mthreads -Wl -Wl,-subsystem,windows
+
 INCLUDE		= -IRenal -I. -I$(QT_INCLUDE) -I$(QT_INCLUDE)\QtGui -I$(QT_INCLUDE)\QtCore -I$(QWT_INCLUDE)
 LIBS		= -LRenal -LGraphics -lgraphics -lrenal -L$(QT_LIBS)  -lQtGui4 -lQtCore4
 
@@ -35,7 +37,7 @@ libgraphics.dll:
 	$(CC) $(CFLAGS) $(INCLUDE) -c $< -o $@
 	
 $(TARGET): $(INTERNAL_LIBS) $(OBJECTS)
-	$(CC) -o $(TARGET) $(OBJECTS) $(LIBS)
+	$(CC) $(LDFLAGS) -o $(TARGET) $(OBJECTS) $(LIBS)
 	
 clean:
 	rm -fr $(TARGET) $(OBJECTS) $(INTERNAL_LIBS)

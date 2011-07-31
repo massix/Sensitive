@@ -19,7 +19,7 @@
  * THE SOFTWARE.
  */
 
-#include <vector>
+#include <QtCore>
 
 #include <Renal/NextCalculator.h>
 #include <Renal/NextException.h>
@@ -29,6 +29,9 @@
 #include <Graphics/MainUI.h>
 
 int main(int argc, char *argv[]) {
+
+	Q_INIT_RESOURCE(Sensitive);
+
 	Graphics::MainApplication run(argc, argv);
 
 	run.setApplicationName("Sensitive");
