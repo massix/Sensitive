@@ -20,6 +20,7 @@
  */
 
 #include "MainApplication.h"
+#include "Starter.h"
 #include "MainUI.h"
 
 #include <QApplication>
@@ -38,7 +39,21 @@ MainApplication::~MainApplication() {
 }
 
 int MainApplication::exec() {
-	main_window = new Graphics::MainUI(new Renal::NewtonCalculator());
+	Starter t;
+
+	switch (t.exec()) {
+	case QDialog::Rejected:
+		return 0;
+	case NEWTON:
+		main_window = new Graphics::MainUI(new Renal::NewtonCalculator());
+		break;
+	case LAGRANGE:
+		main_window = new Graphics::MainUI(new Renal::LaGrangeCalculator());
+		break;
+	default:
+		return 0;
+	}
+
 	main_window->show();
 
 	return QApplication::exec();

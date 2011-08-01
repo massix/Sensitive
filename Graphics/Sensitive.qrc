@@ -1,7 +1,7 @@
 <RCC>
-  <qresource prefix="tool_imgs">
-    <file>images/add.png</file>
-    <file>images/private.png</file>
+  <qresource prefix="portraits">
+    <file alias="Newton">images/Newton.jpg</file>
+    <file alias="LaGrange">images/Lagrange.jpg</file>
   </qresource>
   <qresource prefix="bundle">
   	<file alias="logo">images/logo.png</file>
