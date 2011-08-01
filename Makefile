@@ -1,51 +1,41 @@
-SUBDIRS		= Gui Renal
+# Sensitive Makefile
+# Copyright (C) 2011 Massimo Gengarelli <massimo.gengarelli@gmail.com>
 
-QT_PATH		= 	C:\Qt\4.7.3
-QT_INCLUDE	=	$(QT_PATH)\include
-QT_LIBS		=	$(QT_PATH)\lib
-QT_MOC		=	$(QT_PATH)\bin\moc.exe
+include Qwt_qt_config.makefile
 
-QWT_PATH	=	C:\Qwt-6.0.0
-QWT_INCLUDE	=	$(QWT_PATH)\include
+LDFLAGS		=  $(OS_LDFLAGS)
 
-MINGW_PATH	=	C:\MinGW
-MINGW_WRES	=	$(MINGW_PATH)\bin\windres.exe
+INCLUDE		= -I.
+LIBS		= -LRenal -LGraphics -lgraphics -lrenal
 
-CC			= g++
+ifeq ($(OS),Windows_NT)
+	RESOURCES	= Sensitive.res
+endif
 
-CFLAGS		= -O3
-
-LDFLAGS		=  -enable-stdcall-fixup -Wl,-enable-auto-import -Wl,-enable-runtime-pseudo-reloc -Wl,-s -mthreads -Wl -Wl,-subsystem,windows
-
-INCLUDE		= -IRenal -I. -I$(QT_INCLUDE) -I$(QT_INCLUDE)\QtGui -I$(QT_INCLUDE)\QtCore -I$(QWT_INCLUDE)
-LIBS		= -LRenal -LGraphics -lgraphics -lrenal -L$(QT_LIBS)  -lQtGui4 -lQtCore4 -lQtSvg4
-
-RESOURCES	= Sensitive.res
-
-TARGET		= Sensitive.exe
+TARGET		= Sensitive$(EXE_EXT)
 OBJECTS		= Sensitive.o
 
-INTERNAL_LIBS	= librenal.dll libgraphics.dll
+INTERNAL_LIBS	= librenal.$(LIB_EXT) libgraphics.$(LIB_EXT)
 
 .PHONY: clean $(INTERNAL_LIBS)
 
 
 all: $(TARGET)
 
-librenal.dll:
+librenal.$(LIB_EXT):
 	cd Renal; make all
 	
-libgraphics.dll:
+libgraphics.$(LIB_EXT):
 	cd Graphics; make all
-	
+
 Sensitive.res: Resources.rc
 	$(MINGW_WRES) -O coff -o $(RESOURCES) Resources.rc
 
 .cpp.o:
-	$(CC) $(CFLAGS) $(INCLUDE) -c $< -o $@
+	$(CC) $(CFLAGS) $(INCLUDE) $(QT_CFLAGS) $(QWT_CFLAGS) -c $< -o $@
 	
 $(TARGET): $(INTERNAL_LIBS) $(OBJECTS) $(RESOURCES)
-	$(CC) $(LDFLAGS) -o $(TARGET) $(OBJECTS) $(RESOURCES) $(LIBS)
+	$(CC) $(LDFLAGS) -o $(TARGET) $(OBJECTS) $(RESOURCES) $(QT_LDFLAGS) $(QWT_LDFLAGS) $(LIBS)
 	
 clean:
 	rm -fr $(TARGET) $(OBJECTS) $(INTERNAL_LIBS) $(RESOURCES)

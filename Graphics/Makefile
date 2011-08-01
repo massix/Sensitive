@@ -1,17 +1,10 @@
-CC			=	g++
+# Sensitive Makefile
+# Copyright (C) 2011 Massimo Gengarelli <massimo.gengarelli@gmail.com>
 
-QT_PATH		= 	C:\Qt\4.7.3
-QT_INCLUDE	=	$(QT_PATH)\include
-QT_LIBS		=	$(QT_PATH)\lib
-QT_MOC		=	$(QT_PATH)\bin\moc.exe
-QT_RCC		=	$(QT_PATH)\bin\rcc.exe
+include ../Qwt_qt_config.makefile
 
-QWT_PATH	=	C:\Qwt-6.0.0
-QWT_INCLUDE	=	$(QWT_PATH)\include
-QWT_LIBS	=	$(QWT_PATH)\lib
-
-INCLUDES	=	-I$(QT_INCLUDE) -I$(QT_INCLUDE)\QtGui -I$(QT_INCLUDE)\QtCore -I$(QWT_INCLUDE) -I..
-LIBS		=	-L$(QT_LIBS) -lQtGui4 -lQtCore4 -lQtSvg4 -L$(QWT_LIBS) -lqwt -L..\Renal -lrenal
+INCLUDE		=	-I..
+LIBS		=	-L../Renal -lrenal
 
 CXXFLAGS	= 	-O3
 LDFLAGS		=
@@ -23,7 +16,7 @@ OBJECTS		= 	moc_MainUI.o moc_MainApplication.o moc_Starter.o moc_SLabel.o AboutD
 RESOURCES	=	qrc_Sensitive.cpp
 RESOURCES_SRC = Sensitive.qrc
 
-TARGET		= 	libgraphics.dll
+TARGET		= 	libgraphics.$(LIB_EXT)
 
 
 .PHONY: clean
@@ -46,11 +39,11 @@ qrc_Sensitive.cpp:
 	$(QT_RCC) -name Sensitive -o $(RESOURCES) $(RESOURCES_SRC)
 
 .cpp.o: $(MOCFILES) $(RESOURCES)
-	$(CC) $(CXXFLAGS) $(INCLUDES) -o $@ -c $<
+	$(CC) $(CXXFLAGS) $(INCLUDE) $(QT_CFLAGS) $(QWT_CFLAGS) -o $@ -c $<
 	
 $(TARGET): $(OBJECTS) $(RESOURCES)
-	$(CC) -shared $(LDFLAGS) -o $(TARGET) $(OBJECTS) $(LIBS)
-	cp $(TARGET) ..\
+	$(CC) -shared $(LDFLAGS) -o $(TARGET) $(OBJECTS) $(LIBS) $(QT_LDFLAGS) $(QWT_LDFLAGS)
+	cp $(TARGET) ../
 	
 clean:
 	rm -fr $(TARGET) $(OBJECTS) $(MOCFILES) $(RESOURCES) 
