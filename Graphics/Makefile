@@ -16,7 +16,7 @@ LIBS		=	-L$(QT_LIBS) -lQtGui4 -lQtCore4 -lQtSvg4 -L$(QWT_LIBS) -lqwt -L..\Renal 
 CXXFLAGS	= 	-O3
 LDFLAGS		=
 
-MOCFILES	= 	moc_MainUI.cpp moc_MainApplication.cpp moc_Starter.cpp moc_SLabel.h
+MOCFILES	= 	moc_MainUI.cpp moc_MainApplication.cpp moc_Starter.cpp moc_SLabel.cpp
 
 OBJECTS		= 	moc_MainUI.o moc_MainApplication.o moc_Starter.o moc_SLabel.o AboutDialog.o MainUI.o MainApplication.o Starter.o SLabel.o qrc_Sensitive.o 
 
