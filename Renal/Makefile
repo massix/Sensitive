@@ -3,10 +3,10 @@ CC			=	g++
 INCLUDES	=
 LIBS		=
 
-CXXFLAGS	= -O3
+CXXFLAGS	= -O3 -DDEBUG
 LDFLAGS		=
 
-OBJECTS		= NextCalculator.o NextException.o LaGrangeCalculator.o
+OBJECTS		= NextCalculator.o NextException.o LaGrangeCalculator.o NewtonCalculator.o
 
 TARGET		= librenal.dll
 

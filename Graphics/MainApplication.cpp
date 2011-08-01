@@ -25,6 +25,7 @@
 #include <QApplication>
 
 #include <Renal/LaGrangeCalculator.h>
+#include <Renal/NewtonCalculator.h>
 
 namespace Graphics {
 
@@ -37,7 +38,7 @@ MainApplication::~MainApplication() {
 }
 
 int MainApplication::exec() {
-	main_window = new Graphics::MainUI(new Renal::LaGrangeCalculator());
+	main_window = new Graphics::MainUI(new Renal::NewtonCalculator());
 	main_window->show();
 
 	return QApplication::exec();

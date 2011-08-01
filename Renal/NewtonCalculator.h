@@ -19,26 +19,25 @@
  * THE SOFTWARE.
  */
 
-#ifndef NEXTEXCEPTION_H_
-#define NEXTEXCEPTION_H_
+#ifndef NEWTONCALCULATOR_H_
+#define NEWTONCALCULATOR_H_
 
-#include <string>
-#include <exception>
+#include "NextCalculator.h"
 
 namespace Renal {
 
-class NextException : public std::exception {
+class NewtonCalculator : public NextCalculator {
 public:
-	NextException(const char *message);
-	virtual ~NextException() throw();
+	NewtonCalculator(int precision = 5) : NextCalculator(precision) {};
+	virtual ~NewtonCalculator();
 
-	std::string		*GetMessage();
-	void			PrintMessage();
+	/* Override */
+	bool 	BuildFunction();
 
 private:
-	std::string		*message;
+
 };
 
 }
 
-#endif /* NEXTEXCEPTION_H_ */
+#endif /* NEWTONCALCULATOR_H_ */

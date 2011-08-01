@@ -24,11 +24,16 @@
 #include <Renal/NextCalculator.h>
 #include <Renal/NextException.h>
 #include <Renal/LaGrangeCalculator.h>
+#include <Renal/NewtonCalculator.h>
 
 #include <Graphics/MainApplication.h>
 #include <Graphics/MainUI.h>
 
+using namespace Renal;
+using namespace std;
+
 int main(int argc, char *argv[]) {
+#if 1
 
 	Q_INIT_RESOURCE(Sensitive);
 
@@ -40,4 +45,19 @@ int main(int argc, char *argv[]) {
 	run.setAttribute(Qt::AA_ImmediateWidgetCreation, true);
 
 	return run.exec();
+#else
+	NextCalculator *calculator = new NewtonCalculator(3);
+
+	calculator->Clear();
+
+	calculator->InsertCoords(0, 1);
+	calculator->InsertCoords(4, 5);
+	calculator->InsertCoords(9, 10);
+	calculator->InsertCoords(10, 11);
+	calculator->InsertCoords(14, 15);
+	calculator->InsertCoords(19, 20);
+	calculator->BuildFunction();
+
+	return 0;
+#endif
 }

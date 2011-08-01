@@ -29,15 +29,14 @@
 
 namespace Renal {
 
-	class LaGrangeCalculator: public Renal::NextCalculator {
-		public:
-			LaGrangeCalculator(int precision = 5) : Renal::NextCalculator(precision) {};
+class LaGrangeCalculator: public Renal::NextCalculator {
+public:
+	LaGrangeCalculator(int precision = 5) : Renal::NextCalculator(precision) {};
 
-			bool	BuildFunction();
+	bool	BuildFunction();
 
-		private:
-			std::vector<double>*	MultiplyVectors(std::vector<double> & first, std::vector<double> & second);
-	};
+private:
+};
 
 }
 
