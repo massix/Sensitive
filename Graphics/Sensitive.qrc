@@ -1,7 +1,7 @@
 <RCC>
   <qresource prefix="portraits">
-    <file alias="Newton">images/Newton.jpg</file>
-    <file alias="LaGrange">images/Lagrange.jpg</file>
+    <file alias="Newton">images/Newton.png</file>
+    <file alias="LaGrange">images/Lagrange.png</file>
   </qresource>
   <qresource prefix="bundle">
   	<file alias="logo">images/logo.png</file>
