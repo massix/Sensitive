@@ -19,87 +19,34 @@
  * THE SOFTWARE.
  */
 
-#ifndef MAINUI_H_
-#define MAINUI_H_
+#ifndef SPLOT_H_
+#define SPLOT_H_
 
-#include "STableWidget.h"
-#include "SPlot.h"
-
-#include <iostream>
-
-#include <QObject>
 #include <QtGui>
+#include <QtCore>
+
+#include <vector>
 
 #include <qwt.h>
 #include <qwt_plot.h>
-#include <qwt_plot_curve.h>
-
-#include <Renal/NextCalculator.h>
 
 namespace Graphics {
 
-enum InnerRoles {
-	COORD
-};
-
-class MainUI : public QMainWindow {
+class SPlot : public QwtPlot {
 
 	Q_OBJECT
 
 public:
-	MainUI(Renal::NextCalculator *calculator);
-	virtual ~MainUI();
+	SPlot() : QwtPlot() {setAcceptDrops(true);};
+	virtual ~SPlot();
 
-private:
-	QWidget				*fixed_widget;
-	QWidget				*docked_widget;
-
-	/* Main Layout elements */
-	QDockWidget			*coords_dock;
-	QVBoxLayout			*docked_layout;
-	QVBoxLayout			*central_layout;
-	QHBoxLayout			*bottom_buttons;
-
-	/* Table fullfilled with coordinates */
-	STableWidget		*coords_table;
-
-	/* Coordinates management buttons */
-	QPushButton			*reset_coords;
-	QPushButton			*add_coord;
-	QPushButton			*delete_coord;
-	QPushButton			*interpole;
-
-	/* Results */
-	QGridLayout			*results_grid;
-	QTextEdit			*polynom_line;
-	QLineEdit			*input_point;
-	QLineEdit			*output_point;
-
-	/* Plot Canvas */
-	SPlot				*plot;
-	QwtPlotCurve		*function;
-
-	/* Calculator */
-	Renal::NextCalculator *calculator;
-
-public slots:
-	void			AddCoord();
-	void			DeleteCoord();
-	void			Interpole();
-	void			CheckData(QTableWidgetItem* data);
-	void			CalculateInPoint();
-
-private slots:
-	void			ShowAboutDialog();
-
-private:
-	void			CreateMenus();
-
+	void 	dragEnterEvent(QDragEnterEvent *event);
+	void 	dropEvent(QDropEvent *event);
 
 signals:
-
+	void	DropAccepted(std::vector<std::pair<double, double> > *newCoords);
 };
 
 }
 
-#endif /* MAINUI_H_ */
+#endif /* SPLOT_H_ */

@@ -20,6 +20,9 @@
  */
 
 #include "MainUI.h"
+
+#include "SPlot.h"
+#include "STableWidget.h"
 #include "AboutDialog.h"
 
 #include <vector>
@@ -49,11 +52,13 @@ MainUI::MainUI(Renal::NextCalculator *calculator) : QMainWindow() {
 
 	/* Defining layout */
 	fixed_widget = new QWidget();
+
 	docked_widget = new QWidget();
 
 	coords_dock = new QDockWidget("Coordinates");
 
 	docked_layout = new QVBoxLayout(docked_widget);
+
 	central_layout = new QVBoxLayout(fixed_widget);
 	bottom_buttons = new QHBoxLayout();
 
@@ -63,7 +68,7 @@ MainUI::MainUI(Renal::NextCalculator *calculator) : QMainWindow() {
 	/* ++++ BUILDING UP THE DOCKED WIDGET WHICH WILL CONTAIN THE COORDINATES TABLE ++++ */
 
 	/* Table Widget that will contain the coordinates */
-	coords_table = new QTableWidget(1, 2);
+	coords_table = new STableWidget(1, 2);
 
 	/* Headers for the table */
 	QStringList headers;
@@ -119,7 +124,7 @@ MainUI::MainUI(Renal::NextCalculator *calculator) : QMainWindow() {
 	results_grid->addWidget(input_point, 1, 0);
 	results_grid->addWidget(output_point, 1, 1);
 
-	plot = new QwtPlot();
+	plot = new SPlot();
 	plot->setTitle("Welcome to Sensitive");
 
 	function = new QwtPlotCurve("f(x)");
@@ -134,6 +139,8 @@ MainUI::MainUI(Renal::NextCalculator *calculator) : QMainWindow() {
 
 	/* Connecting signals */
 	QObject::connect(input_point, SIGNAL(returnPressed()), this, SLOT(CalculateInPoint()));
+	QObject::connect(plot, SIGNAL(DropAccepted(std::vector<std::pair<double, double> > *)),
+					 coords_table, SLOT(RefreshCoords(std::vector<std::pair<double, double> >*)));
 
 	CreateMenus();
 

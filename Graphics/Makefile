@@ -9,9 +9,27 @@ LIBS		=	-L../Renal -lrenal
 CXXFLAGS	= 	-O3
 LDFLAGS		=
 
-MOCFILES	= 	moc_MainUI.cpp moc_MainApplication.cpp moc_Starter.cpp moc_SLabel.cpp
+MOCFILES	= 	moc_MainUI.cpp \
+				moc_MainApplication.cpp \
+				moc_Starter.cpp \
+				moc_SLabel.cpp \
+				moc_STableWidget.cpp \
+				moc_SPlot.cpp
 
-OBJECTS		= 	moc_MainUI.o moc_MainApplication.o moc_Starter.o moc_SLabel.o AboutDialog.o MainUI.o MainApplication.o Starter.o SLabel.o qrc_Sensitive.o 
+OBJECTS		= 	moc_MainUI.o \
+				moc_MainApplication.o \
+				moc_Starter.o \
+				moc_SLabel.o \
+				moc_STableWidget.o \
+				moc_SPlot.o \
+				AboutDialog.o \
+				MainUI.o \
+				MainApplication.o \
+				Starter.o \
+				SLabel.o \
+				SPlot.o \
+				STableWidget.o \
+				qrc_Sensitive.o 
 
 RESOURCES	=	qrc_Sensitive.cpp
 RESOURCES_SRC = Sensitive.qrc
@@ -33,6 +51,12 @@ moc_Starter.cpp: Starter.h
 	$(QT_MOC) -o $@ $<
 	
 moc_SLabel.cpp: SLabel.h
+	$(QT_MOC) -o $@ $<
+
+moc_STableWidget.cpp: STableWidget.h
+	$(QT_MOC) -o $@ $<
+	
+moc_SPlot.cpp: SPlot.h
 	$(QT_MOC) -o $@ $<
 	
 qrc_Sensitive.cpp:
