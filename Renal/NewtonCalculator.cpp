@@ -41,6 +41,9 @@ bool NewtonCalculator::BuildFunction() {
 	vector<double> tmp_divert[2];
 	vector<double> divert;
 
+	if (coords->size() < 2)
+		throw NextException("I have no coefficients.");
+
 	/* Initialize the coeffs' vector to all 0s */
 	for (int i = 0; i < coords->size(); i++)
 		coeffs->push_back(0.);

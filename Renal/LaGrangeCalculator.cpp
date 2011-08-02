@@ -33,7 +33,10 @@ namespace Renal {
 bool LaGrangeCalculator::BuildFunction() {
 	std::vector<std::pair<double, double> >::iterator ite = coords->begin();
 
-	this->coeffs->clear();
+	if (coords->size() < 2)
+		throw NextException("I have no coefficients.");
+
+	coeffs->clear();
 
 	for (int i = 0; i < coords->size(); i++)
 		this->coeffs->push_back(0);
