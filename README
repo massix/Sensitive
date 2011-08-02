@@ -1,20 +1,55 @@
-Sensitive is a Software to calculate and plot data statistics using LaGrange or Newton.
+Sensitive is a Software to calculate and plot data statistics using Lagrange's polynomial or Newton's polynomial.
+It is far from being complete, even if now ships with a decent and usable UI.
 
-It is far from being complete, final version will have a Graphical User Interface for the plots.
 
 
 COMPILE ON WINDOWS
 ------------------
 
-You need to have MinGW installed, after that is just as simple as cd'ing in the directory where you
-have downloaded the sources and type "make". No installation process is required up to now.
+You need to have MinGW, Qt >= 4.7.0 and Qwt >= 6.0.0 installed.
+Tune up the Qwt_qt_config.makefile, indicating the paths where you've installed your Qt and Qwt development files.
+Cd where you;ve downloaded the Sensitive's sources and then type make. If everything is set ok, you'll end up having the
+executable on the root directory. Remember that you MUST have Qwt.dll in your %PATH% or in the directory where the
+exe is.
 
 
 COMPILE ON LINUX
 ----------------
 
-You need to tune up the Makefiles a little to reflect the Unix's hierarchy and standard extensions for
-libraries and executables (s/.dll/.so/g, for example).
-After that, to execute the compiled binary you have to manually specify the LD_LIBRARY_PATH environment
-variable. For example, using Bash:
-LD_LIBRARY_PATH=. ./Sensitive
+On Ubuntu 11.04, you can install the libqt4-dev package, but you have to compile Qwt from sources, since the version that is
+shipped in the repositories is quite old. Tune up the Qwt_qt_config.makefile (if needed, the version shipped is already
+configured for a standard Ubuntu installation of both libqt4-dev and qwt) and type make.
+After that, you'll have the executable in the topmost directory of the sources. Remember to set the LD_LIBRARY_PATH environment
+variable with the paths of the librenal.so, libgraphics.so and libqwt.so
+(e.g.: 
+  $ LD_LIBRARY_PATH=".;/usr/local/qwt-6.0.1/lib" ./Sensitive
+)
+
+
+COMPILE ON OSX
+--------------
+
+Dunno, lol.
+
+
+
+COMPILE ON IPHONE
+------------------
+
+You can't.
+
+
+USAGE
+-----
+
+First of all, you have to select which polynomial form you'd like to use. After that, you'll be greeted by a maximized window
+with the left side covered by a table where you can insert coordinates (you can fill it with double precision numbers). When the
+table contains the coordinates you want, just click on "Interpole!" and let the software do the rest.
+You can also drag&drop a .txt file containing the coordinates to the plot.
+The .txt file must contain a couple of coordinates in the form x:y on every line. 
+Every other malformed line will be ignored.
+e.g:
+0:-15
+1:-15
+2:23
+3:243
