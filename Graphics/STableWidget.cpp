@@ -38,6 +38,8 @@ void STableWidget::RefreshCoords(std::vector<std::pair<double, double> > *newCoo
 	}
 
 	delete(newCoords);
+
+	emit DropFinished();
 }
 
 void STableWidget::clearContents() {

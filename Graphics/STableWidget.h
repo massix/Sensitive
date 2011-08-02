@@ -43,6 +43,9 @@ public slots:
 
 	/* Override */
 	void	clearContents();
+
+signals:
+	void	DropFinished();
 };
 
 }

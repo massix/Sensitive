@@ -141,6 +141,7 @@ MainUI::MainUI(Renal::NextCalculator *calculator) : QMainWindow() {
 	QObject::connect(input_point, SIGNAL(returnPressed()), this, SLOT(CalculateInPoint()));
 	QObject::connect(plot, SIGNAL(DropAccepted(std::vector<std::pair<double, double> > *)),
 					 coords_table, SLOT(RefreshCoords(std::vector<std::pair<double, double> >*)));
+	QObject::connect(coords_table, SIGNAL(DropFinished()), this, SLOT(Interpole()));
 
 	CreateMenus();
 
