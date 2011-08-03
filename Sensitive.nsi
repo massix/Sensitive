@@ -25,8 +25,8 @@ InstallDir "$PROGRAMFILES\${PACKAGE_NAME}"
 !define MUI_PAGE_HEADER_TEXT "Sensitive UI Installer"
 !define MUI_PAGE_HEADER_SUBTEXT "This will install Sensitive UI on your computer"
 !define MUI_HEADERIMAGE
-!define MUI_WELCOMEFINISHPAGE_BITMAP "E:\Workspace\Sensitive\ExternLibs\bitmap.bmp"
-!define MUI_UNWELCOMEFINISHPAGE_BITMAP "E:\Workspace\Sensitive\ExternLibs\bitmap.bmp"
+!define MUI_WELCOMEFINISHPAGE_BITMAP "ExternLibs\bitmap.bmp"
+!define MUI_UNWELCOMEFINISHPAGE_BITMAP "ExternLibs\bitmap.bmp"
 
 ; Welcome page
 !define MUI_WELCOMEPAGE_TITLE "Sensitive UI"
