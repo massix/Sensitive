@@ -189,7 +189,20 @@ void MainUI::Interpole() {
 	}
 
 	try {
+		/* Benchmarking */
+		QTime *timer = new QTime();
+		timer->start();
+
+		/* Let the magic happens */
 		calculator->BuildFunction();
+
+		int elapsed = timer->elapsed();
+		delete(timer);
+
+		QString msg;
+		msg.append(QString("Polynom calculated in %0.%1s").arg(elapsed/1000).arg(elapsed));
+		statusBar()->showMessage(msg);
+
 		std::vector<double> *polynom = calculator->GetPolynom();
 		QString output("<i>f(x)</i> = ");
 
@@ -268,7 +281,15 @@ void MainUI::CalculateInPoint() {
 
 	if (result) {
 		try {
+			QTime *timer = new QTime();
+
+			timer->start();
 			output_point->setText(QString("f(%0) = %1").arg(point).arg(calculator->CalculateInPoint(point)));
+			int elapsed = timer->elapsed();
+
+			QString msg(QString("Point %0 calculated in %1.%2s").arg(point).arg(elapsed/1000).arg(elapsed));
+			statusBar()->showMessage(msg);
+			delete(timer);
 		}
 		catch (Renal::NextException &e) {
 			QString message(e.GetMessage()->c_str());
