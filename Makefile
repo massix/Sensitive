@@ -37,6 +37,9 @@ Sensitive.res: Resources.rc
 $(TARGET): $(INTERNAL_LIBS) $(OBJECTS) $(RESOURCES)
 	$(CC) $(LDFLAGS) -o $(TARGET) $(OBJECTS) $(RESOURCES) $(QT_LDFLAGS) $(QWT_LDFLAGS) $(LIBS)
 	
+win32installer: Sensitive.nsi
+	$(NSIS_MAKE) Sensitive.nsi
+	
 clean:
 	rm -fr $(TARGET) $(OBJECTS) $(INTERNAL_LIBS) $(RESOURCES)
 	cd Renal; make clean

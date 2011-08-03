@@ -25,6 +25,9 @@ ifeq ($(OS),Windows_NT)
 
 	MINGW_PATH	=	C:\MinGW
 	MINGW_WRES	=	$(MINGW_PATH)\bin\windres.exe
+	
+	NSIS_PATH	=	C:\Program Files\NSIS
+	NSIS_MAKE	=	"$(NSIS_PATH)\makensis.exe"
 
 
 	OS_LDFLAGS	=	-enable-stdcall-fixup -Wl,-enable-auto-import \
