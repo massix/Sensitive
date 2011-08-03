@@ -98,4 +98,5 @@ SectionEnd
 
 Section "Uninstall"
 	RMDir /r "$INSTDIR"
+	RMDir /r "$SMPROGRAMS\Sensitive"
 SectionEnd
