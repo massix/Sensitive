@@ -83,7 +83,7 @@ Section "Install"
 	File "librenal.dll"
 	File "ExternLibs\*.dll"
 	File "sensitive.ico"
-	
+
 	; Menu shortcuts
 	CreateDirectory "$SMPROGRAMS\Sensitive"
   	CreateShortcut 	"$SMPROGRAMS\Sensitive\Sensitive.lnk" \
@@ -92,6 +92,12 @@ Section "Install"
   	CreateShortcut "$SMPROGRAMS\Sensitive\Uninstall Sensitive.lnk" \
                    "$INSTDIR\uninstall.exe"
 
+
+	; File associations
+	WriteRegStr HKLM "Software\Classes\.sns" "" "SensitiveFile"
+	WriteRegStr HKLM "Software\Classes\SensitiveFile" "" "Sensitive File"
+	WriteRegStr HKLM "Software\Classes\SensitiveFile\DefaultIcon" "" "$INSTDIR\Sensitive.ico"
+
 	WriteUninstaller "$INSTDIR\uninstall.exe"
 SectionEnd
 
@@ -99,4 +105,7 @@ SectionEnd
 Section "Uninstall"
 	RMDir /r "$INSTDIR"
 	RMDir /r "$SMPROGRAMS\Sensitive"
+
+	DeleteRegKey HKLM "Software\Classes\.sns"
+	DeleteRegKey HKLM "Software\Classes\SensitiveFile"
 SectionEnd
