@@ -34,6 +34,7 @@
 #include <qwt_plot.h>
 #include <qwt_plot_curve.h>
 #include <qwt_plot_renderer.h>
+#include <qwt_plot_scaleitem.h>
 
 #include <Renal/NextCalculator.h>
 
@@ -80,6 +81,8 @@ private:
 	/* Plot Canvas */
 	SPlot				*plot;
 	QwtPlotCurve		*function;
+	QwtPlotScaleItem	*abscissas;
+	QwtPlotScaleItem	*ordinates;
 
 	/* Calculator */
 	Renal::NextCalculator *calculator;

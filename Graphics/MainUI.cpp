@@ -128,12 +128,18 @@ MainUI::MainUI(Renal::NextCalculator *calculator, QString calculator_name) :
 	plot = new SPlot();
 	plot->setTitle("Welcome to Sensitive");
 
+	abscissas = new QwtPlotScaleItem(QwtScaleDraw::RightScale, 0.0);
+	abscissas->attach(plot);
+
+	ordinates = new QwtPlotScaleItem(QwtScaleDraw::BottomScale, 0.0);
+	ordinates->attach(plot);
+
 	function = new QwtPlotCurve("f(x)");
 	function->setTitle("f(x)");
 	function->setStyle(QwtPlotCurve::Lines);
 
-	plot->setAxisTitle(QwtPlot::xBottom, "x");
-	plot->setAxisTitle(QwtPlot::yLeft, "y");
+	plot->enableAxis(QwtPlot::yLeft, false);
+	plot->enableAxis(QwtPlot::xBottom, false);
 
 	central_layout->addWidget(plot);
 	central_layout->addLayout(results_grid);
