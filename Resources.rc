@@ -2,8 +2,8 @@ IDI_ICON1 ICON DISCARDABLE "sensitive.ico"
 
 
 1	VERSIONINFO
-FILEVERSION		0,9,3,0
-PRODUCTVERSION	0,9,3,0
+FILEVERSION		0,9,8,0
+PRODUCTVERSION	0,9,8,0
 
 BEGIN
 	BLOCK "StringFileInfo"
@@ -12,12 +12,12 @@ BEGIN
 		BEGIN
 			VALUE	"CompanyName", ""
 			VALUE	"FileDescription", "Sensitive UI"
-			VALUE	"FileVersion", "0.9.3.0"
+			VALUE	"FileVersion", "0.9.8.0"
 			VALUE	"InternalName", "Sensitive"
 			VALUE	"LegalCopyright", "Massimo Gengarelli"
 			VALUE	"OriginalFilename", "Sensitive.exe"
 			VALUE	"ProductName", "Sensitive UI"
-			VALUE	"ProductVersion", "0.9.3.0"
+			VALUE	"ProductVersion", "0.9.8.0"
 		END
 	END
 
