@@ -37,7 +37,7 @@ void SPlot::dragEnterEvent(QDragEnterEvent *event) {
 		return;
 
 	foreach(QUrl url, event->mimeData()->urls()) {
-		if (QFileInfo(url.toLocalFile()).suffix().toLower() == "txt") {
+		if (QFileInfo(url.toLocalFile()).suffix().toLower() == "sns") {
 			event->acceptProposedAction();
 			return;
 		}
@@ -53,7 +53,7 @@ void SPlot::dropEvent(QDropEvent *event) {
 	foreach(QUrl url, event->mimeData()->urls()) {
 		QFileInfo fileInfo(url.toLocalFile());
 
-		if (fileInfo.suffix().toLower() == "txt") {
+		if (fileInfo.suffix().toLower() == "sns") {
 			QFile file(url.toLocalFile());
 			if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
 				QTextStream stream(&file);

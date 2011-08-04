@@ -96,7 +96,7 @@ public slots:
 	void			CheckData(QTableWidgetItem* data);
 	void			CalculateInPoint();
 	void			ExportPDF();
-	void			ExportTXT();
+	void			ExportSNS();
 
 private slots:
 	void			ShowAboutDialog();
