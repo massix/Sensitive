@@ -24,6 +24,7 @@
 #include "MainUI.h"
 
 #include <QApplication>
+#include <QString>
 
 #include <Renal/LaGrangeCalculator.h>
 #include <Renal/NewtonCalculator.h>
@@ -45,10 +46,10 @@ int MainApplication::exec() {
 	case QDialog::Rejected:
 		return 0;
 	case NEWTON:
-		main_window = new Graphics::MainUI(new Renal::NewtonCalculator());
+		main_window = new Graphics::MainUI(new Renal::NewtonCalculator(), QString("Newton's polynomial form"));
 		break;
 	case LAGRANGE:
-		main_window = new Graphics::MainUI(new Renal::LaGrangeCalculator());
+		main_window = new Graphics::MainUI(new Renal::LaGrangeCalculator(), QString("Lagrange's polynomial form"));
 		break;
 	default:
 		return 0;

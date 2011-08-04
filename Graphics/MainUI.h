@@ -33,6 +33,7 @@
 #include <qwt.h>
 #include <qwt_plot.h>
 #include <qwt_plot_curve.h>
+#include <qwt_plot_renderer.h>
 
 #include <Renal/NextCalculator.h>
 
@@ -47,10 +48,11 @@ class MainUI : public QMainWindow {
 	Q_OBJECT
 
 public:
-	MainUI(Renal::NextCalculator *calculator);
+	MainUI(Renal::NextCalculator *calculator, QString calculator_name);
 	virtual ~MainUI();
 
 private:
+	QString				calculator_name;
 	QWidget				*fixed_widget;
 	QWidget				*docked_widget;
 
@@ -82,12 +84,19 @@ private:
 	/* Calculator */
 	Renal::NextCalculator *calculator;
 
+	/* Printer device */
+	QPrinter			*printer;
+	QPainter			*painter;
+	QwtPlotRenderer		*plot_renderer;
+
 public slots:
 	void			AddCoord();
 	void			DeleteCoord();
 	void			Interpole();
 	void			CheckData(QTableWidgetItem* data);
 	void			CalculateInPoint();
+	void			ExportPDF();
+	void			ExportTXT();
 
 private slots:
 	void			ShowAboutDialog();
