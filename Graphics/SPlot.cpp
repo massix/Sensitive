@@ -61,6 +61,8 @@ void SPlot::dropEvent(QDropEvent *event) {
 				/* Parse the file */
 				while (!stream.atEnd()) {
 					QString read = stream.readLine();
+					if (read.startsWith('#'))
+						continue;
 					QStringList coords = read.split(':');
 
 					if (coords.size() != 2)
