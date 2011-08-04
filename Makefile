@@ -37,7 +37,7 @@ Sensitive.res: Resources.rc
 $(TARGET): $(INTERNAL_LIBS) $(OBJECTS) $(RESOURCES)
 	$(CC) $(LDFLAGS) -o $(TARGET) $(OBJECTS) $(RESOURCES) $(QT_LDFLAGS) $(QWT_LDFLAGS) $(LIBS)
 	
-win32installer: Sensitive.nsi
+win32installer: $(TARGET) Sensitive.nsi
 	$(NSIS_MAKE) Sensitive.nsi
 	
 clean:
