@@ -81,6 +81,7 @@ Section "Install"
 	File "Sensitive.exe"
 	File "libgraphics.dll"
 	File "librenal.dll"
+	File "libsnsprotocol.dll"
 	File "ExternLibs\*.dll"
 	File "sensitive.ico"
 
