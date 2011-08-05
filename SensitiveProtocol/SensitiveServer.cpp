@@ -1,12 +1,29 @@
-/*
- * SensitiveServer.cpp
+/* Copyright (C) 2011 by Massimo Gengarelli <massimo.gengarelli@gmail.com>
  *
- *  Created on: 05/ago/2011
- *      Author: Massi
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 
 #include "SensitiveServer.h"
 #include "SensitiveMessage.h"
+#include "SensitiveException.h"
+
+#include <vector>
 
 #include <QObject>
 
@@ -14,27 +31,35 @@
 #include <QTcpSocket>
 #include <QByteArray>
 #include <QDataStream>
-
-#include <iostream>
+#include <QStringList>
+#include <QHostInfo>
 
 namespace Protocol {
 
-SensitiveServer::SensitiveServer(QObject *parent) : QTcpServer(parent) {
+SensitiveServer::SensitiveServer(QObject *parent)
+	: QTcpServer(parent), connected(false), syn(false), ack(false), receive_max(-1), received(0)
+{
+
+}
+
+void SensitiveServer::StartServer() {
 	QObject::connect(this, SIGNAL(newConnection()), this, SLOT(HandleConnection()));
 	listen(QHostAddress::Any, 53517);
 }
 
 
 void SensitiveServer::HandleConnection() {
-	QByteArray block, block_in;
-	QDataStream out(&block, QIODevice::WriteOnly);
+	/* We're already handling someone, they have to sit down in the waiting room. */
+	if (connected)
+		return;
 
+	/* Start serving another client */
 	blockSize = 0;
 	connection = nextPendingConnection();
 	QObject::connect(connection, SIGNAL(disconnected()), connection, SLOT(deleteLater()));
 	QObject::connect(connection, SIGNAL(readyRead()), this, SLOT(ReadMessage()));
 
-	std::cout << "[SensitiveServer] New connection" << std::endl;
+	connected = true;
 }
 
 void SensitiveServer::ReadMessage() {
@@ -57,14 +82,96 @@ void SensitiveServer::ReadMessage() {
 
 	message = msg;
 
-	std::cout << "[SensitiveServer] " << blockSize << " Received: " << message.toStdString() << std::endl;
+	/* First kind of message we may receive is the SYN! message */
+	if (message.startsWith(MESSAGE_SYN) && !syn) {
+		message.remove(0, 4);
+		syn = true;
 
-//	connection->disconnectFromHost();
-//	connection->close();
+		/* Send (b)ACK */
+		QByteArray block;
+		QDataStream out(&block, QIODevice::WriteOnly);
+		out.setVersion(QDataStream::Qt_4_0);
+
+		SensitiveMessage msg(MESSAGE_ACK,QHostInfo::localHostName().toStdString().c_str());
+
+		out << (quint16)0;
+		out << msg.GetMessage();
+		out.device()->seek(0);
+		out << (quint16)(block.size() - sizeof(quint16));
+
+		connection->write(block);
+	}
+
+	/* BCOO Message, "Begin Coordinates" sending */
+	else if (message.startsWith(MESSAGE_BCOO) && syn) {
+		message.remove(0, 4);
+		bool ok;
+
+		receive_max = message.toInt(&ok);
+
+		if (!ok)
+			throw SensitiveException("Malformed BCOO message received.");
+
+		received = 0;
+
+		/* Send the message back */
+		QByteArray block;
+		QDataStream out(&block, QIODevice::WriteOnly);
+		out.setVersion(QDataStream::Qt_4_0);
+
+		out << (quint16) (msg.size() - sizeof(quint16));
+		out << msg;
+
+		connection->write(block);
+	}
+
+	/* List of the "COORD"inates */
+	else if (message.startsWith(MESSAGE_COOR) && (receive_max > 0)) {
+		message.remove(0, 4);
+
+		QStringList receivedCoords = message.split(';');
+
+		if (receivedCoords.size() != receive_max)
+			throw SensitiveException("Too much coordinates received.");
+
+		coordinates = new std::vector<std::pair<double, double> >();
+		foreach(QString string, receivedCoords) {
+			QStringList partial = string.split(':');
+			if (partial.size() != 2)
+				continue;
+
+			bool ok_x, ok_y;
+			double x = partial.at(0).toDouble(&ok_x);
+			double y = partial.at(1).toDouble(&ok_y);
+
+			if (ok_x && ok_y)
+				coordinates->push_back(std::pair<double, double>(x, y));
+		}
+
+		emit CoordinatesSuccess();
+	}
+
+	/* Something bad happened :( */
+	else
+		throw SensitiveException("Protocol Error");
+
+	/* Reset the blockSize in order to receive the next message */
+	blockSize = 0;
+}
+
+std::vector<std::pair<double, double> >* SensitiveServer::GetCoordinates() {
+	return coordinates;
 }
 
 SensitiveServer::~SensitiveServer() {
-	close();
+	if (connection->isValid())
+		connection->disconnectFromHost();
+
+	if (connection->isOpen())
+		connection->close();
+
+	delete(coordinates);
+	delete(connection);
 }
 
 }

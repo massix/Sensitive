@@ -42,9 +42,17 @@ int main(int argc, char *argv[]) {
 
 	Graphics::MainApplication run(argc, argv);
 
-#if 1
+#if 0
 	Protocol::SensitiveServer server;
 	Protocol::SensitiveClient client;
+
+	server.StartServer();
+	std::vector<std::pair<double,double> > vector;
+	vector.push_back(std::pair<double, double>(0, 0));
+	vector.push_back(std::pair<double, double>(1, 1));
+
+	client.SetCoordinates(vector);
+	client.InitiateProtocol();
 #endif
 
 	run.setApplicationName("Sensitive");

@@ -19,37 +19,19 @@
  * THE SOFTWARE.
  */
 
-#ifndef SENSITIVECLIENT_H_
-#define SENSITIVECLIENT_H_
+#include "SensitiveException.h"
 
-#include <QTcpSocket>
-#include <QObject>
-#include <vector>
+#include <exception>
+#include <string>
 
 namespace Protocol {
 
-class SensitiveClient : public QTcpSocket {
+std::string SensitiveException::GetMessage() {
+	return _message;
+}
 
-	Q_OBJECT
-
-public:
-	SensitiveClient(QObject *parent = 0);
-	virtual ~SensitiveClient();
-
-	void InitiateProtocol();
-	void SetCoordinates(std::vector<std::pair<double, double> >& coords);
-
-private:
-	bool ack;
-	QByteArray *block;
-	quint16	blockSize;
-	std::vector<std::pair<double, double> > *coords;
-
-private slots:
-	void	ReadMessage();
-	void	ErrorHandler(QAbstractSocket::SocketError error);
-};
+SensitiveException::~SensitiveException() throw() {
 
 }
 
-#endif /* SENSITIVECLIENT_H_ */
+}
