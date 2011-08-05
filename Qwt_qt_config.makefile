@@ -20,6 +20,7 @@ ifeq ($(OS),Windows_NT)
 	QWT_LIBS	=	$(QWT_PATH)\lib
 
 	QT_LDFLAGS	=	-L$(QT_LIBS) -lQtGui4 -lQtCore4 -lQtSvg4
+	QT_NETWORK	=	-L$(QT_LIBS) -lQtNetwork4 -lQtCore4
 
 	LIB_EXT		=	dll
 
@@ -48,6 +49,7 @@ else
 	QWT_LIBS	=	$(QWT_PATH)/lib
 
 	QT_LDFLAGS 	=	-L$(QT_LIBS) -lQtGui -lQtCore -lQtSvg
+	QT_NETWORK	=	-L$(QT_LIBS) -lQtNetwork
 
 	LIB_EXT		=	so
 
@@ -57,7 +59,7 @@ else
 endif
 
 
-QT_CFLAGS	=	-I$(QT_INCLUDE) -I$(QT_INCLUDE)/QtGui -I$(QT_INCLUDE)/QtCore
+QT_CFLAGS	=	-I$(QT_INCLUDE) -I$(QT_INCLUDE)/QtGui -I$(QT_INCLUDE)/QtCore -I$(QT_INCLUDE)/QtNetwork
 
 QWT_CFLAGS	=	-I$(QWT_INCLUDE)
 QWT_LDFLAGS	=	-L$(QWT_LIBS) -lqwt

@@ -6,7 +6,7 @@ include Qwt_qt_config.makefile
 LDFLAGS		=  $(OS_LDFLAGS)
 
 INCLUDE		= -I.
-LIBS		= -LRenal -LGraphics -lgraphics -lrenal
+LIBS		= -LRenal -LGraphics -LSensitiveProtocol -lgraphics -lrenal -lsnsprotocol
 
 ifeq ($(OS),Windows_NT)
 	RESOURCES	= Sensitive.res
@@ -15,7 +15,7 @@ endif
 TARGET		= Sensitive$(EXE_EXT)
 OBJECTS		= Sensitive.o
 
-INTERNAL_LIBS	= librenal.$(LIB_EXT) libgraphics.$(LIB_EXT)
+INTERNAL_LIBS	= librenal.$(LIB_EXT) libsnsprotocol.$(LIB_EXT) libgraphics.$(LIB_EXT)
 
 .PHONY: clean $(INTERNAL_LIBS)
 
@@ -27,6 +27,9 @@ librenal.$(LIB_EXT):
 	
 libgraphics.$(LIB_EXT):
 	cd Graphics; make all
+
+libsnsprotocol.$(LIB_EXT):
+	cd SensitiveProtocol; make all
 
 Sensitive.res: Resources.rc
 	$(MINGW_WRES) -O coff -o $(RESOURCES) Resources.rc
@@ -44,3 +47,4 @@ clean:
 	rm -fr $(TARGET) $(OBJECTS) $(INTERNAL_LIBS) $(RESOURCES)
 	cd Renal; make clean
 	cd Graphics; make clean
+	cd SensitiveProtocol; make clean

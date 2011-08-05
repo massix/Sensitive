@@ -29,6 +29,9 @@
 #include <Graphics/MainApplication.h>
 #include <Graphics/MainUI.h>
 
+#include <SensitiveProtocol/SensitiveServer.h>
+#include <SensitiveProtocol/SensitiveClient.h>
+
 using namespace Renal;
 using namespace std;
 
@@ -38,6 +41,11 @@ int main(int argc, char *argv[]) {
 	Q_INIT_RESOURCE(Sensitive);
 
 	Graphics::MainApplication run(argc, argv);
+
+#if 1
+	Protocol::SensitiveServer server;
+	Protocol::SensitiveClient client;
+#endif
 
 	run.setApplicationName("Sensitive");
 	run.setApplicationVersion("0.0.1");
