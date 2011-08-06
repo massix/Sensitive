@@ -157,7 +157,6 @@ MainUI::MainUI(Renal::NextCalculator *calculator, QString calculator_name) :
 					 coords_table, SLOT(RefreshCoords(std::vector<std::pair<double, double> >*)));
 	QObject::connect(coords_table, SIGNAL(DropFinished()), this, SLOT(Interpole()));
 
-	CreateMenus();
 	printer = new QPrinter();
 	painter = new QPainter();
 
@@ -171,6 +170,21 @@ MainUI::MainUI(Renal::NextCalculator *calculator, QString calculator_name) :
 
 	server = new Protocol::SensitiveServer();
 	client = new Protocol::SensitiveClient();
+
+	serverWindow = new ServerWindow(this);
+	QObject::connect(serverWindow, SIGNAL(StartServer(quint16)), this, SLOT(ServerConfigured(quint16)));
+	QObject::connect(serverWindow, SIGNAL(CancelServer()), this, SLOT(ServerDelete()));
+	QObject::connect(serverWindow, SIGNAL(rejected()), server, SLOT(Shutdown()));
+	QObject::connect(server, SIGNAL(SynAcquired(QString&)), serverWindow, SLOT(Progress25(QString&)));
+	QObject::connect(server, SIGNAL(BcooAcquired(int)), serverWindow, SLOT(Progress50(int)));
+	QObject::connect(server, SIGNAL(CoorAcquired()), serverWindow, SLOT(Progress75()));
+	QObject::connect(server, SIGNAL(CoorAcquired()), this, SLOT(ServerFinished()));
+
+	clientWindow = new ClientWindow(this);
+	QObject::connect(clientWindow, SIGNAL(ClientConfigured(QString&, quint16)), this, SLOT(ClientConfigured(QString&, quint16)));
+	QObject::connect(clientWindow, SIGNAL(rejected()), client, SLOT(ResetClient()));
+
+	CreateMenus();
 
 	setCentralWidget(fixed_widget);
 
@@ -311,8 +325,8 @@ void MainUI::CreateMenus() {
 	QObject::connect(aboutQT, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
 	QObject::connect(toPdf, SIGNAL(triggered()), this, SLOT(ExportPDF()));
 	QObject::connect(toTxt, SIGNAL(triggered()), this, SLOT(ExportSNS()));
-	QObject::connect(serverStart, SIGNAL(triggered()), this, SLOT(ServerStart()));
-	QObject::connect(clientStart, SIGNAL(triggered()), this, SLOT(ClientStart()));
+	QObject::connect(serverStart, SIGNAL(triggered()), serverWindow, SLOT(show()));
+	QObject::connect(clientStart, SIGNAL(triggered()), clientWindow, SLOT(show()));
 }
 
 
@@ -413,7 +427,7 @@ void MainUI::ExportPDF() {
 
 
 	/* Render Plot */
-	painter->translate(QPoint(printer->pageRect().x() + 150, printer->pageRect().y() + 50));
+	painter->translate(QPoint(printer->pageRect().x() + 150, printer->pageRect().y() + 80));
 	plot_renderer->render(plot, painter, QRect(0, 0, 550, 400));
 
 
@@ -447,31 +461,15 @@ void MainUI::ExportSNS() {
 	file.close();
 }
 
-void MainUI::ServerStart() {
-	serverWindow = new ServerWindow(this);
-	serverWindow->show();
-
-	QObject::connect(serverWindow, SIGNAL(StartServer(quint16)), this, SLOT(ServerConfigured(quint16)));
-	QObject::connect(serverWindow, SIGNAL(CancelServer()), this, SLOT(ServerDelete()));
-	QObject::connect(serverWindow, SIGNAL(rejected()), server, SLOT(Shutdown()));
-}
-
 void MainUI::ServerDelete() {
 	server->Shutdown();
 	serverWindow->hide();
-	serverWindow->deleteLater();
 }
 
 void MainUI::ServerConfigured(quint16 port) {
-
 	try {
 		server->StartServer(port);
-
 		serverWindow->Progress0();
-		QObject::connect(server, SIGNAL(SynAcquired(QString&)), serverWindow, SLOT(Progress25(QString&)));
-		QObject::connect(server, SIGNAL(BcooAcquired(int)), serverWindow, SLOT(Progress50(int)));
-		QObject::connect(server, SIGNAL(CoorAcquired()), serverWindow, SLOT(Progress75()));
-		QObject::connect(server, SIGNAL(CoorAcquired()), this, SLOT(ServerFinished()));
 	}
 
 	catch (Protocol::SensitiveException& e) {
@@ -486,15 +484,9 @@ void MainUI::ServerFinished() {
 	std::vector<std::pair<double, double> >* newCoords = server->GetCoordinates();
 	coords_table->RefreshCoords(newCoords);
 	Interpole();
+	ServerDelete();
 }
 
-void MainUI::ClientStart() {
-	clientWindow = new ClientWindow(this);
-	clientWindow->show();
-
-	QObject::connect(clientWindow, SIGNAL(ClientConfigured(QString&, quint16)), this, SLOT(ClientConfigured(QString&, quint16)));
-	QObject::connect(clientWindow, SIGNAL(rejected()), client, SLOT(ResetClient()));
-}
 
 void MainUI::ClientConfigured(QString& hostname, quint16 port) {
 	try {

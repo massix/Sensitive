@@ -116,12 +116,10 @@ private slots:
 	void			ExportSNS();
 
 	/* Server and client stuffs */
-	void			ServerStart();
 	void			ServerConfigured(quint16 port);
 	void			ServerDelete();
 	void			ServerFinished();
 
-	void			ClientStart();
 	void			ClientConfigured(QString& hostname, quint16 port);
 
 private:

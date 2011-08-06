@@ -61,6 +61,9 @@ void ServerWindow::StartServerClicked() {
 
 void ServerWindow::CancelServerClicked() {
 	emit CancelServer();
+
+	stopServer->setEnabled(false);
+	startServer->setEnabled(true);
 }
 
 ServerWindow::~ServerWindow() {
@@ -97,6 +100,9 @@ void ServerWindow::Progress75() {
 void ServerWindow::Progress100() {
 	progressDialog->setValue(4);
 	progressDialog->accept();
+
+	startServer->setEnabled(true);
+	stopServer->setEnabled(false);
 }
 
 }
