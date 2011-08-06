@@ -2,3 +2,5 @@
 *.so
 *.dll
 moc_*.cpp
+Sensitive
+Sensitive.exe
