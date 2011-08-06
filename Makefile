@@ -23,13 +23,13 @@ INTERNAL_LIBS	= librenal.$(LIB_EXT) libsnsprotocol.$(LIB_EXT) libgraphics.$(LIB_
 all: $(TARGET)
 
 librenal.$(LIB_EXT):
-	cd Renal; make all
+	cd Renal && $(MAKE)
 	
 libgraphics.$(LIB_EXT):
-	cd Graphics; make all
+	cd Graphics && $(MAKE)
 
 libsnsprotocol.$(LIB_EXT):
-	cd SensitiveProtocol; make all
+	cd SensitiveProtocol && $(MAKE)
 
 Sensitive.res: Resources.rc
 	$(MINGW_WRES) -O coff -o $(RESOURCES) Resources.rc
