@@ -5,7 +5,7 @@
 
 ; General informations on Sensitive
 !define PACKAGE_NAME	"Sensitive"
-!define PACKAGE_VERSION	"0.9.8"
+!define PACKAGE_VERSION	"0.9.9"
 
 Name "${PACKAGE_NAME} ${PACKAGE_VERSION}"
 OutFile "${PACKAGE_NAME}-${PACKAGE_VERSION}.exe"
