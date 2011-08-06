@@ -35,6 +35,8 @@ public:
 	STableWidget(int rows, int cols, QWidget *parent = 0) : QTableWidget(rows, cols, parent) {};
 	virtual ~STableWidget();
 
+	std::vector<std::pair<double, double> >* GetCoordinates();
+
 public:
 
 

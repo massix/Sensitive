@@ -6,7 +6,7 @@ include ../Qwt_qt_config.makefile
 INCLUDES	=
 LIBS		=
 
-LDFLAGS		=
+LDFLAGS		= -g
 
 OBJECTS		= NextCalculator.o NextException.o LaGrangeCalculator.o NewtonCalculator.o
 
@@ -18,7 +18,7 @@ TARGET		= librenal.$(LIB_EXT)
 all: $(TARGET)
 
 .cpp.o:
-	$(CC) $(CFLAGS) $(INCLUDES) -o $@ -c $<
+	$(CC) $(CXXFLAGS) $(INCLUDES) -o $@ -c $<
 	
 $(TARGET): $(OBJECTS)
 	$(CC) -shared $(LDFLAGS) -o $(TARGET) $(OBJECTS) $(LIBS)

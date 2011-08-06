@@ -36,17 +36,31 @@
 namespace Protocol {
 
 SensitiveClient::SensitiveClient(QObject *parent) : QTcpSocket(), ack(false), coords(0) {
-	QObject::connect(this, SIGNAL(disconnected()), this, SLOT(deleteLater()));
 	QObject::connect(this, SIGNAL(readyRead()), this, SLOT(ReadMessage()));
 	QObject::connect(this, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(ErrorHandler(QAbstractSocket::SocketError)));
 }
 
-void SensitiveClient::InitiateProtocol() {
+void SensitiveClient::ResetClient() {
+	if (isValid())
+		disconnectFromHost();
+
+	ack = 0;
+	if (coords != 0)
+		delete(coords);
+}
+
+void SensitiveClient::InitiateProtocol(QString& server_ip, quint16 port) {
 	if (coords == 0)
 		throw SensitiveException("No coordinates set");
 
+	if (server_ip.isNull() || server_ip.isEmpty())
+		server_ip = "127.0.0.1";
 
-	connectToHost(QHostAddress::LocalHost, 53517);
+	QHostAddress address(server_ip);
+
+	connectToHost(address, port);
+
+	waitForConnected();
 
 	/* Send SYN */
 	SensitiveMessage msg(MESSAGE_SYN, QHostInfo::localHostName().toStdString().c_str());
@@ -90,6 +104,8 @@ void SensitiveClient::ReadMessage() {
 		msg.remove(0, 4);
 		ack = true;
 
+		emit AckAcquired(msg);
+
 		/* Send a message indicating how much coordinates he should expect */
 		block->clear();
 		QDataStream out(block, QIODevice::WriteOnly);
@@ -107,6 +123,8 @@ void SensitiveClient::ReadMessage() {
 	else if (msg.startsWith(MESSAGE_BCOO) && ack) {
 		msg.remove(0, 4);
 		QString coordinates;
+
+		emit BcooAcquired();
 
 		/* Send the coordinates */
 		for (std::vector<std::pair<double, double> >::iterator ite = coords->begin(); ite != coords->end(); ++ite)
@@ -127,6 +145,15 @@ void SensitiveClient::ReadMessage() {
 
 	}
 
+	else if (msg.startsWith(MESSAGE_ECOO)) {
+		ack = !ack;
+
+		disconnectFromHost();
+		close();
+
+		emit EcooAcquired();
+	}
+
 	else
 		throw SensitiveException("Protocol Error");
 
@@ -138,7 +165,25 @@ void SensitiveClient::SetCoordinates(std::vector<std::pair<double, double> >& co
 }
 
 void SensitiveClient::ErrorHandler(QAbstractSocket::SocketError error) {
-	// TODO: implement error handler
+	if (isValid()) disconnectFromHost();
+	if (isOpen()) close();
+
+	switch (error) {
+	case QAbstractSocket::HostNotFoundError:
+		throw SensitiveException("Host not found");
+	case QAbstractSocket::ConnectionRefusedError:
+		throw SensitiveException("Connection refused. Is server listening on the other side?");
+	case QAbstractSocket::RemoteHostClosedError:
+		throw SensitiveException("Remote host closed connection");
+	case QAbstractSocket::SocketAccessError:
+		throw SensitiveException("I can't access the socket. I probably don't have the right priviledges..");
+	case QAbstractSocket::SocketResourceError:
+		throw SensitiveException("Local system refused to open the socket.");
+	case QAbstractSocket::SocketTimeoutError:
+		throw SensitiveException("Socket timeout error :-(");
+	default:
+		throw SensitiveException("Unknown error");
+	}
 }
 
 SensitiveClient::~SensitiveClient() {

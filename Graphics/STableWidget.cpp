@@ -42,6 +42,25 @@ void STableWidget::RefreshCoords(std::vector<std::pair<double, double> > *newCoo
 	emit DropFinished();
 }
 
+std::vector<std::pair<double, double> >* STableWidget::GetCoordinates() {
+	std::vector<std::pair<double, double> >* coords = new std::vector<std::pair<double, double> >();
+
+	for (int lines = 0; lines < rowCount(); lines++) {
+		if (item(lines, 0) == 0 || item(lines, 1) == 0)
+			continue;
+
+		bool ok_x, ok_y;
+
+		double x = item(lines, 0)->text().toDouble(&ok_x);
+		double y = item(lines, 1)->text().toDouble(&ok_y);
+
+		if (ok_x && ok_y)
+			coords->push_back(std::pair<double, double>(x, y));
+	}
+
+	return coords;
+}
+
 void STableWidget::clearContents() {
 	QTableWidget::clearContents();
 

@@ -35,6 +35,8 @@ public:
 
 	std::string GetMessage();
 
+	virtual const char* what() const throw();
+
 private:
 	std::string _message;
 };

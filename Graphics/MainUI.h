@@ -24,6 +24,8 @@
 
 #include "STableWidget.h"
 #include "SPlot.h"
+#include "ServerWindow.h"
+#include "ClientWindow.h"
 
 #include <iostream>
 
@@ -37,6 +39,10 @@
 #include <qwt_plot_scaleitem.h>
 
 #include <Renal/NextCalculator.h>
+
+#include <SensitiveProtocol/SensitiveClient.h>
+#include <SensitiveProtocol/SensitiveServer.h>
+#include <SensitiveProtocol/SensitiveException.h>
 
 namespace Graphics {
 
@@ -92,7 +98,15 @@ private:
 	QPainter			*painter;
 	QwtPlotRenderer		*plot_renderer;
 
-public slots:
+	/* Server and client pointers, not initialized until needed */
+	Protocol::SensitiveServer	*server;
+	Protocol::SensitiveClient 	*client;
+
+	/* Server and client windows */
+	ServerWindow		*serverWindow;
+	ClientWindow		*clientWindow;
+
+private slots:
 	void			AddCoord();
 	void			DeleteCoord();
 	void			Interpole();
@@ -101,8 +115,14 @@ public slots:
 	void			ExportPDF();
 	void			ExportSNS();
 
-private slots:
-	void			ShowAboutDialog();
+	/* Server and client stuffs */
+	void			ServerStart();
+	void			ServerConfigured(quint16 port);
+	void			ServerDelete();
+	void			ServerFinished();
+
+	void			ClientStart();
+	void			ClientConfigured(QString& hostname, quint16 port);
 
 private:
 	void			CreateMenus();

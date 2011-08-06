@@ -36,8 +36,12 @@ public:
 	SensitiveClient(QObject *parent = 0);
 	virtual ~SensitiveClient();
 
-	void InitiateProtocol();
+	void InitiateProtocol(QString& server_ip, quint16 port);
 	void SetCoordinates(std::vector<std::pair<double, double> >& coords);
+
+
+public slots:
+	void ResetClient();
 
 private:
 	bool ack;
@@ -48,6 +52,12 @@ private:
 private slots:
 	void	ReadMessage();
 	void	ErrorHandler(QAbstractSocket::SocketError error);
+
+signals:
+	/* Signals emitted during the transaction */
+	void	AckAcquired(QString& server);
+	void	BcooAcquired();
+	void	EcooAcquired();
 };
 
 }

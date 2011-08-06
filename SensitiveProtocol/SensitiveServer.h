@@ -37,8 +37,11 @@ public:
 	SensitiveServer(QObject *parent = 0);
 	virtual ~SensitiveServer();
 
-	void		StartServer();
+	void		StartServer(quint16 port);
 	std::vector<std::pair<double, double> >* GetCoordinates();
+
+public slots:
+	void		Shutdown();
 
 private:
 	QString		message;
@@ -55,14 +58,10 @@ private slots:
 	void	ReadMessage();
 
 signals:
-	/* Emitted while waiting a message */
-	void	WaitingMessage();
-
-	/* Emitted after having successfully received the coordinates */
-	void	CoordinatesSuccess();
-
-	/* Emitted if the client didn't behave like we were expecting */
-	void	CoordinatesFail();
+	/* Signals sent during the different phases of transaction */
+	void	SynAcquired(QString& client);
+	void 	BcooAcquired(int coords);
+	void	CoorAcquired();
 };
 
 }

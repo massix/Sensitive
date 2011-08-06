@@ -24,6 +24,8 @@
 #include "SPlot.h"
 #include "STableWidget.h"
 #include "AboutDialog.h"
+#include "ServerWindow.h"
+#include "ClientWindow.h"
 
 #include <vector>
 #include <cmath>
@@ -42,12 +44,17 @@
 #include <Renal/NextCalculator.h>
 #include <Renal/NextException.h>
 
+#include <SensitiveProtocol/SensitiveServer.h>
+#include <SensitiveProtocol/SensitiveClient.h>
+#include <SensitiveProtocol/SensitiveException.h>
+
 #define MAX_ERROR 0.00000001
 
 namespace Graphics {
 
 MainUI::MainUI(Renal::NextCalculator *calculator, QString calculator_name) :
-		QMainWindow(), calculator(calculator), calculator_name(calculator_name) {
+		QMainWindow(), calculator(calculator), calculator_name(calculator_name)
+{
 	setWindowTitle(QString("Sensitive UI - %0").arg(this->calculator_name));
 	setWindowIcon(QIcon(":/bundle/icon.svg"));
 
@@ -161,6 +168,9 @@ MainUI::MainUI(Renal::NextCalculator *calculator, QString calculator_name) :
 
 	statusBar()->show();
 	statusBar()->showMessage("Welcome to Sensitive UI. Please feel free to smoke a joint while interpolating.");
+
+	server = new Protocol::SensitiveServer();
+	client = new Protocol::SensitiveClient();
 
 	setCentralWidget(fixed_widget);
 
@@ -281,6 +291,12 @@ void MainUI::CreateMenus() {
 	exit->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_X));
 	exit->setStatusTip(tr("Exits from Sensitive"));
 
+	QMenu *exchangeMenu = menuBar()->addMenu("E&xchange");
+	QAction *serverStart = exchangeMenu->addAction("Start &server (receive)");
+	QAction *clientStart = exchangeMenu->addAction("Start &client (send)");
+
+	serverStart->setStatusTip("Receive coordinates from a remote client");
+	clientStart->setStatusTip("Send coordinates to a remote host");
 
 	QMenu *helpMenu = menuBar()->addMenu("&Help");
 	QAction *about = helpMenu->addAction("About");
@@ -295,6 +311,8 @@ void MainUI::CreateMenus() {
 	QObject::connect(aboutQT, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
 	QObject::connect(toPdf, SIGNAL(triggered()), this, SLOT(ExportPDF()));
 	QObject::connect(toTxt, SIGNAL(triggered()), this, SLOT(ExportSNS()));
+	QObject::connect(serverStart, SIGNAL(triggered()), this, SLOT(ServerStart()));
+	QObject::connect(clientStart, SIGNAL(triggered()), this, SLOT(ClientStart()));
 }
 
 
@@ -429,8 +447,67 @@ void MainUI::ExportSNS() {
 	file.close();
 }
 
-void MainUI::ShowAboutDialog() {
+void MainUI::ServerStart() {
+	serverWindow = new ServerWindow(this);
+	serverWindow->show();
 
+	QObject::connect(serverWindow, SIGNAL(StartServer(quint16)), this, SLOT(ServerConfigured(quint16)));
+	QObject::connect(serverWindow, SIGNAL(CancelServer()), this, SLOT(ServerDelete()));
+	QObject::connect(serverWindow, SIGNAL(rejected()), server, SLOT(Shutdown()));
+}
+
+void MainUI::ServerDelete() {
+	server->Shutdown();
+	serverWindow->hide();
+	serverWindow->deleteLater();
+}
+
+void MainUI::ServerConfigured(quint16 port) {
+
+	try {
+		server->StartServer(port);
+
+		serverWindow->Progress0();
+		QObject::connect(server, SIGNAL(SynAcquired(QString&)), serverWindow, SLOT(Progress25(QString&)));
+		QObject::connect(server, SIGNAL(BcooAcquired(int)), serverWindow, SLOT(Progress50(int)));
+		QObject::connect(server, SIGNAL(CoorAcquired()), serverWindow, SLOT(Progress75()));
+		QObject::connect(server, SIGNAL(CoorAcquired()), this, SLOT(ServerFinished()));
+	}
+
+	catch (Protocol::SensitiveException& e) {
+		QMessageBox::information(this, "Exception occured", QString(e.GetMessage().c_str()));
+	}
+}
+
+void MainUI::ServerFinished() {
+	serverWindow->Progress100();
+	/* Grab coordinates from the server */
+
+	std::vector<std::pair<double, double> >* newCoords = server->GetCoordinates();
+	coords_table->RefreshCoords(newCoords);
+	Interpole();
+}
+
+void MainUI::ClientStart() {
+	clientWindow = new ClientWindow(this);
+	clientWindow->show();
+
+	QObject::connect(clientWindow, SIGNAL(ClientConfigured(QString&, quint16)), this, SLOT(ClientConfigured(QString&, quint16)));
+	QObject::connect(clientWindow, SIGNAL(rejected()), client, SLOT(ResetClient()));
+}
+
+void MainUI::ClientConfigured(QString& hostname, quint16 port) {
+	try {
+		std::vector<std::pair<double, double> > *tmp = coords_table->GetCoordinates();
+		std::vector<std::pair<double, double> > coordsVector(*tmp);
+		delete(tmp);
+
+		client->SetCoordinates(coordsVector);
+		client->InitiateProtocol(hostname, port);
+	}
+	catch (Protocol::SensitiveException& e) {
+		QMessageBox::information(this, "Exception occured", QString(e.GetMessage().c_str()));
+	}
 }
 
 }

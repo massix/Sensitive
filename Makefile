@@ -3,7 +3,7 @@
 
 include Qwt_qt_config.makefile
 
-LDFLAGS		=  $(OS_LDFLAGS)
+LDFLAGS		=  $(OS_LDFLAGS) -g
 
 INCLUDE		= -I.
 LIBS		= -LRenal -LGraphics -LSensitiveProtocol -lgraphics -lrenal -lsnsprotocol
@@ -35,7 +35,7 @@ Sensitive.res: Resources.rc
 	$(MINGW_WRES) -O coff -o $(RESOURCES) Resources.rc
 
 .cpp.o:
-	$(CC) $(CFLAGS) $(INCLUDE) $(QT_CFLAGS) $(QWT_CFLAGS) -c $< -o $@
+	$(CC) $(CXXFLAGS) $(INCLUDE) $(QT_CFLAGS) $(QWT_CFLAGS) -c $< -o $@
 	
 $(TARGET): $(INTERNAL_LIBS) $(OBJECTS) $(RESOURCES)
 	$(CC) $(LDFLAGS) -o $(TARGET) $(OBJECTS) $(RESOURCES) $(QT_LDFLAGS) $(QWT_LDFLAGS) $(LIBS)

@@ -42,9 +42,21 @@ SensitiveServer::SensitiveServer(QObject *parent)
 
 }
 
-void SensitiveServer::StartServer() {
+void SensitiveServer::Shutdown() {
+	connected = false;
+	syn = false;
+	ack = false;
+	receive_max = -1;
+	received = 0;
+	blockSize = 0;
+
+	if (isListening())
+		close();
+}
+
+void SensitiveServer::StartServer(quint16 port) {
 	QObject::connect(this, SIGNAL(newConnection()), this, SLOT(HandleConnection()));
-	listen(QHostAddress::Any, 53517);
+	listen(QHostAddress::Any, port);
 }
 
 
@@ -87,6 +99,8 @@ void SensitiveServer::ReadMessage() {
 		message.remove(0, 4);
 		syn = true;
 
+		emit SynAcquired(message);
+
 		/* Send (b)ACK */
 		QByteArray block;
 		QDataStream out(&block, QIODevice::WriteOnly);
@@ -112,6 +126,8 @@ void SensitiveServer::ReadMessage() {
 		if (!ok)
 			throw SensitiveException("Malformed BCOO message received.");
 
+		emit BcooAcquired(receive_max);
+
 		received = 0;
 
 		/* Send the message back */
@@ -125,7 +141,7 @@ void SensitiveServer::ReadMessage() {
 		connection->write(block);
 	}
 
-	/* List of the "COORD"inates */
+	/* List of the "COOR"dinates */
 	else if (message.startsWith(MESSAGE_COOR) && (receive_max > 0)) {
 		message.remove(0, 4);
 
@@ -144,11 +160,33 @@ void SensitiveServer::ReadMessage() {
 			double x = partial.at(0).toDouble(&ok_x);
 			double y = partial.at(1).toDouble(&ok_y);
 
-			if (ok_x && ok_y)
+			if (ok_x && ok_y) {
 				coordinates->push_back(std::pair<double, double>(x, y));
+				++received;
+			}
 		}
 
-		emit CoordinatesSuccess();
+		emit CoorAcquired();
+
+		/* Send Ecoo to signal to the client that we successfully received the coordinates */
+		SensitiveMessage ecoo(MESSAGE_ECOO, "Goodbye");
+		QByteArray block;
+		QDataStream out(&block, QIODevice::WriteOnly);
+
+		out << (quint16)0;
+		out << ecoo.GetMessage();
+		out.device()->seek(0);
+		out << (quint16)(block.size() - sizeof(quint16));
+
+		connection->write(block);
+
+//		connection->disconnectFromHost();
+//		connection->close();
+
+		syn = false;
+		ack = false;
+		receive_max = -1;
+		received = 0;
 	}
 
 	/* Something bad happened :( */

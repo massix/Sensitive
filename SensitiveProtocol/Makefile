@@ -5,7 +5,7 @@ include ../Qwt_qt_config.makefile
 
 INCLUDE		=	-I..
 
-CXXFLAGS	=	-O3 -g
+LDFLAGS		=	-g
 
 MOCFILES	=	moc_SensitiveServer.cpp moc_SensitiveClient.cpp
 OBJECTS		=	moc_SensitiveServer.o moc_SensitiveClient.o SensitiveMessage.o SensitiveServer.o SensitiveClient.o SensitiveException.o

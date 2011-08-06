@@ -30,6 +30,10 @@ std::string SensitiveException::GetMessage() {
 	return _message;
 }
 
+const char* SensitiveException::what() const throw() {
+	return _message.c_str();
+}
+
 SensitiveException::~SensitiveException() throw() {
 
 }

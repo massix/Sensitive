@@ -56,7 +56,6 @@ int main(int argc, char *argv[]) {
 #endif
 
 	run.setApplicationName("Sensitive");
-	run.setApplicationVersion("0.0.1");
 
 	run.setAttribute(Qt::AA_ImmediateWidgetCreation, true);
 

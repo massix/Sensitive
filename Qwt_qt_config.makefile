@@ -4,8 +4,8 @@
 
 # Generic variables
 
-CC		=	g++
-CFLAGS	= 	-O3
+CC			=	g++
+CXXFLAGS	= 	-g -O3
 
 ifeq ($(OS),Windows_NT)
 	QT_PATH		= 	C:\Qt\4.7.3
