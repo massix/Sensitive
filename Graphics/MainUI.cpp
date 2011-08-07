@@ -274,7 +274,7 @@ void MainUI::Interpole() {
 
 		QVector<double> x_points;
 		QVector<double> y_points;
-		for (int i = -25; i < 25; i++) {
+		for (int i = -50; i <= 50; i++) {
 			x_points.push_back(i);
 			y_points.push_back(calculator->CalculateInPoint(i));
 		}
