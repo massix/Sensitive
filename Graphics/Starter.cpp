@@ -88,12 +88,14 @@ Starter::~Starter() {
 
 void Starter::Animate(QWidget* target) {
 	animation->setTargetObject(target);
-	animation->setPropertyName("geometry");
-	animation->setDuration(500);
+	animation->setPropertyName("size");
+	animation->setDuration(1000);
 
-	animation->setStartValue(target->geometry());
-	animation->setKeyValueAt(0.5, QRect(150, 300, 60, 60));
-	animation->setEndValue(target->geometry());
+	animation->setStartValue(target->size());
+	animation->setEndValue(target->size());
+	animation->setKeyValueAt(0.2, QSize(target->size().width(), 0));
+
+	animation->setEasingCurve(QEasingCurve::OutBounce);
 
 	if (target == newton_image) {
 		selected = NEWTON;
