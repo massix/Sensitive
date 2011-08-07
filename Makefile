@@ -45,6 +45,6 @@ win32installer: $(TARGET) Sensitive.nsi
 	
 clean:
 	rm -fr $(TARGET) $(OBJECTS) $(INTERNAL_LIBS) $(RESOURCES)
-	cd Renal; make clean
-	cd Graphics; make clean
-	cd SensitiveProtocol; make clean
+	cd Renal && $(MAKE) clean
+	cd Graphics && $(MAKE) clean
+	cd SensitiveProtocol && $(MAKE) clean
