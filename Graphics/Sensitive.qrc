@@ -6,5 +6,7 @@
   <qresource prefix="bundle">
   	<file alias="logo">images/logo.png</file>
     <file alias="icon.svg">images/Icon.svg</file>
+    <file alias="logo-about">images/logo-about.png</file>
+    <file alias="logo-about-svg">images/logo-about.svg</file>
   </qresource>
 </RCC>

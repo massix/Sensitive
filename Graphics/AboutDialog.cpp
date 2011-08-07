@@ -67,7 +67,7 @@ AboutDialog::AboutDialog(QWidget *parent) : QDialog(parent) {
 	website->setReadOnly(true);
 
 	logo = new QLabel();
-	logo->setPixmap(QPixmap(":/bundle/logo"));
+	logo->setPixmap(QPixmap(":/bundle/logo-about"));
 
 	description = new QLabel("<b>Sensitive Interpolation Software</b><br />"
 			"Copyright(C) 2011 Massimo Gengarelli &lt;massimo.gengarelli@gmail.com&gt;.<br />"
