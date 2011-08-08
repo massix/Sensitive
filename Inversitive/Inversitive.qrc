@@ -1,0 +1,7 @@
+<RCC>
+  <qresource prefix="form">
+    <file>inversitive.ui</file>
+    <file alias="logo">images/Icon.png</file>
+    <file alias="logo-svg">images/Icon.svg</file>
+  </qresource>
+</RCC>

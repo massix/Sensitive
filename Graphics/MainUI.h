@@ -46,10 +46,6 @@
 
 namespace Graphics {
 
-enum InnerRoles {
-	COORD
-};
-
 class MainUI : public QMainWindow {
 
 	Q_OBJECT

@@ -15,21 +15,29 @@ endif
 TARGET		= Sensitive$(EXE_EXT)
 OBJECTS		= Sensitive.o
 
-INTERNAL_LIBS	= librenal.$(LIB_EXT) libsnsprotocol.$(LIB_EXT) libgraphics.$(LIB_EXT)
 
-.PHONY: clean $(INTERNAL_LIBS)
+# Targets
+LIBRENAL		= librenal.$(LIB_EXT)
+LIBSNSPROTOCOL	= libsnsprotocol.$(LIB_EXT)
+LIBGRAPHICS		= libgraphics.$(LIB_EXT)
+INVERSITIVE		= Inversitive$(EXE_EXT)
+
+.PHONY: clean $(INVERSITIVE) $(LIBRENAL) $(LIBSNSPROTOCOL) $(LIBGRAPHICS)
 
 
-all: $(TARGET)
+all: $(INVERSITIVE) $(TARGET)
 
-librenal.$(LIB_EXT):
+$(LIBRENAL):
 	cd Renal && $(MAKE)
+
+$(LIBSNSPROTOCOL):
+	cd SensitiveProtocol && $(MAKE)
 	
-libgraphics.$(LIB_EXT):
+$(LIBGRAPHICS): $(LIBRENAL) $(LIBSNSPROTOCOL) 
 	cd Graphics && $(MAKE)
 
-libsnsprotocol.$(LIB_EXT):
-	cd SensitiveProtocol && $(MAKE)
+$(INVERSITIVE): $(LIBSNSPROTOCOL)
+	cd Inversitive && $(MAKE)
 
 Sensitive.res: Resources.rc
 	$(MINGW_WRES) -O coff -o $(RESOURCES) Resources.rc
@@ -37,14 +45,15 @@ Sensitive.res: Resources.rc
 .cpp.o:
 	$(CC) $(CXXFLAGS) $(INCLUDE) $(QT_CFLAGS) $(QWT_CFLAGS) -c $< -o $@
 	
-$(TARGET): $(INTERNAL_LIBS) $(OBJECTS) $(RESOURCES)
+$(TARGET): $(OBJECTS) $(LIBRENAL) $(LIBSNSPROTOCOL) $(LIBGRAPHICS) $(RESOURCES)
 	$(CC) $(LDFLAGS) -o $(TARGET) $(OBJECTS) $(RESOURCES) $(QT_LDFLAGS) $(QWT_LDFLAGS) $(LIBS)
 	
-win32installer: $(TARGET) Sensitive.nsi
+win32installer: $(TARGET) $(INVERSITIVE) Sensitive.nsi
 	$(NSIS_MAKE) Sensitive.nsi
 	
 clean:
-	rm -fr $(TARGET) $(OBJECTS) $(INTERNAL_LIBS) $(RESOURCES)
+	rm -fr $(TARGET) $(OBJECTS) $(LIBRENAL) $(LIBGRAPHICS) $(LIBSNSPROTOCOL) $(INVERSITIVE) $(RESOURCES)
 	cd Renal && $(MAKE) clean
 	cd Graphics && $(MAKE) clean
 	cd SensitiveProtocol && $(MAKE) clean
+	cd Inversitive && $(MAKE) clean

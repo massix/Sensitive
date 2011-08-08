@@ -1,4 +1,4 @@
-IDI_ICON1 ICON DISCARDABLE "sensitive.ico"
+IDI_ICON1 ICON DISCARDABLE "inversitive.ico"
 
 
 1	VERSIONINFO
@@ -11,12 +11,12 @@ BEGIN
 		BLOCK "040904E4"
 		BEGIN
 			VALUE	"CompanyName", ""
-			VALUE	"FileDescription", "Sensitive UI"
+			VALUE	"FileDescription", "Inversitive"
 			VALUE	"FileVersion", "1.0.0.0"
-			VALUE	"InternalName", "Sensitive"
+			VALUE	"InternalName", "Inversitive"
 			VALUE	"LegalCopyright", "Massimo Gengarelli"
-			VALUE	"OriginalFilename", "Sensitive.exe"
-			VALUE	"ProductName", "Sensitive UI"
+			VALUE	"OriginalFilename", "Inversitive.exe"
+			VALUE	"ProductName", "Inversitive"
 			VALUE	"ProductVersion", "1.0.0.0"
 		END
 	END
@@ -26,3 +26,5 @@ BEGIN
 		VALUE	"Translation", 0x809, 1252
 	END
 END
+
+

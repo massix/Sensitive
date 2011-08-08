@@ -5,7 +5,7 @@
 
 ; General informations on Sensitive
 !define PACKAGE_NAME	"Sensitive"
-!define PACKAGE_VERSION	"0.9.9"
+!define PACKAGE_VERSION	"1.0.0"
 
 Name "${PACKAGE_NAME} ${PACKAGE_VERSION}"
 OutFile "${PACKAGE_NAME}-${PACKAGE_VERSION}.exe"
@@ -84,12 +84,18 @@ Section "Install"
 	File "libsnsprotocol.dll"
 	File "ExternLibs\*.dll"
 	File "sensitive.ico"
+	File "Inversitive\inversitive.ico"
+	File "Inversitive.exe"
 
 	; Menu shortcuts
 	CreateDirectory "$SMPROGRAMS\Sensitive"
   	CreateShortcut 	"$SMPROGRAMS\Sensitive\Sensitive.lnk" \
   	               	"$INSTDIR\Sensitive.exe" "" \
-                  	"$INSTDIR\Sensitive.ico"
+					"$INSTDIR\sensitive.ico"
+
+    CreateShortCut	"$SMPROGRAMS\Sensitive\Inversitive.lnk" \
+					"$INSTDIR\Inversitive.exe" "" \
+					"$INSTDIR\inversitive.ico"
   	CreateShortcut "$SMPROGRAMS\Sensitive\Uninstall Sensitive.lnk" \
                    "$INSTDIR\uninstall.exe"
 

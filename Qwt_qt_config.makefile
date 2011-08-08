@@ -5,7 +5,7 @@
 # Generic variables
 
 CC			=	g++
-CXXFLAGS	= 	-g -O3
+CXXFLAGS	= 	-O3 -DQT_SHARED -DNO_DEBUG
 
 ifeq ($(OS),Windows_NT)
 	QT_PATH		= 	C:\Qt\4.7.3
@@ -19,7 +19,7 @@ ifeq ($(OS),Windows_NT)
 	QWT_INCLUDE	=	$(QWT_PATH)\include
 	QWT_LIBS	=	$(QWT_PATH)\lib
 
-	QT_LDFLAGS	=	-L$(QT_LIBS) -lQtGui4 -lQtCore4 -lQtSvg4
+	QT_LDFLAGS	=	-L$(QT_LIBS) -lQtUiTools -lQtGui4 -lQtCore4 -lQtSvg4
 	QT_NETWORK	=	-L$(QT_LIBS) -lQtNetwork4 -lQtCore4
 
 	LIB_EXT		=	dll
