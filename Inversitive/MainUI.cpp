@@ -35,6 +35,7 @@ MainUI::MainUI(QWidget *parent) : QWidget(), expanded(false) {
 		throw std::exception();
 
 	setWindowIcon(QIcon(":/form/logo-svg"));
+	setWindowTitle("Inversitive UI");
 
 	loader = new QUiLoader(this);
 	edit = new QTextEdit(this);
