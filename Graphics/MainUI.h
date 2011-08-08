@@ -110,6 +110,7 @@ private slots:
 	void			CalculateInPoint();
 	void			ExportPDF();
 	void			ExportSNS();
+	void			Reset();
 
 	/* Server and client stuffs */
 	void			ServerConfigured(quint16 port);

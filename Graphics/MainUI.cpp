@@ -105,9 +105,8 @@ MainUI::MainUI(Renal::NextCalculator *calculator, QString calculator_name) :
 	QObject::connect(add_coord, SIGNAL(clicked()), this, SLOT(AddCoord()));
 	QObject::connect(delete_coord, SIGNAL(clicked()), this, SLOT(DeleteCoord()));
 	QObject::connect(reset_coords, SIGNAL(clicked()), coords_table, SLOT(clearContents()));
+	QObject::connect(reset_coords, SIGNAL(clicked()), this, SLOT(Reset()));
 	QObject::connect(interpole, SIGNAL(clicked()), this, SLOT(Interpole()));
-
-
 
 	/* ++++ BUILDING UP THE FIXED PART OF THE WINDOW, WHICH WILL CONTAIN THE PLOT AND THE RESULTS ++++ */
 	results_grid = new QGridLayout();
@@ -207,6 +206,18 @@ void MainUI::AddCoord() {
 void MainUI::DeleteCoord() {
 	coords_table->removeRow(coords_table->currentRow());
 }
+
+void MainUI::Reset() {
+	function->detach();
+	plot->replot();
+
+	input_point->clear();
+	output_point->clear();
+	polynom_line->clear();
+
+	calculator->Clear();
+}
+
 
 void MainUI::Interpole() {
 	if (calculator == 0)
