@@ -6,14 +6,17 @@ include ../Qwt_qt_config.makefile
 INCLUDES	=
 LIBS		=
 
-LDFLAGS		= -g
+LDFLAGS		=
 
-OBJECTS		= NextCalculator.o NextException.o LaGrangeCalculator.o NewtonCalculator.o
+OBJECTS		= 	NextCalculator.o \
+				NextException.o \
+				LaGrangeCalculator.o \
+				NewtonCalculator.o
 
 TARGET		= librenal.$(LIB_EXT)
 
 
-.PHONY: clean
+.PHONY: all clean
 
 all: $(TARGET)
 

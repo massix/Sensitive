@@ -6,7 +6,7 @@ include ../Qwt_qt_config.makefile
 INCLUDE		=	-I..
 LIBS		=	-L../Renal -lrenal -L../SensitiveProtocol -lsnsprotocol
 
-LDFLAGS		=	-g
+LDFLAGS		=
 
 MOCFILES	= 	moc_MainUI.cpp \
 				moc_MainApplication.cpp \
@@ -17,14 +17,8 @@ MOCFILES	= 	moc_MainUI.cpp \
 				moc_ServerWindow.cpp \
 				moc_ClientWindow.cpp
 
-OBJECTS		= 	moc_MainUI.o \
-				moc_MainApplication.o \
-				moc_Starter.o \
-				moc_SLabel.o \
-				moc_STableWidget.o \
-				moc_SPlot.o \
-				moc_ServerWindow.o \
-				moc_ClientWindow.o \
+OBJECTS		= 	$(MOCFILES:.cpp=.o) \
+				$(RESOURCES:.cpp=.o) \
 				AboutDialog.o \
 				MainUI.o \
 				MainApplication.o \
@@ -33,8 +27,7 @@ OBJECTS		= 	moc_MainUI.o \
 				SPlot.o \
 				STableWidget.o \
 				ServerWindow.o \
-				ClientWindow.o \
-				qrc_Sensitive.o 
+				ClientWindow.o
 
 RESOURCES	=	qrc_Sensitive.cpp
 RESOURCES_SRC = Sensitive.qrc
@@ -42,41 +35,20 @@ RESOURCES_SRC = Sensitive.qrc
 TARGET		= 	libgraphics.$(LIB_EXT)
 
 
-.PHONY: clean
+.PHONY: all clean
 
 all: $(TARGET)
 
-moc_MainUI.cpp: MainUI.h
-	$(QT_MOC) -o $@ $<
-	
-moc_MainApplication.cpp: MainApplication.h
-	$(QT_MOC) -o $@ $<
-	
-moc_Starter.cpp: Starter.h
-	$(QT_MOC) -o $@ $<
-	
-moc_SLabel.cpp: SLabel.h
-	$(QT_MOC) -o $@ $<
+%.cpp:
+	$(QT_MOC) -o $@ $(subst .cpp,.h,$(subst moc_,,$@))
 
-moc_STableWidget.cpp: STableWidget.h
-	$(QT_MOC) -o $@ $<
-	
-moc_SPlot.cpp: SPlot.h
-	$(QT_MOC) -o $@ $<
-	
-moc_ServerWindow.cpp: ServerWindow.h
-	$(QT_MOC) -o $@ $<
-	
-moc_ClientWindow.cpp: ClientWindow.h
-	$(QT_MOC) -o $@ $<
-
-qrc_Sensitive.cpp:
+$(RESOURCES): $(RESOURCES_SRC)
 	$(QT_RCC) -name Sensitive -o $(RESOURCES) $(RESOURCES_SRC)
 
-.cpp.o: $(MOCFILES) $(RESOURCES)
+.cpp.o:
 	$(CC) $(CXXFLAGS) $(INCLUDE) $(QT_CFLAGS) $(QWT_CFLAGS) -o $@ -c $<
 	
-$(TARGET): $(OBJECTS) $(RESOURCES)
+$(TARGET): $(MOCFILES) $(OBJECTS) $(RESOURCES)
 	$(CC) -shared $(LDFLAGS) -o $(TARGET) $(OBJECTS) $(LIBS) $(QT_LDFLAGS) $(QWT_LDFLAGS)
 	cp $(TARGET) ../
 	

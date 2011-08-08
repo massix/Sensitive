@@ -3,7 +3,7 @@
 
 include Qwt_qt_config.makefile
 
-LDFLAGS		=  $(OS_LDFLAGS) -g
+LDFLAGS		=  $(OS_LDFLAGS)
 
 INCLUDE		= -I.
 LIBS		= -LRenal -LGraphics -LSensitiveProtocol -lgraphics -lrenal -lsnsprotocol
@@ -38,7 +38,7 @@ LIBSNSPROTOCOL	= libsnsprotocol.$(LIB_EXT)
 LIBGRAPHICS		= libgraphics.$(LIB_EXT)
 INVERSITIVE		= Inversitive_UI$(EXE_EXT)
 
-.PHONY: clean $(INVERSITIVE) $(LIBRENAL) $(LIBSNSPROTOCOL) $(LIBGRAPHICS)
+.PHONY: all clean $(INVERSITIVE) $(LIBRENAL) $(LIBSNSPROTOCOL) $(LIBGRAPHICS)
 
 
 all: $(INVERSITIVE) $(TARGET)

@@ -3,20 +3,24 @@
 
 include ../Qwt_qt_config.makefile
 
-INCLUDE		=	
-LIBS		=	
+INCLUDE		=
+LIBS		=
 
 QT_CFLAGS	+=	-I$(QT_INCLUDE)/QtUiTools
 
 ifeq ($(OS),Windows_NT)
 	RC_FILE	= Inversitive.res
+	RC_SRC	= Resources.rc
 endif
 
 LDFLAGS		=	$(OS_LDFLAGS)
 
 MOCFILES	=	moc_MainUI.cpp
 
-OBJECTS		=	moc_MainUI.o MainUI.o Inversitive.o qrc_Inversitive.o
+OBJECTS		=	$(MOCFILES:.cpp=.o) \
+				$(RESOURCES:.cpp=.o) \
+				MainUI.o \
+				Inversitive.o
 
 TARGET		=	Inversitive_UI$(EXE_EXT)
 
@@ -25,21 +29,21 @@ RESOURCES_SRC = Inversitive.qrc
 
 all: $(TARGET) $(RESOURCES) $(OBJECTS)
 
-.PHONY: clean
+.PHONY: all clean
 
-moc_MainUI.cpp: MainUI.h
-	$(QT_MOC) -o $@ $<
+%.cpp:
+	$(QT_MOC) -o $@ $(subst .cpp,.h,$(subst moc_,,$@))
 
-.cpp.o: %.cpp
+.cpp.o:
 	$(CC) $(CXXFLAGS) $(INCLUDE) $(QT_CFLAGS) -o $@ -c $<
 
 $(RESOURCES): $(RESOURCES_SRC)
 	$(QT_RCC) -name Inversitive -o $(RESOURCES) $(RESOURCES_SRC)
 
-$(RC_FILE): Resources.rc
-	$(MINGW_WRES) -O coff -o $(RC_FILE) Resources.rc
+$(RC_FILE): $(RC_SRC)
+	$(MINGW_WRES) -O coff -o $(RC_FILE) $(RC_SRC)
 
-$(TARGET): $(OBJECTS) $(RC_FILE)
+$(TARGET): $(MOCFILES) $(OBJECTS) $(RC_FILE)
 	$(CC) $(LDFLAGS) -o $(TARGET) $(OBJECTS) $(RC_FILE) $(LIBS) $(QT_LDFLAGS)
 	cp $(TARGET) ../
 

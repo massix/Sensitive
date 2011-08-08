@@ -5,27 +5,30 @@ include ../Qwt_qt_config.makefile
 
 INCLUDE		=	-I..
 
-LDFLAGS		=	-g
+LDFLAGS		=
 
-MOCFILES	=	moc_SensitiveServer.cpp moc_SensitiveClient.cpp
-OBJECTS		=	moc_SensitiveServer.o moc_SensitiveClient.o SensitiveMessage.o SensitiveServer.o SensitiveClient.o SensitiveException.o
+MOCFILES	=	moc_SensitiveServer.cpp \
+				moc_SensitiveClient.cpp
+
+OBJECTS		=	$(MOCFILES:.cpp=.o) \
+				SensitiveMessage.o \
+				SensitiveServer.o \
+				SensitiveClient.o \
+				SensitiveException.o
 
 TARGET		=	libsnsprotocol.$(LIB_EXT)
 
-.PHONY:	clean
+.PHONY:	all clean
 
 all: $(TARGET)
 
-moc_SensitiveServer.cpp: SensitiveServer.h
-	$(QT_MOC) -o $@ $<
+%.cpp:
+	$(QT_MOC) -o $@ $(subst .cpp,.h,$(subst moc_,,$@))
 
-moc_SensitiveClient.cpp: SensitiveClient.h
-	$(QT_MOC) -o $@ $<
-
-.cpp.o: %.cpp $(MOCFILES)
+.cpp.o:
 	$(CC) $(CXXFLAGS) $(INCLUDE) $(QT_CFLAGS) -o $@ -c $<
 
-$(TARGET): $(OBJECTS) 
+$(TARGET): $(MOCFILES) $(OBJECTS)
 	$(CC) -shared $(LDFLAGS) -o $(TARGET) $(OBJECTS) $(LIBS) $(QT_NETWORK)
 	cp $(TARGET) ../
 	
