@@ -33,59 +33,89 @@ SPlot::~SPlot() {
 }
 
 void SPlot::dragEnterEvent(QDragEnterEvent *event) {
-	if (event->mimeData()->urls().isEmpty())
-		return;
+	if (event->mimeData()->hasText() && event->mimeData()->urls().isEmpty())
+		event->acceptProposedAction();
 
-	foreach(QUrl url, event->mimeData()->urls()) {
-		if (QFileInfo(url.toLocalFile()).suffix().toLower() == "sns") {
-			event->acceptProposedAction();
-			return;
+	else if (!event->mimeData()->urls().isEmpty()) {
+		foreach(QUrl url, event->mimeData()->urls()) {
+			if (QFileInfo(url.toLocalFile()).suffix().toLower() == "sns")
+				event->acceptProposedAction();
 		}
 	}
 }
 
 void SPlot::dropEvent(QDropEvent *event) {
-	if (event->mimeData()->urls().isEmpty())
-		return;
-
 	std::vector<std::pair<double, double> > *newCoords = new std::vector<std::pair<double, double> >();
 
-	foreach(QUrl url, event->mimeData()->urls()) {
-		QFileInfo fileInfo(url.toLocalFile());
+	if (event->mimeData()->hasText() && event->mimeData()->urls().isEmpty()) {
+		QString text = event->mimeData()->text();
 
-		if (fileInfo.suffix().toLower() == "sns") {
-			QFile file(url.toLocalFile());
-			if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-				QTextStream stream(&file);
+		/* Parse Text */
+		QStringList lines = text.split('\n');
 
-				/* Parse the file */
-				while (!stream.atEnd()) {
-					QString read = stream.readLine();
-					if (read.startsWith('#'))
-						continue;
-					QStringList coords = read.split(':');
+		if (lines.size() < 2)
+			return;
 
-					if (coords.size() != 2)
-						continue;
+		foreach (QString s, lines) {
+			if (s.startsWith('#'))
+				continue;
 
-					bool result_x, result_y;
-					double x, y;
+			bool result_x, result_y;
+			double x, y;
+			QStringList coords = s.split(':');
 
-					x = coords.first().toDouble(&result_x);
-					y = coords.last().toDouble(&result_y);
+			if (coords.size() != 2)
+				continue;
 
-					if (result_x && result_y)
-						newCoords->push_back(std::pair<double, double>(x, y));
-				}
+			x = coords.first().toDouble(&result_x);
+			y = coords.last().toDouble(&result_y);
 
-				file.close();
-			}
+			if (result_x && result_y)
+				newCoords->push_back(std::pair<double, double>(x, y));
 
 		}
 	}
 
+	else if (!event->mimeData()->urls().isEmpty()) {
+		foreach(QUrl url, event->mimeData()->urls()) {
+			QFileInfo fileInfo(url.toLocalFile());
+
+			if (fileInfo.suffix().toLower() == "sns") {
+				QFile file(url.toLocalFile());
+				if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+					QTextStream stream(&file);
+
+					/* Parse the file */
+					while (!stream.atEnd()) {
+						QString read = stream.readLine();
+						if (read.startsWith('#'))
+							continue;
+						QStringList coords = read.split(':');
+
+						if (coords.size() != 2)
+							continue;
+
+						bool result_x, result_y;
+						double x, y;
+
+						x = coords.first().toDouble(&result_x);
+						y = coords.last().toDouble(&result_y);
+
+						if (result_x && result_y)
+							newCoords->push_back(std::pair<double, double>(x, y));
+					}
+
+					file.close();
+				}
+
+			}
+		}
+	}
+
+	else
+		return;
+
 	emit DropAccepted(newCoords);
-	return;
 }
 
 }
