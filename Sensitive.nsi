@@ -85,7 +85,7 @@ Section "Install"
 	File "ExternLibs\*.dll"
 	File "sensitive.ico"
 	File "Inversitive\inversitive.ico"
-	File "Inversitive.exe"
+	File "Inversitive_UI.exe"
 
 	; Menu shortcuts
 	CreateDirectory "$SMPROGRAMS\Sensitive"
@@ -94,7 +94,7 @@ Section "Install"
 					"$INSTDIR\sensitive.ico"
 
     CreateShortCut	"$SMPROGRAMS\Sensitive\Inversitive.lnk" \
-					"$INSTDIR\Inversitive.exe" "" \
+					"$INSTDIR\Inversitive_UI.exe" "" \
 					"$INSTDIR\inversitive.ico"
   	CreateShortcut "$SMPROGRAMS\Sensitive\Uninstall Sensitive.lnk" \
                    "$INSTDIR\uninstall.exe"

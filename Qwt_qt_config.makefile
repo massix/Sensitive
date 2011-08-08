@@ -48,7 +48,7 @@ else
 	QWT_INCLUDE	=	$(QWT_PATH)/include
 	QWT_LIBS	=	$(QWT_PATH)/lib
 
-	QT_LDFLAGS 	=	-L$(QT_LIBS) -lQtGui -lQtCore -lQtSvg
+	QT_LDFLAGS 	=	-L$(QT_LIBS) -lQtUiTools -lQtGui -lQtCore -lQtSvg
 	QT_NETWORK	=	-L$(QT_LIBS) -lQtNetwork
 
 	LIB_EXT		=	so

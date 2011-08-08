@@ -20,7 +20,7 @@ OBJECTS		= Sensitive.o
 LIBRENAL		= librenal.$(LIB_EXT)
 LIBSNSPROTOCOL	= libsnsprotocol.$(LIB_EXT)
 LIBGRAPHICS		= libgraphics.$(LIB_EXT)
-INVERSITIVE		= Inversitive$(EXE_EXT)
+INVERSITIVE		= Inversitive_UI$(EXE_EXT)
 
 .PHONY: clean $(INVERSITIVE) $(LIBRENAL) $(LIBSNSPROTOCOL) $(LIBGRAPHICS)
 

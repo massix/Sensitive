@@ -18,7 +18,7 @@ MOCFILES	=	moc_MainUI.cpp
 
 OBJECTS		=	moc_MainUI.o MainUI.o Inversitive.o qrc_Inversitive.o
 
-TARGET		=	Inversitive$(EXE_EXT)
+TARGET		=	Inversitive_UI$(EXE_EXT)
 
 RESOURCES	=	qrc_Inversitive.cpp
 RESOURCES_SRC = Inversitive.qrc
