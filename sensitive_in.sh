@@ -1,0 +1,9 @@
+#!/bin/sh
+
+SENSITIVE_DIR=SNS_CHANGE_ME
+QWT_DIR=QWT_CHANGE_ME
+
+LD_LIBRARY_PATH="${SENSITIVE_DIR}/lib;${QWT_DIR}"; export LD_LIBRARY_PATH
+
+cd ${SENSITIVE_DIR}/bin
+./Sensitive.bin

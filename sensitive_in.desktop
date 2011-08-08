@@ -1,0 +1,10 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Sensitive UI
+Type=Application
+TryExec=TRYXEC_sensitive_CHANGE_ME
+Exec=EXEC_sensitive_CHANGE_ME
+Terminal=false
+Icon=ICON_sensitive_CHANGE_ME
+Categories=Education;Math
+

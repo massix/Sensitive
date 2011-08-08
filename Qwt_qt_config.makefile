@@ -55,7 +55,7 @@ else
 
 	OS_LDFLAGS	=
 
-	EXE_EXT		=
+	EXE_EXT		=	.bin
 endif
 
 

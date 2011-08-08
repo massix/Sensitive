@@ -1,0 +1,10 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Inversitive
+Type=Application
+TryExec=TRYXEC_inversitive_CHANGE_ME
+Exec=EXEC_inversitive_CHANGE_ME
+Terminal=false
+Icon=ICON_inversitive_CHANGE_ME
+Categories=Education;Math
+
