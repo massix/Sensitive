@@ -42,7 +42,7 @@ public:
 	void					SetPrecision(int precision);
 	int						GetPrecision();
 	float					GetMaxError();
-	int						Express10();
+	double					Express10();
 
 protected:
 	std::vector<std::pair<double, double> > 	*coords;

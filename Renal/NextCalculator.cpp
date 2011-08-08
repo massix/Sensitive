@@ -72,12 +72,14 @@ double NextCalculator::CalculateInPoint(double x) {
 
 	double result = 0;
 	int exponent = coeffs->size()-1;
-	for (std::vector<double>::iterator ite = coeffs->begin(); ite != coeffs->end()-1; ++ite, --exponent)
-		result += (*ite * pow(x, exponent));
+	for (std::vector<double>::iterator ite = coeffs->begin(); ite != coeffs->end()-1; ++ite, --exponent) {
+		double coeff = round(*ite * Express10()) / Express10();
+		result += (double) (coeff * pow(x, exponent));
+	}
 
 	result += coeffs->data()[coeffs->size()-1];
 
-	return result;
+	return round(result * Express10()) / Express10();
 }
 
 void NextCalculator::SetPrecision(int precision) {
@@ -92,8 +94,8 @@ float NextCalculator::GetMaxError() {
 	return pow(10, -precision);
 }
 
-int NextCalculator::Express10() {
-	return pow(10, precision);
+double NextCalculator::Express10() {
+	return double(pow(10, precision));
 }
 
 std::vector<double>* NextCalculator::MultiplyVectors(std::vector<double> & first, std::vector<double> & second) {
