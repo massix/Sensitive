@@ -76,7 +76,7 @@ $(NSIFILE): $(NSIFILE:.nsi=_in.nsi)
 	@echo "Generating $@"
 	@sed "s:VERSION_CHANGE_ME:$(VERSION):g" $< > $@
 
-win32installer: $(TARGET) $(INVERSITIVE) $(NSIFILE)
+win32installer: $(SENSITIVE) $(INVERSITIVE) $(NSIFILE)
 	$(NSIS_MAKE) $(NSIFILE)
 
 $(UTILS): $(UTILS:.h=_in.h)
@@ -100,7 +100,7 @@ install: $(SCRIPTFILES) $(DESKTOP)
 	mkdir -p $(LIBDIR)
 	mkdir -p $(INCLUDEDIR)
 	mkdir -p $(INCLUDEDIR)/Renal
-	install -m 0777 $(TARGET) $(BINDIR)
+	install -m 0777 $(SENSITIVE) $(BINDIR)
 	install -m 0777 $(INVERSITIVE) $(BINDIR)
 	install -m 0555 $(LIBRENAL) $(LIBSNSPROTOCOL) $(LIBGRAPHICS) $(LIBDIR)
 	install -m 0444 Renal/*.h $(INCLUDEDIR)/Renal
@@ -127,7 +127,7 @@ release: clean
 	rm -fr Sensitive-$(VERSION)
 
 uninstall:
-	rm -f $(BINDIR)/$(TARGET)
+	rm -f $(BINDIR)/$(SENSITIVE)
 	rm -f $(BINDIR)/$(INVERSITIVE)
 	rm -f /usr/share/applications/sensitive.desktop
 	rm -f /usr/share/applications/inversitive.desktop

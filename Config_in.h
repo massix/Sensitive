@@ -19,6 +19,11 @@
  * THE SOFTWARE.
  */
 
+#ifndef CONFIG_H
+#define CONFIG_H
+
 namespace Config {
-	const char* VERSION = "VERSION_CHANGE_ME";
+	static const char* VERSION = "VERSION_CHANGE_ME";
 }
+
+#endif
