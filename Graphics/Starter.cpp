@@ -35,6 +35,8 @@ namespace Graphics {
 Starter::Starter() : QDialog() {
 	main_layout = new QVBoxLayout(this);
 
+	setWindowTitle("Sensitive UI - Starter");
+
 	selected = LAGRANGE;
 	setResult(LAGRANGE);
 
