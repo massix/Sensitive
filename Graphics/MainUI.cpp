@@ -20,6 +20,7 @@
  */
 
 #include "MainUI.h"
+#include "../Config.h"
 
 #include "SPlot.h"
 #include "STableWidget.h"
@@ -55,7 +56,7 @@ namespace Graphics {
 MainUI::MainUI(Renal::NextCalculator *calculator, QString calculator_name) :
 		QMainWindow(), calculator(calculator), calculator_name(calculator_name)
 {
-	setWindowTitle(QString("Sensitive UI - %0").arg(this->calculator_name));
+	setWindowTitle(QString("Sensitive UI - %0 (%1)").arg(this->calculator_name).arg(Config::VERSION));
 	setWindowIcon(QIcon(":/bundle/icon.svg"));
 
 	/* Defining layout */

@@ -20,6 +20,7 @@
  */
 
 #include "MainUI.h"
+#include "../Config.h"
 
 #include <QtGui>
 #include <QtCore>
@@ -35,7 +36,7 @@ MainUI::MainUI(QWidget *parent) : QWidget(), expanded(false) {
 		throw std::exception();
 
 	setWindowIcon(QIcon(":/form/logo-svg"));
-	setWindowTitle("Inversitive UI");
+	setWindowTitle(QString("Inversitive UI (%0)").arg(Config::VERSION));
 
 	loader = new QUiLoader(this);
 	edit = new QTextEdit(this);

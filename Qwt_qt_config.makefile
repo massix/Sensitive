@@ -5,6 +5,9 @@
 # Generic variables
 
 CC			=	g++
+VERSION		=	1.2.0
+VERSION_W32	=	1,2,0
+
 CXXFLAGS	= 	-O3 -DQT_SHARED -DNO_DEBUG
 
 ifeq ($(OS),Windows_NT)

@@ -20,6 +20,7 @@
  */
 
 #include "AboutDialog.h"
+#include "../Config.h"
 
 #include <QtGui>
 
@@ -69,9 +70,9 @@ AboutDialog::AboutDialog(QWidget *parent) : QDialog(parent) {
 	logo = new QLabel();
 	logo->setPixmap(QPixmap(":/bundle/logo-about"));
 
-	description = new QLabel("<b>Sensitive Interpolation Software</b><br />"
+	description = new QLabel(QString("<b>Sensitive Interpolation Software %0</b><br />"
 			"Copyright(C) 2011 Massimo Gengarelli &lt;massimo.gengarelli@gmail.com&gt;.<br />"
-			"See <i>License</i> tab for further details.");
+			"See <i>License</i> tab for further details.").arg(Config::VERSION));
 
 	close_button = new QPushButton("Close Dialog");
 

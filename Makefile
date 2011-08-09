@@ -12,8 +12,13 @@ ifeq ($(OS),Windows_NT)
 	RESOURCES	= Sensitive.res
 endif
 
-TARGET		= Sensitive$(EXE_EXT)
+UTILS		= Config.h
+
 OBJECTS		= Sensitive.o
+
+
+# Windows stuff
+NSIFILE		= Sensitive.nsi
 
 
 # Unix stuff
@@ -32,16 +37,19 @@ ICONDIR		= /usr/share/icons/hicolor/scalable/apps
 ICON_SENS	= Graphics/images/Icon.svg
 ICON_INVE	= Inversitive/images/Icon.svg
 
+
 # Targets
 LIBRENAL		= librenal.$(LIB_EXT)
 LIBSNSPROTOCOL	= libsnsprotocol.$(LIB_EXT)
 LIBGRAPHICS		= libgraphics.$(LIB_EXT)
 INVERSITIVE		= Inversitive_UI$(EXE_EXT)
+SENSITIVE		= Sensitive$(EXE_EXT)
 
-.PHONY: all clean $(INVERSITIVE) $(LIBRENAL) $(LIBSNSPROTOCOL) $(LIBGRAPHICS)
+
+.PHONY: all clean $(UTILS) $(INVERSITIVE) $(LIBRENAL) $(LIBSNSPROTOCOL) $(LIBGRAPHICS)
 
 
-all: $(INVERSITIVE) $(TARGET)
+all: $(UTILS) $(INVERSITIVE) $(SENSITIVE)
 
 $(LIBRENAL):
 	cd Renal && $(MAKE)
@@ -52,7 +60,7 @@ $(LIBSNSPROTOCOL):
 $(LIBGRAPHICS): $(LIBRENAL) $(LIBSNSPROTOCOL) 
 	cd Graphics && $(MAKE)
 
-$(INVERSITIVE): $(LIBSNSPROTOCOL)
+$(INVERSITIVE): $(UTILS) $(LIBSNSPROTOCOL)
 	cd Inversitive && $(MAKE)
 
 Sensitive.res: Resources.rc
@@ -61,11 +69,19 @@ Sensitive.res: Resources.rc
 .cpp.o:
 	$(CC) $(CXXFLAGS) $(INCLUDE) $(QT_CFLAGS) $(QWT_CFLAGS) -c $< -o $@
 	
-$(TARGET): $(OBJECTS) $(LIBRENAL) $(LIBSNSPROTOCOL) $(LIBGRAPHICS) $(RESOURCES)
-	$(CC) $(LDFLAGS) -o $(TARGET) $(OBJECTS) $(RESOURCES) $(QT_LDFLAGS) $(QWT_LDFLAGS) $(LIBS)
+$(SENSITIVE): $(UTILS) $(OBJECTS) $(LIBRENAL) $(LIBSNSPROTOCOL) $(LIBGRAPHICS) $(RESOURCES)
+	$(CC) $(LDFLAGS) -o $(SENSITIVE) $(OBJECTS) $(RESOURCES) $(QT_LDFLAGS) $(QWT_LDFLAGS) $(LIBS)
 	
-win32installer: $(TARGET) $(INVERSITIVE) Sensitive.nsi
-	$(NSIS_MAKE) Sensitive.nsi
+$(NSIFILE): $(NSIFILE:.nsi=_in.nsi)
+	@echo "Generating $@"
+	@sed "s:VERSION_CHANGE_ME:$(VERSION):g" $< > $@
+
+win32installer: $(TARGET) $(INVERSITIVE) $(NSIFILE)
+	$(NSIS_MAKE) $(NSIFILE)
+
+$(UTILS): $(UTILS:.h=_in.h)
+	@echo "Generating $@"
+	@sed "s:VERSION_CHANGE_ME:$(VERSION):g" $< > $@
 
 %.desktop: %_in.desktop
 	@echo "Generating $@"
@@ -94,6 +110,22 @@ install: $(SCRIPTFILES) $(DESKTOP)
 	install -m 0644 $(ICON_SENS) $(ICONDIR)/sensitive.svg
 	install -m 0644 $(ICON_INVE) $(ICONDIR)/inversitive.svg
 
+release: clean
+	mkdir -p Sensitive-$(VERSION)
+	cp -r Graphics Sensitive-$(VERSION)
+	cp -r Inversitive Sensitive-$(VERSION)
+	cp -r SensitiveProtocol Sensitive-$(VERSION)
+	cp -r Renal Sensitive-$(VERSION)
+	cp Makefile Sensitive-$(VERSION)
+	cp Sensitive.cpp Sensitive-$(VERSION)
+	cp *_in.* Sensitive-$(VERSION)
+	cp AUTHORS LICENSE README Sensitive-$(VERSION)
+	cp Resources.rc Sensitive-$(VERSION)
+	cp Qwt_qt_config.makefile Sensitive-$(VERSION)
+	cp sensitive.ico Sensitive-$(VERSION)
+	tar czf Sensitive-$(VERSION).tgz Sensitive-$(VERSION)
+	rm -fr Sensitive-$(VERSION)
+
 uninstall:
 	rm -f $(BINDIR)/$(TARGET)
 	rm -f $(BINDIR)/$(INVERSITIVE)
@@ -106,9 +138,9 @@ uninstall:
 	rm -f $(GLOBALBIN)/sensitive
 	rm -f $(GLOBALBIN)/inversitive
 
-
 clean:
-	rm -fr $(TARGET) $(OBJECTS) $(LIBRENAL) $(LIBGRAPHICS) $(LIBSNSPROTOCOL) $(INVERSITIVE) $(RESOURCES) $(SCRIPTFILES) $(DESKTOP)
+	rm -fr $(SENSITIVE) $(OBJECTS) $(LIBRENAL) $(LIBGRAPHICS) $(LIBSNSPROTOCOL) $(INVERSITIVE) 
+	rm -fr $(RESOURCES) $(SCRIPTFILES) $(DESKTOP) $(UTILS) $(NSIFILE)
 	cd Renal && $(MAKE) clean
 	cd Graphics && $(MAKE) clean
 	cd SensitiveProtocol && $(MAKE) clean
