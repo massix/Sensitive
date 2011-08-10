@@ -188,7 +188,11 @@ MainUI::MainUI(Renal::NextCalculator *calculator, QString calculator_name) :
 
 	setCentralWidget(fixed_widget);
 
-	progressBar = new QProgressBar();
+	innerThread = new SThread();
+	innerThread->SetCalculator(calculator);
+	QObject::connect(innerThread, SIGNAL(finished()), this, SLOT(InterpoleOver()));
+
+	progressBar = new QProgressBar(this);
 	docked_layout->addWidget(progressBar);
 	progressBar->setVisible(false);
 
@@ -198,6 +202,10 @@ MainUI::MainUI(Renal::NextCalculator *calculator, QString calculator_name) :
 MainUI::~MainUI() {
 	delete(calculator);
 	delete(printer);
+	delete(painter);
+	delete(innerThread);
+	delete(server);
+	delete(client);
 }
 
 void MainUI::CheckData(QTableWidgetItem * data) {
@@ -243,10 +251,6 @@ void MainUI::Interpole() {
 		}
 	}
 
-	innerThread = new SThread();
-	innerThread->SetCalculator(calculator);
-	QObject::connect(innerThread, SIGNAL(finished()), this, SLOT(InterpoleOver()));
-
 	progressBar->setTextVisible(false);
 	progressBar->setRange(0, 0);
 	progressBar->setVisible(true);
@@ -273,49 +277,50 @@ void MainUI::InterpoleOver() {
 				.arg(innerThread->GetElapsed()/1000)
 				.arg(innerThread->GetElapsed()));
 		std::vector<double> *polynom = calculator->GetPolynom();
+
 		QString output("<i>f(x)</i> = ");
 
-		int pol_grade = polynom->size()-1;
-		for (std::vector<double>::iterator ite = polynom->begin(); ite != polynom->end(); ++ite, --pol_grade) {
-			if (*ite == 0)
-				continue;
+		if (polynom->size() > 0) {
+			int pol_grade = polynom->size()-1;
+			for (std::vector<double>::iterator ite = polynom->begin(); ite != polynom->end(); ++ite, --pol_grade) {
+				if (*ite == 0)
+					continue;
 
-			double rounded = round(*ite * calculator->Express10())/calculator->Express10();
-			if (rounded == 0)
-				continue;
+				double rounded = round(*ite * calculator->Express10())/calculator->Express10();
+				if (rounded == 0)
+					continue;
 
-			output.append(QString("%0 ").arg(rounded > 0? "+" : "-"));
+				output.append(QString("%0 ").arg(rounded > 0? "+" : "-"));
 
-			if (rounded != 1 && rounded != -1 || pol_grade == 0)
-				output.append(QString("%1").arg(rounded < 0? rounded * -1 : rounded));
+				if (rounded != 1 && rounded != -1 || pol_grade == 0)
+					output.append(QString("%1").arg(rounded < 0? rounded * -1 : rounded));
 
-			if (pol_grade > 0) {
-				output.append("x");
-				if (pol_grade > 1)
-					output.append(QString("<sup>%1</sup>").arg(pol_grade));
+				if (pol_grade > 0) {
+					output.append("x");
+					if (pol_grade > 1)
+						output.append(QString("<sup>%1</sup>").arg(pol_grade));
+				}
+
+
+				output.append(" ");
 			}
 
+			polynom_line->setText(output);
+			delete(polynom);
 
-			output.append(" ");
+			QVector<double> x_points;
+			QVector<double> y_points;
+			for (int i = -50; i <= 50; i++) {
+				x_points.push_back(i);
+				y_points.push_back(calculator->CalculateInPoint(i));
+			}
+
+			function->setSamples(x_points, y_points);
+			function->attach(plot);
+
+			plot->replot();
 		}
-
-		polynom_line->setText(output);
-		delete(polynom);
-
-		QVector<double> x_points;
-		QVector<double> y_points;
-		for (int i = -50; i <= 50; i++) {
-			x_points.push_back(i);
-			y_points.push_back(calculator->CalculateInPoint(i));
-		}
-
-		function->setSamples(x_points, y_points);
-		function->attach(plot);
-
-		plot->replot();
 	}
-
-	delete(innerThread);
 }
 
 void MainUI::CreateMenus() {
