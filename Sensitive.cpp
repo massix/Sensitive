@@ -21,8 +21,6 @@
 
 #include <QtCore>
 
-#include <iostream>
-
 #include <Renal/NextCalculator.h>
 #include <Renal/NextException.h>
 #include <Renal/LaGrangeCalculator.h>
@@ -38,43 +36,11 @@ using namespace Renal;
 using namespace std;
 
 int main(int argc, char *argv[]) {
-#if 1
-
 	Q_INIT_RESOURCE(Sensitive);
 
 	Graphics::MainApplication run(argc, argv);
 
-#if 0
-	Protocol::SensitiveServer server;
-	Protocol::SensitiveClient client;
-
-	server.StartServer();
-	std::vector<std::pair<double,double> > vector;
-	vector.push_back(std::pair<double, double>(0, 0));
-	vector.push_back(std::pair<double, double>(1, 1));
-
-	client.SetCoordinates(vector);
-	client.InitiateProtocol();
-#endif
-
-	run.setApplicationName("Sensitive");
-
 	run.setAttribute(Qt::AA_ImmediateWidgetCreation, true);
 
 	return run.exec();
-#else
-	NextCalculator *calculator = new NewtonCalculator(3);
-
-	calculator->Clear();
-
-	calculator->InsertCoords(0, 1);
-	calculator->InsertCoords(4, 5);
-	calculator->InsertCoords(9, 10);
-	calculator->InsertCoords(10, 11);
-	calculator->InsertCoords(14, 15);
-	calculator->InsertCoords(19, 20);
-	calculator->BuildFunction();
-
-	return 0;
-#endif
 }
