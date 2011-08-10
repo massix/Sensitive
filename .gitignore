@@ -12,3 +12,5 @@ ExternLibs
 .cproject
 .project
 *.bin
+*.tar.gz
+Sensitive.nsi
