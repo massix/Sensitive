@@ -5,8 +5,8 @@
 # Generic variables
 
 CC			=	g++
-VERSION		=	1.2.1
-VERSION_W32	=	1,2,1
+VERSION		=	1.2.2
+VERSION_W32	=	1,2,2
 
 CXXFLAGS	= 	-O3 -DQT_SHARED -DNO_DEBUG
 
