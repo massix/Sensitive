@@ -39,6 +39,7 @@
 #include <qwt_plot_scaleitem.h>
 
 #include <Renal/NextCalculator.h>
+#include <Renal/NextException.h>
 
 #include <SensitiveProtocol/SensitiveClient.h>
 #include <SensitiveProtocol/SensitiveServer.h>
@@ -102,10 +103,63 @@ private:
 	ServerWindow		*serverWindow;
 	ClientWindow		*clientWindow;
 
+	/* Interpolation thread */
+	class SThread : public QThread {
+	private:
+		Renal::NextCalculator *calculator;
+		QTime *timer;
+		int elapsed;
+		bool exception;
+		Renal::NextException *e;
+
+	public:
+		SThread() : QThread(), elapsed(0), exception(false), e(0) {}
+
+		~SThread() {
+			delete(timer);
+			if (exception)
+				delete(e);
+			calculator->Clear();
+		}
+
+		Renal::NextException* GetException() {
+			return e;
+		}
+
+		void SetCalculator(Renal::NextCalculator *c) {
+			calculator = c;
+		}
+
+		int GetElapsed() {
+			return elapsed;
+		}
+
+		bool HadException() {
+			return exception;
+		}
+
+		void run() {
+			timer = new QTime();
+			timer->start();
+
+			try {
+				calculator->BuildFunction();
+			} catch (Renal::NextException& e) {
+				exception = true;
+				this->e = new Renal::NextException(e);
+			}
+
+			elapsed = timer->elapsed();
+		}
+	} *innerThread;
+
+	QProgressBar	*progressBar;
+
 private slots:
 	void			AddCoord();
 	void			DeleteCoord();
 	void			Interpole();
+	void			InterpoleOver();
 	void			CheckData(QTableWidgetItem* data);
 	void			CalculateInPoint();
 	void			ExportPDF();

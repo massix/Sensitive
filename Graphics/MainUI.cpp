@@ -54,7 +54,7 @@
 namespace Graphics {
 
 MainUI::MainUI(Renal::NextCalculator *calculator, QString calculator_name) :
-		QMainWindow(), calculator(calculator), calculator_name(calculator_name)
+				QMainWindow(), calculator(calculator), calculator_name(calculator_name)
 {
 	setWindowTitle(QString("Sensitive UI - %0").arg(this->calculator_name));
 	setWindowIcon(QIcon(":/bundle/icon.svg"));
@@ -154,7 +154,7 @@ MainUI::MainUI(Renal::NextCalculator *calculator, QString calculator_name) :
 	/* Connecting signals */
 	QObject::connect(input_point, SIGNAL(returnPressed()), this, SLOT(CalculateInPoint()));
 	QObject::connect(plot, SIGNAL(DropAccepted(std::vector<std::pair<double, double> > *)),
-					 coords_table, SLOT(RefreshCoords(std::vector<std::pair<double, double> >*)));
+			coords_table, SLOT(RefreshCoords(std::vector<std::pair<double, double> >*)));
 	QObject::connect(coords_table, SIGNAL(DropFinished()), this, SLOT(Interpole()));
 
 	printer = new QPrinter();
@@ -187,6 +187,9 @@ MainUI::MainUI(Renal::NextCalculator *calculator, QString calculator_name) :
 	CreateMenus();
 
 	setCentralWidget(fixed_widget);
+
+	progressBar = new QProgressBar();
+	statusBar()->addPermanentWidget(progressBar);
 
 	showMaximized();
 }
@@ -239,21 +242,31 @@ void MainUI::Interpole() {
 		}
 	}
 
-	try {
-		/* Benchmarking */
-		QTime *timer = new QTime();
-		timer->start();
+	innerThread = new SThread();
+	innerThread->SetCalculator(calculator);
+	QObject::connect(innerThread, SIGNAL(finished()), this, SLOT(InterpoleOver()));
 
-		/* Let the magic happens */
-		calculator->BuildFunction();
+	progressBar->setRange(0, 0);
+	progressBar->setValue(1);
+	statusBar()->showMessage("Interpolating..");
+	interpole->setEnabled(false);
+	innerThread->start();
+}
 
-		int elapsed = timer->elapsed();
-		delete(timer);
+void MainUI::InterpoleOver() {
+	progressBar->setRange(0, 100);
+	progressBar->reset();
+	interpole->setEnabled(true);
 
-		QString msg;
-		msg.append(QString("Polynom calculated in %0.%1s").arg(elapsed/1000).arg(elapsed));
-		statusBar()->showMessage(msg);
+	if (innerThread->HadException()) {
+		Reset();
+		polynom_line->setText("Failed while calculating the interpolating polynom.");
+	}
 
+	else {
+		statusBar()->showMessage(QString("Polynom calculated in %0.%1s")
+				.arg(innerThread->GetElapsed()/1000)
+				.arg(innerThread->GetElapsed()));
 		std::vector<double> *polynom = calculator->GetPolynom();
 		QString output("<i>f(x)</i> = ");
 
@@ -297,10 +310,7 @@ void MainUI::Interpole() {
 		plot->replot();
 	}
 
-	catch(Renal::NextException &e) {
-		polynom_line->setText(e.GetMessage()->c_str());
-		calculator->Clear();
-	}
+	delete(innerThread);
 }
 
 void MainUI::CreateMenus() {
