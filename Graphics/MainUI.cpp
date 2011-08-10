@@ -93,7 +93,7 @@ MainUI::MainUI(Renal::NextCalculator *calculator, QString calculator_name) :
 	reset_coords = new QPushButton("Reset");
 	add_coord = new QPushButton("Add");
 	delete_coord = new QPushButton("Remove");
-	interpole = new QPushButton("Interpole!");
+	interpole = new QPushButton("Interpolate!");
 
 	bottom_buttons->addWidget(add_coord);
 	bottom_buttons->addWidget(delete_coord);
@@ -410,7 +410,7 @@ void MainUI::ExportPDF() {
 	htmlPage.append(QString("<span align=\"center\" class=\"pol\">%0<br />").arg(polynom_line->document()->toHtml()));
 	htmlPage.append(QString("%0</span><br />").arg(output_point->text()));
 
-	htmlPage.append("<h2>Interpolating points</h2>");
+	htmlPage.append("<h2>Interpolation pts</h2>");
 	htmlPage.append("<table width=\"150\" style=\"border: 1px solid black; border-collapse: collapse\">"
 			"<thead style=\"border-bottom: 2px solid black\"><tr><th>X</th><th>Y</th></tr></thead>");
 
@@ -426,7 +426,7 @@ void MainUI::ExportPDF() {
 	htmlPage.append("</table><br />");
 
 	/* "Interesting points" */
-	htmlPage.append("<h2>Interesting points</h2>");
+	htmlPage.append("<h2>Interesting pts</h2>");
 	htmlPage.append(QString("f(-1) = %0<br />").arg(calculator->CalculateInPoint(-1)));
 	htmlPage.append(QString("f(0) = %0<br />").arg(calculator->CalculateInPoint(0)));
 	htmlPage.append(QString("f(1) = %0<br />").arg(calculator->CalculateInPoint(1)));
