@@ -189,7 +189,8 @@ MainUI::MainUI(Renal::NextCalculator *calculator, QString calculator_name) :
 	setCentralWidget(fixed_widget);
 
 	progressBar = new QProgressBar();
-	statusBar()->addPermanentWidget(progressBar);
+	docked_layout->addWidget(progressBar);
+	progressBar->setVisible(false);
 
 	showMaximized();
 }
@@ -246,8 +247,10 @@ void MainUI::Interpole() {
 	innerThread->SetCalculator(calculator);
 	QObject::connect(innerThread, SIGNAL(finished()), this, SLOT(InterpoleOver()));
 
+	progressBar->setTextVisible(false);
 	progressBar->setRange(0, 0);
-	progressBar->setValue(1);
+	progressBar->setVisible(true);
+
 	statusBar()->showMessage("Interpolating..");
 	interpole->setEnabled(false);
 	innerThread->start();
@@ -256,6 +259,8 @@ void MainUI::Interpole() {
 void MainUI::InterpoleOver() {
 	progressBar->setRange(0, 100);
 	progressBar->reset();
+	progressBar->setVisible(false);
+
 	interpole->setEnabled(true);
 
 	if (innerThread->HadException()) {

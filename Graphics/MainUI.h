@@ -119,7 +119,6 @@ private:
 			delete(timer);
 			if (exception)
 				delete(e);
-			calculator->Clear();
 		}
 
 		Renal::NextException* GetException() {
