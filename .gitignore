@@ -11,3 +11,4 @@ ExternLibs
 *.swp
 .cproject
 .project
+*.bin
