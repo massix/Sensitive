@@ -28,6 +28,9 @@
 #include <exception>
 #include <cmath>
 
+#define MAX(a, b) (a > b? a : b)
+#define MIN(a, b) (a < b? a : b)
+
 namespace Inversitive {
 
 MainUI::MainUI(QWidget *parent) : QWidget(), expanded(false) {
@@ -51,7 +54,6 @@ MainUI::MainUI(QWidget *parent) : QWidget(), expanded(false) {
 	layout->addWidget(save);
 	save->setVisible(false);
 
-
 	QObject::connect(save, SIGNAL(clicked()), this, SLOT(SaveFile()));
 	QObject::connect(loaded_widget->findChild<QPushButton*>("pushButton"), SIGNAL(clicked()), this, SLOT(Press()));
 
@@ -70,6 +72,12 @@ void MainUI::Press() {
 	layout->setSizeConstraint(QLayout::SetNoConstraint);
 
 	QLineEdit *linePol = loaded_widget->findChild<QLineEdit*>("lineEdit");
+
+	QSpinBox *minimum = loaded_widget->findChild<QSpinBox*>("minimum");
+	QSpinBox *maximum = loaded_widget->findChild<QSpinBox*>("maximum");
+
+	int min = minimum->value();
+	int max = maximum->value();
 
 	animation->setStartValue(this->size());
 	if (!expanded) {
@@ -93,7 +101,7 @@ void MainUI::Press() {
 
 		result.append("\n");
 
-		for (int i = -10; i < 10; i++) {
+		for (int i = MIN(min, max); i <= MAX(min, max); i++) {
 			double r = 0;
 			int exp = 0;
 			foreach (double d, coeffs) {

@@ -35,6 +35,26 @@
          </property>
         </widget>
        </item>
+       <item>
+        <widget class="QSpinBox" name="minimum">
+         <property name="minimum">
+          <number>-100</number>
+         </property>
+         <property name="maximum">
+          <number>100</number>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSpinBox" name="maximum">
+         <property name="minimum">
+          <number>-100</number>
+         </property>
+         <property name="maximum">
+          <number>100</number>
+         </property>
+        </widget>
+       </item>
       </layout>
      </item>
      <item>
