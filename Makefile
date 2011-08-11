@@ -27,13 +27,12 @@ DESTDIR		= /usr/local/sensitive
 BINDIR		= $(DESTDIR)/bin
 LIBDIR		= $(DESTDIR)/lib
 INCLUDEDIR	= $(DESTDIR)/include
-
-GLOBALBIN	= /usr/bin
+DESKTOPDIR	= $(DESTDIR)/share/applications
+ICONDIR		= $(DESTDIR)/share/icons/hicolor/scalable/apps
 
 SCRIPTFILES	= sensitive.sh inversitive.sh
 DESKTOP		= sensitive.desktop inversitive.desktop
 
-ICONDIR		= /usr/share/icons/hicolor/scalable/apps
 ICON_SENS	= Graphics/images/Icon.svg
 ICON_INVE	= Inversitive/images/Icon.svg
 
@@ -46,7 +45,7 @@ INVERSITIVE		= Inversitive_UI$(EXE_EXT)
 SENSITIVE		= Sensitive$(EXE_EXT)
 
 
-.PHONY: all clean $(UTILS) $(INVERSITIVE) $(LIBRENAL) $(LIBSNSPROTOCOL) $(LIBGRAPHICS)
+.PHONY: all clean $(UTILS) $(INVERSITIVE) $(LIBRENAL) $(LIBSNSPROTOCOL) $(LIBGRAPHICS) regen
 
 
 all: $(UTILS) $(INVERSITIVE) $(SENSITIVE)
@@ -85,8 +84,8 @@ $(UTILS): $(UTILS:.h=_in.h)
 
 %.desktop: %_in.desktop
 	@echo "Generating $@"
-	@sed "s:TRYXEC_$(subst _in.desktop,,$<)_CHANGE_ME:$(GLOBALBIN)/$(subst _in.desktop,,$<):g" $< > $@
-	@sed -i "s:EXEC_$(subst _in.desktop,,$<)_CHANGE_ME:$(GLOBALBIN)/$(subst _in.desktop,,$<):g" $@
+	@sed "s:TRYXEC_$(subst _in.desktop,,$<)_CHANGE_ME:$(BINDIR)/$(subst _in.desktop,,$<):g" $< > $@
+	@sed -i "s:EXEC_$(subst _in.desktop,,$<)_CHANGE_ME:$(BINDIR)/$(subst _in.desktop,,$<):g" $@
 	@sed -i "s:ICON_$(subst _in.desktop,,$<)_CHANGE_ME:$(ICONDIR)/$(subst _in.desktop,.svg,$<):g" $@
 
 %.sh: %_in.sh
@@ -94,19 +93,24 @@ $(UTILS): $(UTILS:.h=_in.h)
 	@sed "s:QWT_CHANGE_ME:$(QWT_PATH)/lib:g" $< > $@
 	@sed -i "s:SNS_CHANGE_ME:$(DESTDIR):g" $@
 
-install: $(SCRIPTFILES) $(DESKTOP)
+regen:
+	rm -fr $(SCRIPTFILES) $(DESKTOP)
+
+install: regen $(SCRIPTFILES) $(DESKTOP)
 	mkdir -p $(DESTDIR)
 	mkdir -p $(BINDIR)
 	mkdir -p $(LIBDIR)
 	mkdir -p $(INCLUDEDIR)
 	mkdir -p $(INCLUDEDIR)/Renal
+	mkdir -p $(DESKTOPDIR)
+	mkdir -p $(ICONDIR)
 	install -m 0777 $(SENSITIVE) $(BINDIR)
 	install -m 0777 $(INVERSITIVE) $(BINDIR)
 	install -m 0555 $(LIBRENAL) $(LIBSNSPROTOCOL) $(LIBGRAPHICS) $(LIBDIR)
 	install -m 0444 Renal/*.h $(INCLUDEDIR)/Renal
-	install -m 0777 sensitive.sh $(GLOBALBIN)/sensitive
-	install -m 0777 inversitive.sh $(GLOBALBIN)/inversitive
-	install -m 0644 $(DESKTOP) /usr/share/applications
+	install -m 0777 sensitive.sh $(BINDIR)/sensitive
+	install -m 0777 inversitive.sh $(BINDIR)/inversitive
+	install -m 0644 $(DESKTOP) $(DESKTOPDIR)
 	install -m 0644 $(ICON_SENS) $(ICONDIR)/sensitive.svg
 	install -m 0644 $(ICON_INVE) $(ICONDIR)/inversitive.svg
 
@@ -129,14 +133,14 @@ release: clean
 uninstall:
 	rm -f $(BINDIR)/$(SENSITIVE)
 	rm -f $(BINDIR)/$(INVERSITIVE)
-	rm -f /usr/share/applications/sensitive.desktop
-	rm -f /usr/share/applications/inversitive.desktop
+	rm -f $(DESKTOPDIR)/sensitive.desktop
+	rm -f $(DESKTOPDIR)/inversitive.desktop
 	rm -f $(ICONDIR)/sensitive.svg
 	rm -f $(ICONDIR)/inversitive.svg
 	rm -f $(LIBDIR)/$(LIBRENAL) $(LIBDIR)/$(LIBSNSPROTOCOL) $(LIBDIR)/$(LIBGRAPHICS)
 	rm -fr $(INCLUDEDIR)/Renal
-	rm -f $(GLOBALBIN)/sensitive
-	rm -f $(GLOBALBIN)/inversitive
+	rm -f $(BINDIR)/sensitive
+	rm -f $(BINDIR)/inversitive
 
 clean:
 	rm -fr $(SENSITIVE) $(OBJECTS) $(LIBRENAL) $(LIBGRAPHICS) $(LIBSNSPROTOCOL) $(INVERSITIVE) 
