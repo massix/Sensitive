@@ -27,9 +27,9 @@
 
 namespace Renal {
 
-NextCalculator::NextCalculator(int precision) {
-	coords = new std::vector<std::pair<double, double> >();
-	coeffs = new std::vector<double>();
+NextCalculator::NextCalculator(int precision) : xmin(0), xmax(0), minSet(false) {
+	coords = new PVector();
+	coeffs = new DVector();
 	this->precision = precision;
 }
 
@@ -42,7 +42,7 @@ bool NextCalculator::InsertCoords(double x, double y) {
 	return _InsertCoords(x, y);
 }
 
-bool NextCalculator::InsertCoords(std::pair<double, double> & coords) {
+bool NextCalculator::InsertCoords(Pair & coords) {
 	return _InsertCoords(coords.first, coords.second);
 }
 
@@ -50,14 +50,33 @@ size_t NextCalculator::CountCoords() {
 	return this->coords->size();
 }
 
+double NextCalculator::GetXmin() const {
+	return xmin;
+}
+
+double NextCalculator::GetXmax() const {
+	return xmax;
+}
+
 bool NextCalculator::_InsertCoords(double x, double y) {
 	size_t old_size = coords->size();
-	coords->push_back(std::pair<double, double>(x, y));
+	coords->push_back(Pair(x, y));
+
+	if (!minSet) {
+		xmin = x;
+		xmax = x;
+		minSet = true;
+	}
+
+	if (x < xmin)
+		xmin = x;
+	else if (x > xmax)
+		xmax = x;
 
 	return (coords->size() > old_size);
 }
 
-std::vector<double>* NextCalculator::GetPolynom() {
+DVector* NextCalculator::GetPolynom() {
 	return new std::vector<double>(*coeffs);
 }
 
@@ -72,7 +91,7 @@ double NextCalculator::CalculateInPoint(double x) {
 
 	double result = 0;
 	int exponent = coeffs->size()-1;
-	for (std::vector<double>::iterator ite = coeffs->begin(); ite != coeffs->end()-1; ++ite, --exponent) {
+	for (DVector::iterator ite = coeffs->begin(); ite != coeffs->end()-1; ++ite, --exponent) {
 		double coeff = round(*ite * Express10()) / Express10();
 		result += (double) (coeff * pow(x, exponent));
 	}
@@ -91,34 +110,34 @@ int NextCalculator::GetPrecision() {
 }
 
 float NextCalculator::GetMaxError() {
-	return pow(10, -precision);
+	return pow(10., -precision);
 }
 
 double NextCalculator::Express10() {
-	return double(pow(10, precision));
+	return double(pow(10., precision));
 }
 
-std::vector<double>* NextCalculator::MultiplyVectors(std::vector<double> & first, std::vector<double> & second) {
-	std::vector<double> coeffs_tmp;
-	std::vector<double> *ret;
+DVector* NextCalculator::MultiplyVectors(std::vector<double> & first, std::vector<double> & second) {
+	DVector coeffs_tmp;
+	DVector *ret;
 
 	if (first.size() < 1) {
-		ret = new std::vector<double>(second);
+		ret = new DVector(second);
 		return ret;
 	}
 
 	if (second.size() < 1) {
-		ret = new std::vector<double>(first);
+		ret = new DVector(first);
 		return ret;
 	}
 
 	if (second.size() != 2)
 		throw NextException("Second vector's size is not 2.");
 
-	ret = new std::vector<double>();
+	ret = new DVector();
 
-	for (std::vector<double>::iterator first_ite = first.begin(); first_ite != first.end(); ++first_ite)
-		for (std::vector<double>::iterator second_ite = second.begin(); second_ite != second.end(); ++second_ite)
+	for (DVector::iterator first_ite = first.begin(); first_ite != first.end(); ++first_ite)
+		for (DVector::iterator second_ite = second.begin(); second_ite != second.end(); ++second_ite)
 			coeffs_tmp.push_back(*first_ite * *second_ite);
 
 	ret->push_back(coeffs_tmp.data()[0]);
