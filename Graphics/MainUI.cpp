@@ -622,7 +622,6 @@ void MainUI::ServerFinished() {
 
 	std::vector<std::pair<double, double> >* newCoords = server->GetCoordinates();
 	coords_table->RefreshCoords(newCoords);
-	Interpole();
 	ServerDelete();
 }
 
