@@ -1,55 +1,57 @@
-Sensitive is a Software to calculate and plot data statistics using Lagrange's polynomial or Newton's polynomial.
-It is far from being complete, even if now ships with a decent and usable UI.
+SENSITIVE SUITE
+---------------
+
+Sensitive is a suite containing two softwares: Inversitive and Sensitive.
+
+Inversitive is a small utility to use along with Sensitive: given a set of coefficients for a
+polynom and a domain, it calculates all the points of the domain. The given result is easily
+understandable by both a human being and Sensitive. You can drag'n'drop the result directly to
+Sensitive to begin an interpolation.
+
+Sensitive is the core software: given a set of coordinates in an infinite domain (R), calculates
+the polynom with an user-defined interpolation form (currently Lagrange's or Newton's forms).
+If there are more than 10 coordinates set, the resulting polynom may be inaccurate or may have a too 
+high degree. As a result of this, the user is asked whether if he'd like to approximate the polynom
+using a cubic spline or continue with the standard interpolation form.
+
+Sensitive can also export the whole dataset and plot to a PDF or to a .SNS file.
+
+Sensitive includes also a small server/client protocol (similar to a SYN/ACK handshake) that allows
+the user to send coordinates over the air to another Sensitive client.
 
 
 
-COMPILE ON WINDOWS
-------------------
+DEPENDENCIES
+------------
 
-You need to have MinGW, Qt >= 4.7.0 and Qwt >= 6.0.0 installed.
-Tune up the Qwt_qt_config.makefile, indicating the paths where you've installed your Qt and Qwt development files.
-Cd where you;ve downloaded the Sensitive's sources and then type make. If everything is set ok, you'll end up having the
-executable on the root directory. Remember that you MUST have Qwt.dll in your %PATH% or in the directory where the
-exe is.
+Qt >= 4.7.0				(http://qt.nokia.com)
+Qwt >= 6.0.0			(http://qwt.sourceforge.net)
+Eol-BSpline >= 1.5		(http://www.eol.ucar.edu/~granger/bspline)
+g++ >= 4.5.0			(not my fault, Qt 4.7 requires g++ >= 4.5)
 
-
-COMPILE ON LINUX
-----------------
-
-On Ubuntu 11.04, you can install the libqt4-dev package, but you have to compile Qwt from sources, since the version that is
-shipped in the repositories is quite old. Tune up the Qwt_qt_config.makefile (if needed, the version shipped is already
-configured for a standard Ubuntu installation of both libqt4-dev and qwt) and type make.
-After that, you'll have the executable in the topmost directory of the sources. Remember to set the LD_LIBRARY_PATH environment
-variable with the paths of the librenal.so, libgraphics.so and libqwt.so
-(e.g.: 
-  $ LD_LIBRARY_PATH=".;/usr/local/qwt-6.0.1/lib" ./Sensitive
-)
-
-
-COMPILE ON OSX
---------------
-
-Dunno, lol.
+mingw && msys to compile under Windows_NT.
 
 
 
-COMPILE ON IPHONE
-------------------
+COMPILE
+-------
 
-You can't.
+If the dependencies are met, just tune the Qwt_qt_config.makefile in the topmost directory, setting the
+paths to where you've installed the libraries. After that just type make (and make install under UNIX if
+you'd like to install it, default directory is /usr/local/sensitive, change it by defining a different DESTDIR).
+
+Under Windows, you need to have $MINGW/bin and $MSYS/bin in your path (where $MINGW and $MSYS are the directories
+to where you've installed the softwares). There's also included a .nsi file, to compile it you need to have NSIS
+installed (and to type "make win32installer")
 
 
-USAGE
------
 
-First of all, you have to select which polynomial form you'd like to use. After that, you'll be greeted by a maximized window
-with the left side covered by a table where you can insert coordinates (you can fill it with double precision numbers). When the
-table contains the coordinates you want, just click on "Interpole!" and let the software do the rest.
-You can also drag&drop a .txt file containing the coordinates to the plot.
-The .txt file must contain a couple of coordinates in the form x:y on every line. 
-Every other malformed line will be ignored.
-e.g:
-0:-15
-1:-15
-2:23
-3:243
+CREDITS
+-------
+
+While I wrote from scratch the two interpolation forms, credits for the Cubic Splines go to Gary Granger
+(http://www.eol.ucar.edu/~granger/bspline/doc/index.html).
+
+UI is written using Qt (credits go to Trolltech/Nokia communities) and Qwt (credits go to Uwe Rathmann and 
+Josef Wilgen).
+
