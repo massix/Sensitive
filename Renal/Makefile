@@ -3,14 +3,15 @@
 
 include ../Qwt_qt_config.makefile
 
-INCLUDES	=
-LIBS		=
+INCLUDES	=	$(BS_INCLUDE)
+LIBS		=	$(BS_LIB)
 
 LDFLAGS		=
 
 OBJECTS		= 	NextCalculator.o \
 				NextException.o \
 				LaGrangeCalculator.o \
+				NextSpline.o \
 				NewtonCalculator.o
 
 TARGET		= librenal.$(LIB_EXT)
