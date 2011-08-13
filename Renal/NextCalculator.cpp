@@ -83,6 +83,9 @@ DVector* NextCalculator::GetPolynom() {
 void NextCalculator::Clear() {
 	coords->clear();
 	coeffs->clear();
+	minSet = false;
+	xmin = 0;
+	xmax = 0;
 }
 
 double NextCalculator::CalculateInPoint(double x) {
