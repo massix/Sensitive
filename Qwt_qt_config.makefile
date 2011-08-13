@@ -18,6 +18,9 @@ ifeq ($(OS),Windows_NT)
 	QT_MOC		=	$(QT_PATH)\bin\moc.exe
 	QT_RCC		=	$(QT_PATH)\bin\rcc.exe
 
+	BS_INCLUDE	=	-IC:\Users\Massi\Desktop\eol-bspline-1.5\BSpline
+	BS_LIB		=	-LC:\Users\Massi\Desktop\eol-bspline-1.5\BSpline -lbspline
+
 	QWT_PATH	=	C:\Qwt-6.0.0
 	QWT_INCLUDE	=	$(QWT_PATH)\include
 	QWT_LIBS	=	$(QWT_PATH)\lib
