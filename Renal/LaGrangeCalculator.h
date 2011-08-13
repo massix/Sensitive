@@ -31,6 +31,7 @@ namespace Renal {
 
 class LaGrangeCalculator: public Renal::NextCalculator {
 public:
+	virtual ~LaGrangeCalculator() {};
 	LaGrangeCalculator(int precision = 5) : Renal::NextCalculator(precision) {};
 
 	bool	BuildFunction();
