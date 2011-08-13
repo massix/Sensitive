@@ -26,6 +26,7 @@
 #include "SPlot.h"
 #include "ServerWindow.h"
 #include "ClientWindow.h"
+#include "PlotterThread.h"
 
 #include <iostream>
 
@@ -61,15 +62,28 @@ private:
 	QString				calculator_name;
 	QWidget				*fixed_widget;
 	QWidget				*docked_widget;
+	QWidget				*plot_config_widget;
 
 	/* Main Layout elements */
 	QDockWidget			*coords_dock;
+	QDockWidget			*plot_config_dock;
 	QVBoxLayout			*docked_layout;
 	QVBoxLayout			*central_layout;
+	QVBoxLayout			*plot_config_layout;
+	QHBoxLayout			*plot_config_spinners;
+	QHBoxLayout			*plot_config_buttons;
 	QHBoxLayout			*bottom_buttons;
 
 	/* Table fullfilled with coordinates */
 	STableWidget		*coords_table;
+
+	/* Plot config spinners and buttons */
+	QDoubleSpinBox		*plot_config_from;
+	QDoubleSpinBox		*plot_config_to;
+	QDoubleSpinBox		*plot_config_step;
+	QPushButton			*plot_config_replot;
+	QPushButton			*plot_config_autodetect;
+	QLabel				*plot_config_benchmark;
 
 	/* Coordinates management buttons */
 	QPushButton			*reset_coords;
@@ -118,7 +132,7 @@ private:
 		Renal::NextException *e;
 
 	public:
-		SThread() : QThread(), elapsed(0), exception(false), e(0) {}
+		SThread() : QThread(), elapsed(0), exception(false), e(0) {timer = new QTime();}
 
 		~SThread() {
 			delete(timer);
@@ -147,7 +161,6 @@ private:
 		}
 
 		void run() {
-			timer = new QTime();
 			timer->start();
 			exception = false;
 
@@ -162,7 +175,10 @@ private:
 		}
 	} *innerThread;
 
+	PlotterThread	*plotterThread;
+
 	QProgressBar	*progressBar;
+	QProgressBar	*plot_config_pbar;
 
 private slots:
     void AddCoord();
@@ -179,6 +195,10 @@ private slots:
     void ServerDelete();
     void ServerFinished();
     void ClientConfigured(QString & hostname, quint16 port);
+
+    void Replot();
+    void ReplotOver();
+    void AutoDetect();
 private:
     void CreateMenus();
 protected:

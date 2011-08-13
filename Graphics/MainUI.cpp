@@ -27,6 +27,7 @@
 #include "AboutDialog.h"
 #include "ServerWindow.h"
 #include "ClientWindow.h"
+#include "PlotterThread.h"
 
 #include <vector>
 #include <cmath>
@@ -62,18 +63,64 @@ MainUI::MainUI(Renal::NextCalculator *calculator, QString calculator_name) :
 
 	/* Defining layout */
 	fixed_widget = new QWidget();
-
 	docked_widget = new QWidget();
+	plot_config_widget = new QWidget();
 
 	coords_dock = new QDockWidget("Coordinates");
+	plot_config_dock = new QDockWidget("Plot configuration");
 
 	docked_layout = new QVBoxLayout(docked_widget);
+	plot_config_layout = new QVBoxLayout(plot_config_widget);
 
 	central_layout = new QVBoxLayout(fixed_widget);
 	bottom_buttons = new QHBoxLayout();
 
 	addDockWidget(Qt::LeftDockWidgetArea, coords_dock);
+	addDockWidget(Qt::LeftDockWidgetArea, plot_config_dock);
+	splitDockWidget(coords_dock, plot_config_dock, Qt::Vertical);
+
 	coords_dock->setWidget(docked_widget);
+	plot_config_dock->setWidget(plot_config_widget);
+
+	/* ++++ BUILDING UP THE PLOT CONFIGURATION WIDGET ++++ */
+
+	plot_config_from = new QDoubleSpinBox();
+	plot_config_to = new QDoubleSpinBox();
+	plot_config_step = new QDoubleSpinBox();
+	plot_config_pbar = new QProgressBar();
+	plot_config_benchmark = new QLabel(":-)");
+	plot_config_autodetect = new QPushButton("Autodetect");
+	plot_config_replot = new QPushButton("Replot");
+
+	plot_config_step->setRange(0., 100.);
+	plot_config_step->setDecimals(3);
+
+	plot_config_from->setRange(-1000., 1000.);
+	plot_config_from->setDecimals(10);
+
+	plot_config_to->setRange(-1000., 1000.);
+	plot_config_to->setDecimals(10);
+
+	plot_config_buttons = new QHBoxLayout();
+	plot_config_buttons->addWidget(plot_config_autodetect);
+	plot_config_buttons->addWidget(plot_config_replot);
+
+	plot_config_spinners = new QHBoxLayout();
+	plot_config_spinners->addWidget(plot_config_from);
+	plot_config_spinners->addWidget(plot_config_to);
+	plot_config_spinners->addWidget(plot_config_step);
+
+	plot_config_layout->addWidget(new QLabel("Set the domain and the step"));
+	plot_config_layout->addLayout(plot_config_spinners);
+	plot_config_layout->addLayout(plot_config_buttons);
+	plot_config_layout->addWidget(plot_config_pbar);
+	plot_config_layout->addWidget(plot_config_benchmark);
+
+	plot_config_dock->setMaximumHeight(plot_config_dock->sizeHint().height());
+
+	QObject::connect(plot_config_replot, SIGNAL(clicked()), this, SLOT(Replot()));
+	QObject::connect(plot_config_autodetect, SIGNAL(clicked()), this, SLOT(AutoDetect()));
+	QObject::connect(plot_config_autodetect, SIGNAL(clicked()), this, SLOT(Replot()));
 
 	/* ++++ BUILDING UP THE DOCKED WIDGET WHICH WILL CONTAIN THE COORDINATES TABLE ++++ */
 
@@ -193,6 +240,13 @@ MainUI::MainUI(Renal::NextCalculator *calculator, QString calculator_name) :
 	innerThread->SetCalculator(calculator);
 	QObject::connect(innerThread, SIGNAL(finished()), this, SLOT(InterpoleOver()));
 
+	plotterThread = new PlotterThread();
+	plotterThread->SetCalculator(calculator);
+	plotterThread->SetPlot(plot);
+	plotterThread->SetPlotCurve(function);
+	QObject::connect(plotterThread, SIGNAL(StepDone(int)), plot_config_pbar, SLOT(setValue(int)));
+	QObject::connect(plotterThread, SIGNAL(finished()), this, SLOT(ReplotOver()));
+
 	progressBar = new QProgressBar(this);
 	docked_layout->addWidget(progressBar);
 	progressBar->setVisible(false);
@@ -208,6 +262,7 @@ MainUI::~MainUI() {
 	delete(printer);
 	delete(painter);
 	delete(innerThread);
+	delete(plotterThread);
 	delete(server);
 	delete(client);
 	delete(spline_calculator);
@@ -262,6 +317,7 @@ void MainUI::Interpole() {
 
 	/* Set the default calculator to be the user requested one */
 	innerThread->SetCalculator(calculator);
+	plotterThread->SetCalculator(calculator);
 
 	/* If there are too much coordinates set, ask the user if he would like to Spline */
 	if (calculator->CountCoords() > COORDS_SPLINEABLE) {
@@ -275,13 +331,14 @@ void MainUI::Interpole() {
 		switch (spline.exec()) {
 		case QMessageBox::Yes:
 			innerThread->SetCalculator(spline_calculator);
+			plotterThread->SetCalculator(spline_calculator);
 			break;
 		default:
 			break;
 		}
 	}
 
-
+	AutoDetect();
 
 	progressBar->setTextVisible(false);
 	progressBar->setRange(0, 0);
@@ -290,6 +347,32 @@ void MainUI::Interpole() {
 	statusBar()->showMessage("Interpolating..");
 	interpole->setEnabled(false);
 	innerThread->start();
+}
+
+void MainUI::Replot() {
+
+	plotterThread->SetMin(plot_config_from->value());
+	plotterThread->SetMax(plot_config_to->value());
+	plotterThread->SetStep(plot_config_step->value());
+
+
+	plot_config_pbar->setRange(0, plotterThread->TotalSteps());
+
+	plotterThread->start();
+}
+
+void MainUI::ReplotOver() {
+	plot->replot();
+	plot_config_benchmark->setText(QString("Calculated %0 points in %1.%2s")
+			.arg(plotterThread->TotalSteps())
+			.arg(plotterThread->GetElapsed()/1000)
+			.arg(plotterThread->GetElapsed()));
+}
+
+void MainUI::AutoDetect() {
+	plot_config_from->setValue(innerThread->GetCalculator()->GetXmin());
+	plot_config_to->setValue(innerThread->GetCalculator()->GetXmax());
+	plot_config_step->setValue(0.5);
 }
 
 void MainUI::InterpoleOver() {
@@ -341,17 +424,7 @@ void MainUI::InterpoleOver() {
 			polynom_line->setText(output);
 			delete(polynom);
 
-			QVector<double> x_points;
-			QVector<double> y_points;
-			for (int i = -50; i <= 50; i++) {
-				x_points.push_back(i);
-				y_points.push_back(innerThread->GetCalculator()->CalculateInPoint(i));
-			}
-
-			function->setSamples(x_points, y_points);
-			function->attach(plot);
-
-			plot->replot();
+			Replot();
 		}
 	}
 }

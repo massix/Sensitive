@@ -15,6 +15,7 @@ MOCFILES	= 	moc_MainUI.cpp \
 				moc_STableWidget.cpp \
 				moc_SPlot.cpp \
 				moc_ServerWindow.cpp \
+				moc_PlotterThread.cpp \
 				moc_ClientWindow.cpp
 
 OBJECTS		= 	$(MOCFILES:.cpp=.o) \
@@ -27,6 +28,7 @@ OBJECTS		= 	$(MOCFILES:.cpp=.o) \
 				SPlot.o \
 				STableWidget.o \
 				ServerWindow.o \
+				PlotterThread.o \
 				ClientWindow.o
 
 RESOURCES	=	qrc_Sensitive.cpp
