@@ -176,6 +176,7 @@ private:
 	} *innerThread;
 
 	PlotterThread	*plotterThread;
+	bool			splined;
 
 	QProgressBar	*progressBar;
 	QProgressBar	*plot_config_pbar;

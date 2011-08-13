@@ -318,6 +318,7 @@ void MainUI::Interpole() {
 	/* Set the default calculator to be the user requested one */
 	innerThread->SetCalculator(calculator);
 	plotterThread->SetCalculator(calculator);
+	splined = false;
 
 	/* If there are too much coordinates set, ask the user if he would like to Spline */
 	if (calculator->CountCoords() > COORDS_SPLINEABLE) {
@@ -332,6 +333,7 @@ void MainUI::Interpole() {
 		case QMessageBox::Yes:
 			innerThread->SetCalculator(spline_calculator);
 			plotterThread->SetCalculator(spline_calculator);
+			splined = true;
 			break;
 		default:
 			break;
@@ -389,12 +391,25 @@ void MainUI::InterpoleOver() {
 	}
 
 	else {
+		Renal::NextCalculator *used_calculator = (splined? calculator : innerThread->GetCalculator());
+
+		/* If we used the spline, let's calculate a 3rd degree polynom using the default calculator */
+		/* This will give us an approximation of the splined polynom */
+		if (splined) {
+			calculator->Clear();
+
+			for (int i = -2; i < 3; i++)
+				calculator->InsertCoords(i, innerThread->GetCalculator()->CalculateInPoint(i));
+
+			calculator->BuildFunction();
+		}
+
 		statusBar()->showMessage(QString("Polynom calculated in %0.%1s")
 				.arg(innerThread->GetElapsed()/1000)
 				.arg(innerThread->GetElapsed()));
-		std::vector<double> *polynom = innerThread->GetCalculator()->GetPolynom();
+		std::vector<double> *polynom = used_calculator->GetPolynom();
 
-		QString output("<i>f(x)</i> = ");
+		QString output(QString("<i>%0(x)</i> = ").arg(splined? "Spline" : "f"));
 
 		if (polynom->size() > 0) {
 			int pol_grade = polynom->size()-1;
@@ -402,7 +417,7 @@ void MainUI::InterpoleOver() {
 				if (*ite == 0)
 					continue;
 
-				double rounded = round(*ite * innerThread->GetCalculator()->Express10())/innerThread->GetCalculator()->Express10();
+				double rounded = round(*ite * used_calculator->Express10())/used_calculator->Express10();
 				if (rounded == 0)
 					continue;
 
