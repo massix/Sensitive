@@ -36,9 +36,6 @@ bool NextSpline::BuildFunction() {
 	if(coords->size() < 10)
 		throw NextException("I don't have enough coordinates to build a spline");
 
-	SplineBase::Debug(1);
-	Spline::Debug(1);
-
 	/* The SplineBase constructor takes an array of values */
 	x = new double[coords->size()];
 	y = new double[coords->size()];
