@@ -47,8 +47,8 @@ else
 	QT_MOC		=	moc-qt4
 	QT_RCC		=	rcc
 
-	BS_INCLUDE	=	-I/home/massi/Desktop/eol-bspline-1.5/BSpline
-	BS_LIB		=	-L/home/massi/Desktop/eol-bspline-1.5/BSpline -lbspline
+	BS_INCLUDE	=	-I$(HOME)/Desktop/eol-bspline-1.5/BSpline
+	BS_LIB		=	-L$(HOME)/Desktop/eol-bspline-1.5/BSpline -lbspline
 
 	QWT_PATH	=	/usr/local/qwt-6.0.1
 	QWT_INCLUDE	=	$(QWT_PATH)/include
