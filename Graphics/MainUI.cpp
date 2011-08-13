@@ -398,7 +398,10 @@ void MainUI::InterpoleOver() {
 		if (splined) {
 			calculator->Clear();
 
-			for (int i = -2; i < 3; i++)
+			int average_pt = (innerThread->GetCalculator()->GetXmin() + innerThread->GetCalculator()->GetXmax()) / 2;
+
+			/* Interpole around the average point */
+			for (int i = average_pt - 2; i < average_pt + 2; i++)
 				calculator->InsertCoords(i, innerThread->GetCalculator()->CalculateInPoint(i));
 
 			calculator->BuildFunction();
