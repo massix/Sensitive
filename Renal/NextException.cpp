@@ -25,17 +25,12 @@
 
 namespace Renal {
 
-NextException::NextException(const char *message) {
-	this->message = new std::string(message);
-
-}
-
-NextException::~NextException() throw() {
-	delete(message);
-}
-
-std::string * NextException::GetMessage() {
+std::string NextException::GetMessage() {
 	return message;
+}
+
+const char *NextException::what() const throw() {
+	return message.c_str();
 }
 
 void NextException::PrintMessage() {

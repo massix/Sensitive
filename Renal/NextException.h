@@ -29,14 +29,15 @@ namespace Renal {
 
 class NextException : public std::exception {
 public:
-	NextException(const char *message);
-	virtual ~NextException() throw();
+	NextException(const char *message) : std::exception(), message(message) {};
+	virtual ~NextException() throw() {};
 
-	std::string		*GetMessage();
+	std::string		GetMessage();
+	virtual const char*	what() const throw();
 	void			PrintMessage();
 
 private:
-	std::string		*message;
+	std::string		message;
 };
 
 }
