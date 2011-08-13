@@ -44,6 +44,7 @@
 
 #include <Renal/NextCalculator.h>
 #include <Renal/NextException.h>
+#include <Renal/NextSpline.h>
 
 #include <SensitiveProtocol/SensitiveServer.h>
 #include <SensitiveProtocol/SensitiveClient.h>
@@ -196,6 +197,9 @@ MainUI::MainUI(Renal::NextCalculator *calculator, QString calculator_name) :
 	docked_layout->addWidget(progressBar);
 	progressBar->setVisible(false);
 
+	/* Build a spline calculator to use as a fallback calculator */
+	spline_calculator = new Renal::NextSpline();
+
 	showMaximized();
 }
 
@@ -206,6 +210,7 @@ MainUI::~MainUI() {
 	delete(innerThread);
 	delete(server);
 	delete(client);
+	delete(spline_calculator);
 }
 
 void MainUI::CheckData(QTableWidgetItem * data) {
@@ -237,7 +242,9 @@ void MainUI::Interpole() {
 		return;
 
 	calculator->Clear();
+	spline_calculator->Clear();
 
+	/* Fill up both the default calculator and the spline one */
 	for (int row = 0; row < coords_table->rowCount(); row++) {
 		if (coords_table->item(row, 0) != 0 && coords_table->item(row, 1) != 0) {
 			double x, y;
@@ -246,10 +253,35 @@ void MainUI::Interpole() {
 			x = coords_table->item(row, 0)->text().toDouble(&result_x);
 			y = coords_table->item(row, 1)->text().toDouble(&result_y);
 
-			if (result_x && result_y)
+			if (result_x && result_y) {
 				calculator->InsertCoords(x, y);
+				spline_calculator->InsertCoords(x, y);
+			}
 		}
 	}
+
+	/* Set the default calculator to be the user requested one */
+	innerThread->SetCalculator(calculator);
+
+	/* If there are too much coordinates set, ask the user if he would like to Spline */
+	if (calculator->CountCoords() > COORDS_SPLINEABLE) {
+		QMessageBox spline;
+		spline.setText("Would you like to spline?");
+		spline.setInformativeText(QString("Since you've inserted a large set of coordinates (%0), "
+				"the %1 may be innacurate or the resulting polynom may be of a very high degree. "
+				"Would you like to use a cubic spline?").arg(calculator->CountCoords()).arg(calculator_name));
+
+		spline.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+		switch (spline.exec()) {
+		case QMessageBox::Yes:
+			innerThread->SetCalculator(spline_calculator);
+			break;
+		default:
+			break;
+		}
+	}
+
+
 
 	progressBar->setTextVisible(false);
 	progressBar->setRange(0, 0);
@@ -269,14 +301,15 @@ void MainUI::InterpoleOver() {
 
 	if (innerThread->HadException()) {
 		Reset();
-		polynom_line->setText("Failed while calculating the interpolating polynom.");
+		statusBar()->showMessage(":-(");
+		polynom_line->setText(innerThread->GetException()->what());
 	}
 
 	else {
 		statusBar()->showMessage(QString("Polynom calculated in %0.%1s")
 				.arg(innerThread->GetElapsed()/1000)
 				.arg(innerThread->GetElapsed()));
-		std::vector<double> *polynom = calculator->GetPolynom();
+		std::vector<double> *polynom = innerThread->GetCalculator()->GetPolynom();
 
 		QString output("<i>f(x)</i> = ");
 
@@ -286,13 +319,13 @@ void MainUI::InterpoleOver() {
 				if (*ite == 0)
 					continue;
 
-				double rounded = round(*ite * calculator->Express10())/calculator->Express10();
+				double rounded = round(*ite * innerThread->GetCalculator()->Express10())/innerThread->GetCalculator()->Express10();
 				if (rounded == 0)
 					continue;
 
 				output.append(QString("%0 ").arg(rounded > 0? "+" : "-"));
 
-				if (rounded != 1 && rounded != -1 || pol_grade == 0)
+				if ((rounded != 1 && rounded != -1) || pol_grade == 0)
 					output.append(QString("%1").arg(rounded < 0? rounded * -1 : rounded));
 
 				if (pol_grade > 0) {
@@ -312,7 +345,7 @@ void MainUI::InterpoleOver() {
 			QVector<double> y_points;
 			for (int i = -50; i <= 50; i++) {
 				x_points.push_back(i);
-				y_points.push_back(calculator->CalculateInPoint(i));
+				y_points.push_back(innerThread->GetCalculator()->CalculateInPoint(i));
 			}
 
 			function->setSamples(x_points, y_points);
@@ -372,7 +405,8 @@ void MainUI::CalculateInPoint() {
 			QTime *timer = new QTime();
 
 			timer->start();
-			output_point->setText(QString("f(%0) = %1").arg(point).arg(calculator->CalculateInPoint(point)));
+			output_point->setText(QString("f(%0) = %1").arg(point)
+					.arg(innerThread->GetCalculator()->CalculateInPoint(point)));
 			int elapsed = timer->elapsed();
 
 			QString msg(QString("Point %0 calculated in %1.%2s").arg(point).arg(elapsed/1000).arg(elapsed));
@@ -380,7 +414,7 @@ void MainUI::CalculateInPoint() {
 			delete(timer);
 		}
 		catch (Renal::NextException &e) {
-			QString message(e.GetMessage()->c_str());
+			QString message(e.what());
 			output_point->setText(message);
 		}
 	}

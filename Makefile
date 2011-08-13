@@ -5,7 +5,7 @@ include Qwt_qt_config.makefile
 
 LDFLAGS		=  $(OS_LDFLAGS)
 
-INCLUDE		= -I.
+INCLUDE		= -I. $(BS_INCLUDE)
 LIBS		= -LRenal -LGraphics -LSensitiveProtocol -lgraphics -lrenal -lsnsprotocol
 
 ifeq ($(OS),Windows_NT)

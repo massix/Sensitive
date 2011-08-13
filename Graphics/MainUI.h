@@ -38,8 +38,10 @@
 #include <qwt_plot_renderer.h>
 #include <qwt_plot_scaleitem.h>
 
+#define COORDS_SPLINEABLE 10
 #include <Renal/NextCalculator.h>
 #include <Renal/NextException.h>
+#include <Renal/NextSpline.h>
 
 #include <SensitiveProtocol/SensitiveClient.h>
 #include <SensitiveProtocol/SensitiveServer.h>
@@ -88,7 +90,10 @@ private:
 	QwtPlotScaleItem	*ordinates;
 
 	/* Calculator */
-	Renal::NextCalculator *calculator;
+	Renal::NextCalculator 	*calculator;
+
+	/* Backup calculator */
+	Renal::NextSpline		*spline_calculator;
 
 	/* Printer device */
 	QPrinter			*printer;
@@ -129,6 +134,10 @@ private:
 			calculator = c;
 		}
 
+		Renal::NextCalculator* GetCalculator() {
+			return calculator;
+		}
+
 		int GetElapsed() {
 			return elapsed;
 		}
@@ -140,6 +149,7 @@ private:
 		void run() {
 			timer = new QTime();
 			timer->start();
+			exception = false;
 
 			try {
 				calculator->BuildFunction();
@@ -155,28 +165,23 @@ private:
 	QProgressBar	*progressBar;
 
 private slots:
-	void			AddCoord();
-	void			DeleteCoord();
-	void			Interpole();
-	void			InterpoleOver();
-	void			CheckData(QTableWidgetItem* data);
-	void			CalculateInPoint();
-	void			ExportPDF();
-	void			ExportSNS();
-	void			Reset();
-
-	/* Server and client stuffs */
-	void			ServerConfigured(quint16 port);
-	void			ServerDelete();
-	void			ServerFinished();
-
-	void			ClientConfigured(QString& hostname, quint16 port);
-
+    void AddCoord();
+    void DeleteCoord();
+    void Interpole();
+    void InterpoleOver();
+    void CheckData(QTableWidgetItem *data);
+    void CalculateInPoint();
+    void ExportPDF();
+    void ExportSNS();
+    void Reset();
+    /* Server and client stuffs */
+    void ServerConfigured(quint16 port);
+    void ServerDelete();
+    void ServerFinished();
+    void ClientConfigured(QString & hostname, quint16 port);
 private:
-	void			CreateMenus();
-
-
-signals:
+    void CreateMenus();
+protected:
 
 };
 

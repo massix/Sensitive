@@ -3,7 +3,7 @@
 
 include ../Qwt_qt_config.makefile
 
-INCLUDE		=	-I..
+INCLUDE		=	-I.. $(BS_INCLUDE)
 LIBS		=	-L../Renal -lrenal -L../SensitiveProtocol -lsnsprotocol
 
 LDFLAGS		=

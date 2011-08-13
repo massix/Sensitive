@@ -21,11 +21,6 @@
 
 #include <QtCore>
 
-#include <Renal/NextCalculator.h>
-#include <Renal/NextException.h>
-#include <Renal/LaGrangeCalculator.h>
-#include <Renal/NewtonCalculator.h>
-
 #include <Graphics/MainApplication.h>
 #include <Graphics/MainUI.h>
 
