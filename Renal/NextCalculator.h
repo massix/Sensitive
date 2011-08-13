@@ -25,6 +25,17 @@
 #include <vector>
 #include <string>
 
+#include <BSpline.h>
+
+/* Useful typedefs */
+typedef BSpline<double> Spline;
+typedef BSplineBase<double> SplineBase;
+typedef std::pair<double, double> Pair;
+typedef std::vector<double> DVector;
+typedef std::vector<Pair> PVector;
+
+using namespace std;
+
 namespace Renal {
 
 class NextCalculator {
@@ -32,24 +43,24 @@ public:
 	NextCalculator(int precision = 5);
 	virtual ~NextCalculator();
 
-	bool					InsertCoords(double x, double y);
-	bool					InsertCoords(std::pair<double, double> & coords);
-	virtual bool			BuildFunction() = 0;
-	size_t					CountCoords();
-	std::vector<double>*	GetPolynom();
-	void					Clear();
-	double					CalculateInPoint(double x);
-	void					SetPrecision(int precision);
-	int						GetPrecision();
-	float					GetMaxError();
-	double					Express10();
+	bool				InsertCoords(double x, double y);
+	bool				InsertCoords(Pair & coords);
+	virtual bool		BuildFunction() = 0;
+	size_t				CountCoords();
+	DVector*			GetPolynom();
+	void				Clear();
+	virtual double	CalculateInPoint(double x);
+	void				SetPrecision(int precision);
+	int					GetPrecision();
+	float				GetMaxError();
+	double				Express10();
 
 protected:
-	std::vector<std::pair<double, double> > 	*coords;
-	std::vector<double> 						*coeffs;
+	PVector 	*coords;
+	DVector 	*coeffs;
 	int	precision;
 
-	std::vector<double>*	MultiplyVectors(std::vector<double> & first, std::vector<double> & second);
+	DVector*	MultiplyVectors(DVector & first, DVector & second);
 
 private:
 	bool	_InsertCoords(double x, double y);
