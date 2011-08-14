@@ -544,8 +544,19 @@ void MainUI::ExportPDF() {
 	htmlPage.append("<table width=\"150\" style=\"border: 1px solid black; border-collapse: collapse\">"
 			"<thead style=\"border-bottom: 2px solid black\"><tr><th>X</th><th>Y</th></tr></thead>");
 
+	int min = 0;
+	int max = coords_table->rowCount();
+	bool reduced = false;
+
+	/* if there are a lot of coordinates, show only the ones in the middle */
+	if (max > 15) {
+		min = (coords_table->rowCount() / 2) - 6;
+		max = (coords_table->rowCount() / 2) + 6;
+		reduced = true;
+	}
+
 	/* Build the coordinates table */
-	for (int lines = 0; lines < coords_table->rowCount(); lines++) {
+	for (int lines = min; lines < max; lines++) {
 		if (coords_table->item(lines, 0) == 0 || coords_table->item(lines, 1) == 0)
 			continue;
 
@@ -554,6 +565,9 @@ void MainUI::ExportPDF() {
 	}
 
 	htmlPage.append("</table><br />");
+
+	if (reduced)
+		htmlPage.append(QString("<i>Showing only %0 pts<br />out of %1 provided.").arg(max - min).arg(coords_table->rowCount()));
 
 	/* "Interesting points" */
 	htmlPage.append("<h2>Interesting pts</h2>");
