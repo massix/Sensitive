@@ -46,27 +46,24 @@ int main(int argc, char *argv[]) {
 
 	return run.exec();
 #else
-	NextMatrix matrix(2);
+	NextMatrix matrix(3);
 	matrix.set_value(1, 0, 0);
 	matrix.set_value(2, 0, 1);
-	matrix.set_value(4, 1, 0);
+	matrix.set_value(3, 0, 2);
+
+	matrix.set_value(0, 1, 0);
 	matrix.set_value(1, 1, 1);
+	matrix.set_value(2, 1, 2);
 
-	double *first_row = matrix[0];
-	double *second_row = matrix[1];
+	matrix.set_value(0, 2, 0);
+	matrix.set_value(0, 2, 1);
+	matrix.set_value(3, 2, 2);
 
-	for (int i = 0; i < matrix.get_cols(); i++)
-		std::cout << first_row[i] << " ";
+	if (matrix.is_triangular())
+		std::cout << "Test OK" << std::endl;
 
-	std::cout << std::endl;
-
-	for (int i = 0; i < matrix.get_cols(); i++)
-		std::cout << second_row[i] << " ";
-
-	std::cout << std::endl << matrix.determinant() << std::endl;
-
-	delete(first_row);
-	delete(second_row);
+	else
+		std::cout << "Test NOT OK" << std::endl;
 
 	return 0;
 #endif

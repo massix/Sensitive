@@ -22,10 +22,6 @@
 #include "NextMatrix.h"
 #include "NextException.h"
 
-namespace Renal {
-
-}
-
 Renal::NextMatrix::NextMatrix(int order)
 	: order(order), rows(order), cols(order)
 {
@@ -53,6 +49,7 @@ double Renal::NextMatrix::determinant()
 	if (rows != cols)
 		throw NextException("Matrix is not square");
 
+	/* Basics */
 	if (order == 1)
 		return operator()(0, 0);
 
@@ -67,6 +64,9 @@ double Renal::NextMatrix::determinant()
 
 double Renal::NextMatrix::operator ()(const int & row, const int & col)
 {
+	if ((row > rows) || (col > cols))
+		throw NextException("Out of bounds");
+
 	return inner_matrix[row][col];
 }
 
@@ -74,6 +74,9 @@ double Renal::NextMatrix::operator ()(const int & row, const int & col)
 
 double* Renal::NextMatrix::operator [](const int & row)
 {
+	if (row > rows)
+		throw NextException("Out of bounds");
+
 	double* ret = new double[order];
 
 	for (int i = 0; i < order; i++)
@@ -113,14 +116,25 @@ int Renal::NextMatrix::get_rows()
 	return rows;
 }
 
+bool Renal::NextMatrix::do_gauss_eliminations()
+{
+	return false;
+}
+
+bool Renal::NextMatrix::is_triangular()
+{
+	if (order == 1)
+		return true;
+
+	for (int i = 0; i < get_rows(); i++)
+		for (int k = 0; k < i; k++)
+			if (inner_matrix[i][k] != 0)
+				return false;
+
+	return true;
+}
 
 int Renal::NextMatrix::get_cols()
 {
 	return cols;
 }
-
-
-
-
-
-/* namespace Renal */

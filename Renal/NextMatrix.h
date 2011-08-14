@@ -44,6 +44,14 @@ public:
 	 */
 	bool		is_square();
 
+	/* Do Gaussian's eliminations until the matrix doesn't become
+	 * a triangular one
+	 */
+	bool		do_gauss_eliminations();
+
+	/* Returns true if the matrix is triangular */
+	bool		is_triangular();
+
 	/* Set a value */
 	bool		set_value(double val, int row, int col);
 
