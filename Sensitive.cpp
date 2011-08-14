@@ -27,10 +27,14 @@
 #include <SensitiveProtocol/SensitiveServer.h>
 #include <SensitiveProtocol/SensitiveClient.h>
 
+#include <Renal/NextCalculator.h>
+#include <Renal/NextException.h>
+
 using namespace Renal;
 using namespace std;
 
 int main(int argc, char *argv[]) {
+#if 0
 	Q_INIT_RESOURCE(Sensitive);
 
 	Graphics::MainApplication run(argc, argv);
@@ -38,4 +42,8 @@ int main(int argc, char *argv[]) {
 	run.setAttribute(Qt::AA_ImmediateWidgetCreation, true);
 
 	return run.exec();
+#else
+
+	return 0;
+#endif
 }
