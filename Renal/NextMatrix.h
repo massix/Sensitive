@@ -26,8 +26,37 @@ namespace Renal {
 
 class NextMatrix {
 public:
-	NextMatrix();
+	NextMatrix(int order);
 	virtual ~NextMatrix();
+
+	/* Calculate the determinant */
+	double		determinant();
+
+	/* Retrieve a certain value */
+	double		operator()(const int& row, const int& col);
+
+	/* Retrieve a certain row */
+	/* The returned value must be manually free'd by the caller */
+	double*	operator[](const int& row);
+
+	/* Almost obvious, just useful to check if we're doing
+	 * mistakes while calculating the determinant.
+	 */
+	bool		is_square();
+
+	/* Set a value */
+	bool		set_value(double val, int row, int col);
+
+	/* General informations */
+	int			get_order();
+	int			get_rows();
+	int			get_cols();
+
+private:
+	double**	inner_matrix;
+	int			order;
+	int			rows;
+	int			cols;
 };
 
 } /* namespace Renal */

@@ -20,16 +20,107 @@
  */
 
 #include "NextMatrix.h"
+#include "NextException.h"
 
 namespace Renal {
 
-NextMatrix::NextMatrix() {
-	// TODO Auto-generated constructor stub
+}
+
+Renal::NextMatrix::NextMatrix(int order)
+	: order(order), rows(order), cols(order)
+{
+	inner_matrix = new double*[order];
+
+	for (int i = 0; i < order; i++)
+		inner_matrix[i] = new double[order];
 
 }
 
-NextMatrix::~NextMatrix() {
-	// TODO Auto-generated destructor stub
+
+
+Renal::NextMatrix::~NextMatrix()
+{
+	for (int i = 0; i < order; i++)
+		delete inner_matrix[i];
+
+	delete inner_matrix;
 }
 
-} /* namespace Renal */
+
+
+double Renal::NextMatrix::determinant()
+{
+	if (rows != cols)
+		throw NextException("Matrix is not square");
+
+	if (order == 1)
+		return operator()(0, 0);
+
+	else if (order == 2)
+		return ((operator()(0, 0) * operator()(1, 1)) - (operator()(1, 0) * operator()(0, 1)));
+
+	else
+		throw NextException("Not implemented yet");
+}
+
+
+
+double Renal::NextMatrix::operator ()(const int & row, const int & col)
+{
+	return inner_matrix[row][col];
+}
+
+
+
+double* Renal::NextMatrix::operator [](const int & row)
+{
+	double* ret = new double[order];
+
+	for (int i = 0; i < order; i++)
+		ret[i] = inner_matrix[row][i];
+
+	return ret;
+}
+
+
+
+bool Renal::NextMatrix::is_square()
+{
+	return (rows == cols);
+}
+
+bool Renal::NextMatrix::set_value(double val, int row, int col)
+{
+	if (row >= order)
+		return false;
+
+	else if (col >= order)
+		return false;
+
+	inner_matrix[row][col] = val;
+
+	return true;
+}
+
+int Renal::NextMatrix::get_order()
+{
+	return order;
+}
+
+
+int Renal::NextMatrix::get_rows()
+{
+	return rows;
+}
+
+
+int Renal::NextMatrix::get_cols()
+{
+	return cols;
+}
+
+
+
+
+
+/* namespace Renal */
