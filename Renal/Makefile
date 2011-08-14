@@ -12,6 +12,7 @@ OBJECTS		= 	NextCalculator.o \
 				NextException.o \
 				LaGrangeCalculator.o \
 				NextSpline.o \
+				NextMatrix.o \
 				NewtonCalculator.o
 
 TARGET		= librenal.$(LIB_EXT)
