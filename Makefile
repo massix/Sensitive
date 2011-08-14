@@ -6,7 +6,7 @@ include Qwt_qt_config.makefile
 LDFLAGS		=  $(OS_LDFLAGS)
 
 INCLUDE		= -I. $(BS_INCLUDE)
-LIBS		= -LRenal -LGraphics -LSensitiveProtocol -lgraphics -lrenal -lsnsprotocol
+LIBS		= -LRenal -lrenal
 
 ifeq ($(OS),Windows_NT)
 	RESOURCES	= Sensitive.res
@@ -48,7 +48,7 @@ SENSITIVE		= Sensitive$(EXE_EXT)
 .PHONY: all clean $(UTILS) $(INVERSITIVE) $(LIBRENAL) $(LIBSNSPROTOCOL) $(LIBGRAPHICS) regen
 
 
-all: $(UTILS) $(INVERSITIVE) $(SENSITIVE)
+all: $(SENSITIVE)
 
 $(LIBRENAL):
 	cd Renal && $(MAKE)
@@ -68,8 +68,8 @@ Sensitive.res: Resources.rc
 .cpp.o:
 	$(CC) $(CXXFLAGS) $(INCLUDE) $(QT_CFLAGS) $(QWT_CFLAGS) -c $< -o $@
 	
-$(SENSITIVE): $(UTILS) $(OBJECTS) $(LIBRENAL) $(LIBSNSPROTOCOL) $(LIBGRAPHICS) $(RESOURCES)
-	$(CC) $(LDFLAGS) -o $(SENSITIVE) $(OBJECTS) $(RESOURCES) $(QT_LDFLAGS) $(QWT_LDFLAGS) $(LIBS)
+$(SENSITIVE): $(OBJECTS) $(LIBRENAL)
+	$(CC) $(LDFLAGS) -o $(SENSITIVE) $(OBJECTS) $(RESOURCES) $(LIBS)
 	
 $(NSIFILE): $(NSIFILE:.nsi=_in.nsi)
 	@echo "Generating $@"
