@@ -14,6 +14,7 @@ OBJECTS		= 	NextCalculator.o \
 				LaGrangeCalculator.o \
 				NextSpline.o \
 				NextMatrix.o \
+				VandermondeCalculator.o \
 				NewtonCalculator.o
 
 TARGET		= librenal.$(LIB_EXT)
