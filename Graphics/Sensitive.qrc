@@ -2,6 +2,7 @@
   <qresource prefix="portraits">
     <file alias="Newton">images/Newton.png</file>
     <file alias="LaGrange">images/Lagrange.png</file>
+    <file alias="Vandermonde">images/Vandermonde.png</file>
   </qresource>
   <qresource prefix="bundle">
   	<file alias="logo">images/logo.png</file>
