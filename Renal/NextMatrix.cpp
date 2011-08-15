@@ -22,13 +22,18 @@
 #include "NextMatrix.h"
 #include "NextException.h"
 
-Renal::NextMatrix::NextMatrix(int order)
-	: order(order), rows(order), cols(order)
-{
-	inner_matrix = new double*[order];
+#include <iostream>
 
-	for (int i = 0; i < order; i++)
-		inner_matrix[i] = new double[order];
+Renal::NextMatrix::NextMatrix(int order)
+	: order(order), rows(order), cols(order), transformed(false)
+{
+	gauss_matrix = new double*[order];
+	original_matrix = new double*[order];
+
+	for (int i = 0; i < order; i++) {
+		gauss_matrix[i] = new double[order];
+		original_matrix[i] = new double[order];
+	}
 
 }
 
@@ -36,10 +41,13 @@ Renal::NextMatrix::NextMatrix(int order)
 
 Renal::NextMatrix::~NextMatrix()
 {
-	for (int i = 0; i < order; i++)
-		delete inner_matrix[i];
+	for (int i = 0; i < order; i++) {
+		delete gauss_matrix[i];
+		delete original_matrix[i];
+	}
 
-	delete inner_matrix;
+	delete original_matrix;
+	delete gauss_matrix;
 }
 
 
@@ -56,8 +64,23 @@ double Renal::NextMatrix::determinant()
 	else if (order == 2)
 		return ((operator()(0, 0) * operator()(1, 1)) - (operator()(1, 0) * operator()(0, 1)));
 
-	else
-		throw NextException("Not implemented yet");
+	else {
+		do_gauss_eliminations();
+		if (!is_triangular())
+			throw NextException("Didn't succeed in gauss transformations");
+
+		double det = 1;
+
+		for (int i = 0; i < order; i++)
+			det *= gauss_matrix[i][i];
+
+
+		return det;
+	}
+
+//
+//	else
+//		throw NextException("Not implemented yet");
 }
 
 
@@ -67,7 +90,7 @@ double Renal::NextMatrix::operator ()(const int & row, const int & col)
 	if ((row > rows) || (col > cols))
 		throw NextException("Out of bounds");
 
-	return inner_matrix[row][col];
+	return gauss_matrix[row][col];
 }
 
 
@@ -80,7 +103,7 @@ double* Renal::NextMatrix::operator [](const int & row)
 	double* ret = new double[order];
 
 	for (int i = 0; i < order; i++)
-		ret[i] = inner_matrix[row][i];
+		ret[i] = gauss_matrix[row][i];
 
 	return ret;
 }
@@ -100,7 +123,8 @@ bool Renal::NextMatrix::set_value(double val, int row, int col)
 	else if (col >= order)
 		return false;
 
-	inner_matrix[row][col] = val;
+	gauss_matrix[row][col] = val;
+	original_matrix[row][col] = val;
 
 	return true;
 }
@@ -116,9 +140,39 @@ int Renal::NextMatrix::get_rows()
 	return rows;
 }
 
+void Renal::NextMatrix::print_matrix()
+{
+	for (int i = 0; i < order; i++) {
+		for (int j = 0; j < order; j++)
+			std::cout << gauss_matrix[i][j] << "\t";
+
+		std::cout << std::endl;
+	}
+}
+
 bool Renal::NextMatrix::do_gauss_eliminations()
 {
-	return false;
+	if (!transformed) {
+		for (int i = 1; i < order; i++)
+			gauss_helper(i);
+
+		transformed = is_triangular();
+	}
+	return transformed;
+}
+
+void Renal::NextMatrix::gauss_helper(int line)
+{
+	int pivot_line;
+	for (int i = 0; i < line; i++) {
+		if (gauss_matrix[line][i] != 0) {
+			pivot_line = i;
+			double coeff = (-gauss_matrix[line][i] / gauss_matrix[pivot_line][i]);
+
+			for (int j = 0; j < order; j++)
+				gauss_matrix[line][j] += (double) (gauss_matrix[pivot_line][j] * coeff);
+		}
+	}
 }
 
 bool Renal::NextMatrix::is_triangular()
@@ -128,7 +182,7 @@ bool Renal::NextMatrix::is_triangular()
 
 	for (int i = 0; i < get_rows(); i++)
 		for (int k = 0; k < i; k++)
-			if (inner_matrix[i][k] != 0)
+			if (gauss_matrix[i][k] != 0)
 				return false;
 
 	return true;

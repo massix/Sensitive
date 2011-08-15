@@ -44,11 +44,6 @@ public:
 	 */
 	bool		is_square();
 
-	/* Do Gaussian's eliminations until the matrix doesn't become
-	 * a triangular one
-	 */
-	bool		do_gauss_eliminations();
-
 	/* Returns true if the matrix is triangular */
 	bool		is_triangular();
 
@@ -60,11 +55,23 @@ public:
 	int			get_rows();
 	int			get_cols();
 
+	/* Debug */
+	void		print_matrix();
+
 private:
-	double**	inner_matrix;
+	double**	gauss_matrix;
+	double**	original_matrix;
 	int			order;
 	int			rows;
 	int			cols;
+	bool		transformed;
+
+	void		gauss_helper(int line);
+
+	/* Do Gaussian's eliminations until the matrix doesn't become
+	 * a triangular one
+	 */
+	bool		do_gauss_eliminations();
 };
 
 } /* namespace Renal */

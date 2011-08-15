@@ -65,6 +65,29 @@ int main(int argc, char *argv[]) {
 	else
 		std::cout << "Test NOT OK" << std::endl;
 
+	NextMatrix matrix_(3);
+	matrix_.set_value(3, 0, 0);
+	matrix_.set_value(2, 0, 1);
+	matrix_.set_value(-1, 0, 2);
+
+	matrix_.set_value(-1, 1, 0);
+	matrix_.set_value(3, 1, 1);
+	matrix_.set_value(2, 1, 2);
+
+	matrix_.set_value(3, 2, 0);
+	matrix_.set_value(1, 2, 1);
+	matrix_.set_value(4, 2, 2);
+
+	matrix_.print_matrix();
+	std::cout << std::endl << std::endl;
+
+	matrix_.determinant();
+	matrix_.print_matrix();
+
+	std::cout << std::endl << std::endl;
+
+	std::cout << "Det: " << matrix_.determinant() << std::endl;
+
 	return 0;
 #endif
 }

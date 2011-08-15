@@ -6,6 +6,7 @@ include ../Qwt_qt_config.makefile
 INCLUDES	=	$(BS_INCLUDE)
 LIBS		=	$(BS_LIB)
 
+CXXFLAGS	+= 	-ggdb
 LDFLAGS		=
 
 OBJECTS		= 	NextCalculator.o \
