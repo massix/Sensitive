@@ -61,6 +61,8 @@ bool Renal::VandermondeCalculator::BuildFunction()
 		double in_det = coeff_matrix.determinant();
 		std::cout << "Det: " << in_det << std::endl;
 		std::cout << "Coeff: " << in_det/det << std::endl;
+
+		coeffs->insert(coeffs->begin(), (double) (in_det / det));
 		std::cout << std::endl << std::endl;
 	}
 
