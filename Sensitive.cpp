@@ -30,6 +30,7 @@
 #include <Renal/NextCalculator.h>
 #include <Renal/NextException.h>
 #include <Renal/NextMatrix.h>
+#include <Renal/VandermondeCalculator.h>
 
 #include <iostream>
 
@@ -46,47 +47,15 @@ int main(int argc, char *argv[]) {
 
 	return run.exec();
 #else
-	NextMatrix matrix(3);
-	matrix.set_value(1, 0, 0);
-	matrix.set_value(2, 0, 1);
-	matrix.set_value(3, 0, 2);
+	VandermondeCalculator calc;
 
-	matrix.set_value(0, 1, 0);
-	matrix.set_value(1, 1, 1);
-	matrix.set_value(2, 1, 2);
+	calc.InsertCoords(0, 3);
+	calc.InsertCoords(1, 4);
+	calc.InsertCoords(2, 7);
+	calc.InsertCoords(3, 12);
+	calc.InsertCoords(4, 19);
 
-	matrix.set_value(0, 2, 0);
-	matrix.set_value(0, 2, 1);
-	matrix.set_value(3, 2, 2);
-
-	if (matrix.is_triangular())
-		std::cout << "Test OK" << std::endl;
-
-	else
-		std::cout << "Test NOT OK" << std::endl;
-
-	NextMatrix matrix_(3);
-	matrix_.set_value(3, 0, 0);
-	matrix_.set_value(2, 0, 1);
-	matrix_.set_value(-1, 0, 2);
-
-	matrix_.set_value(-1, 1, 0);
-	matrix_.set_value(3, 1, 1);
-	matrix_.set_value(2, 1, 2);
-
-	matrix_.set_value(3, 2, 0);
-	matrix_.set_value(1, 2, 1);
-	matrix_.set_value(4, 2, 2);
-
-	matrix_.print_matrix();
-	std::cout << std::endl << std::endl;
-
-	matrix_.determinant();
-	matrix_.print_matrix();
-
-	std::cout << std::endl << std::endl;
-
-	std::cout << "Det: " << matrix_.determinant() << std::endl;
+	calc.BuildFunction();
 
 	return 0;
 #endif
