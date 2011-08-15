@@ -22,23 +22,8 @@
 #include <QtCore>
 
 #include <Graphics/MainApplication.h>
-#include <Graphics/MainUI.h>
-
-#include <SensitiveProtocol/SensitiveServer.h>
-#include <SensitiveProtocol/SensitiveClient.h>
-
-#include <Renal/NextCalculator.h>
-#include <Renal/NextException.h>
-#include <Renal/NextMatrix.h>
-#include <Renal/VandermondeCalculator.h>
-
-#include <iostream>
-
-using namespace Renal;
-using namespace std;
 
 int main(int argc, char *argv[]) {
-#if 0
 	Q_INIT_RESOURCE(Sensitive);
 
 	Graphics::MainApplication run(argc, argv);
@@ -46,23 +31,4 @@ int main(int argc, char *argv[]) {
 	run.setAttribute(Qt::AA_ImmediateWidgetCreation, true);
 
 	return run.exec();
-#else
-	VandermondeCalculator calc;
-
-	calc.InsertCoords(0, 3);
-	calc.InsertCoords(1, 4);
-	calc.InsertCoords(2, 7);
-	calc.InsertCoords(3, 12);
-	calc.InsertCoords(4, 19);
-
-	calc.BuildFunction();
-
-	DVector* res = calc.GetPolynom();
-
-	for (DVector::iterator ite = res->begin(); ite != res->end(); ++ite) {
-		std::cout << *ite << " ";
-	}
-
-	return 0;
-#endif
 }
