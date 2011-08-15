@@ -57,6 +57,12 @@ int main(int argc, char *argv[]) {
 
 	calc.BuildFunction();
 
+	DVector* res = calc.GetPolynom();
+
+	for (DVector::iterator ite = res->begin(); ite != res->end(); ++ite) {
+		std::cout << *ite << " ";
+	}
+
 	return 0;
 #endif
 }
