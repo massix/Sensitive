@@ -54,8 +54,8 @@ public:
 	int					GetPrecision();
 	float				GetMaxError();
 	double				Express10();
-    double 				GetXmin() const;
-    double 				GetXmax() const;
+    double 			GetXmin() const;
+    double 			GetXmax() const;
 
 
 protected:
