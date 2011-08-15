@@ -17,7 +17,8 @@ namespace Graphics {
 
 enum InterpolationForm {
 	NEWTON = 2,
-	LAGRANGE = 3
+	LAGRANGE = 3,
+	VANDERMONDE = 4
 };
 
 class Starter : public QDialog {
@@ -35,6 +36,7 @@ private:
 	QLabel		*presentation;
 	SLabel		*newton_image;
 	SLabel		*lagrange_image;
+	SLabel		*vandermonde_image;
 
 	QTextEdit	*description;
 

@@ -29,6 +29,15 @@ Newton polynomials easier to use. <br /><br /> \
 Lagrange polynomials are used in the Newton-Cotes method of numerical integration and in Shamir's secret sharing scheme in Cryptography.<br /><br /> \
 Source: <a href=\"http://en.wikipedia.org/wiki/Lagrange_polynomial\">Wikipedia</a>"
 
+#define VANDERMONDE_DESCRIPTION "<h1>Vandermonde's Matrix</h1> \
+<b>Warning: the Vandermonde's Matrix interpolates only over up to 4 interpolation points!</b><br /> \
+The Vandermonde matrix evaluates a polynomial at a set of points; formally, it transforms coefficients of a polynomial  to the values the polynomial takes at the points ai. \
+The non-vanishing of the Vandermonde determinant for distinct points αi shows that, for distinct points, the map from coefficients to values at those points is a \
+one-to-one correspondence, and thus that the polynomial interpolation problem is solvable with unique solution; this result is called the unisolvence theorem.<br /> \
+They are thus useful in polynomial interpolation, since solving the system of linear equations Vu = y for u with V an m × n Vandermonde matrix is equivalent to  \
+finding the coefficients uj of the polynomial(s).<br /><br /> \
+Source: <a href=\"http://en.wikipedia.org/wiki/Vandermonde_matrix\">Wikipedia</a>"
+
 
 namespace Graphics {
 
@@ -51,14 +60,21 @@ Starter::Starter() : QDialog() {
 	newton_image->resize(200, 200);
 	selectors_layout->addWidget(newton_image, 0, 0);
 
+	vandermonde_image = new SLabel();
+	vandermonde_image->setPixmap(QPixmap(":/portraits/Vandermonde"));
+	vandermonde_image->setScaledContents(true);
+	vandermonde_image->resize(200, 200);
+	selectors_layout->addWidget(vandermonde_image, 0, 1);
+
 	lagrange_image = new SLabel();
 	lagrange_image->setPixmap(QPixmap(":/portraits/LaGrange"));
 	lagrange_image->setScaledContents(true);
 	lagrange_image->resize(200, 200);
-	selectors_layout->addWidget(lagrange_image, 0, 1);
+	selectors_layout->addWidget(lagrange_image, 0, 2);
 
 	selectors_layout->addWidget(new QLabel("<b>Newton</b> Form"), 1, 0);
-	selectors_layout->addWidget(new QLabel("<b>Lagrange</b> Form"), 1, 1);
+	selectors_layout->addWidget(new QLabel("<b>Vandermonde's Matrix"), 1, 1);
+	selectors_layout->addWidget(new QLabel("<b>Lagrange</b> Form"), 1, 2);
 
 	main_layout->addLayout(selectors_layout);
 
@@ -77,6 +93,7 @@ Starter::Starter() : QDialog() {
 
 	QObject::connect(lagrange_image, SIGNAL(clicked(QWidget*)), this, SLOT(Animate(QWidget*)));
 	QObject::connect(newton_image, SIGNAL(clicked(QWidget*)), this, SLOT(Animate(QWidget*)));
+	QObject::connect(vandermonde_image, SIGNAL(clicked(QWidget*)), this, SLOT(Animate(QWidget*)));
 
 	QObject::connect(animation, SIGNAL(finished()), this, SLOT(RestoreAnimations()));
 
@@ -103,6 +120,10 @@ void Starter::Animate(QWidget* target) {
 		selected = NEWTON;
 		description->setText(NEWTON_DESCRIPTION);
 	}
+	else if (target == vandermonde_image) {
+		selected = VANDERMONDE;
+		description->setText(VANDERMONDE_DESCRIPTION);
+	}
 	else {
 		selected = LAGRANGE;
 		description->setText(LAGRANGE_DESCRIPTION);
@@ -112,6 +133,7 @@ void Starter::Animate(QWidget* target) {
 
 	QObject::disconnect(lagrange_image, SIGNAL(clicked(QWidget*)), this, SLOT(Animate(QWidget*)));
 	QObject::disconnect(newton_image, SIGNAL(clicked(QWidget*)), this, SLOT(Animate(QWidget*)));
+	QObject::disconnect(vandermonde_image, SIGNAL(clicked(QWidget*)), this, SLOT(Animate(QWidget*)));
 
 	animation->start();
 }
@@ -119,6 +141,7 @@ void Starter::Animate(QWidget* target) {
 void Starter::RestoreAnimations() {
 	QObject::connect(lagrange_image, SIGNAL(clicked(QWidget*)), this, SLOT(Animate(QWidget*)));
 	QObject::connect(newton_image, SIGNAL(clicked(QWidget*)), this, SLOT(Animate(QWidget*)));
+	QObject::connect(vandermonde_image, SIGNAL(clicked(QWidget*)), this, SLOT(Animate(QWidget*)));
 }
 
 void Starter::AcceptClicked() {

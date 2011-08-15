@@ -28,6 +28,7 @@
 
 #include <Renal/LaGrangeCalculator.h>
 #include <Renal/NewtonCalculator.h>
+#include <Renal/VandermondeCalculator.h>
 
 namespace Graphics {
 
@@ -50,6 +51,9 @@ int MainApplication::exec() {
 		break;
 	case LAGRANGE:
 		main_window = new Graphics::MainUI(new Renal::LaGrangeCalculator(), QString("Lagrange's polynomial form"));
+		break;
+	case VANDERMONDE:
+		main_window = new Graphics::MainUI(new Renal::VandermondeCalculator(), QString("Vandermonde's polynomial form"));
 		break;
 	default:
 		return 0;
