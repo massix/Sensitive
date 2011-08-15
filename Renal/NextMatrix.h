@@ -27,6 +27,7 @@ namespace Renal {
 class NextMatrix {
 public:
 	NextMatrix(int order);
+	NextMatrix(const NextMatrix& orig);
 	virtual ~NextMatrix();
 
 	/* Calculate the determinant */
@@ -34,6 +35,7 @@ public:
 
 	/* Retrieve a certain value */
 	double		operator()(const int& row, const int& col);
+	double		get_value(const int& row, const int& col);
 
 	/* Retrieve a certain row */
 	/* The returned value must be manually free'd by the caller */
@@ -57,6 +59,9 @@ public:
 
 	/* Debug */
 	void		print_matrix();
+
+	/* Reset the matrix */
+	void		reset_matrix();
 
 private:
 	double**	gauss_matrix;

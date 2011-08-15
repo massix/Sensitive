@@ -38,14 +38,28 @@ Renal::NextMatrix::NextMatrix(int order)
 }
 
 
+Renal::NextMatrix::NextMatrix(const NextMatrix & orig)
+	: order(orig.order), rows(orig.rows), cols(orig.cols), transformed(false)
+{
+	gauss_matrix = new double*[order];
+	original_matrix = new double*[order];
+
+	for (int i = 0; i < order; i++) {
+		gauss_matrix[i] = new double[order];
+		original_matrix[i] = new double[order];
+	}
+
+	for (int i = 0; i < order; i++) {
+		for (int j = 0; j < order; j++) {
+			gauss_matrix[i][j] = orig.original_matrix[i][j];
+			original_matrix[i][j] = orig.original_matrix[i][j];
+		}
+	}
+}
+
 
 Renal::NextMatrix::~NextMatrix()
 {
-	for (int i = 0; i < order; i++) {
-		delete gauss_matrix[i];
-		delete original_matrix[i];
-	}
-
 	delete original_matrix;
 	delete gauss_matrix;
 }
@@ -77,10 +91,6 @@ double Renal::NextMatrix::determinant()
 
 		return det;
 	}
-
-//
-//	else
-//		throw NextException("Not implemented yet");
 }
 
 
@@ -148,6 +158,19 @@ void Renal::NextMatrix::print_matrix()
 
 		std::cout << std::endl;
 	}
+}
+
+void Renal::NextMatrix::reset_matrix()
+{
+	for (int i = 0; i < order; i++) {
+		for (int j = 0; j < order; j++)
+			gauss_matrix[i][j] = original_matrix[i][j];
+	}
+}
+
+double Renal::NextMatrix::get_value(const int & row, const int & col)
+{
+	return original_matrix[row][col];
 }
 
 bool Renal::NextMatrix::do_gauss_eliminations()
