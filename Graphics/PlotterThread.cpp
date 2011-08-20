@@ -54,6 +54,12 @@ int PlotterThread::GetElapsed() {
 }
 
 void PlotterThread::run() {
+	if (max < min) {
+		int tmp = max;
+		max = min;
+		min = tmp;
+	}
+
 	try {
 		QVector<double> x_points;
 		QVector<double> y_points;
@@ -76,6 +82,12 @@ void PlotterThread::run() {
 }
 
 int PlotterThread::TotalSteps() {
+	if (max < min) {
+		int tmp = max;
+		max = min;
+		min = tmp;
+	}
+
 	return round((max - min)/step);
 }
 

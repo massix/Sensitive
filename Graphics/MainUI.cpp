@@ -92,14 +92,14 @@ MainUI::MainUI(Renal::NextCalculator *calculator, QString calculator_name) :
 	plot_config_autodetect = new QPushButton("Autodetect");
 	plot_config_replot = new QPushButton("Replot");
 
-	plot_config_step->setRange(0., 100.);
+	plot_config_step->setRange(0.001, 100.);
 	plot_config_step->setDecimals(3);
 
 	plot_config_from->setRange(-1000., 1000.);
-	plot_config_from->setDecimals(10);
+	plot_config_from->setDecimals(5);
 
 	plot_config_to->setRange(-1000., 1000.);
-	plot_config_to->setDecimals(10);
+	plot_config_to->setDecimals(5);
 
 	plot_config_buttons = new QHBoxLayout();
 	plot_config_buttons->addWidget(plot_config_autodetect);
