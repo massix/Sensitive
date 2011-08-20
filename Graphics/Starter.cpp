@@ -24,6 +24,9 @@
 #include <QtGui>
 #include <QtCore>
 
+#include <exception>
+#include <QUiLoader>
+
 
 #define NEWTON_DESCRIPTION "<h1>Newton Polynomial</h1>\
 In the mathematical field of numerical analysis, a Newton polynomial, named after its inventor Isaac Newton, is the interpolation polynomial for a given set of data points in the Newton form. \
@@ -52,114 +55,76 @@ They are thus useful in polynomial interpolation, since solving the system of li
 finding the coefficients uj of the polynomial(s).<br /><br /> \
 Source: <a href=\"http://en.wikipedia.org/wiki/Vandermonde_matrix\">Wikipedia</a>"
 
-
 namespace Graphics {
 
 Starter::Starter() : QDialog() {
-	main_layout = new QVBoxLayout(this);
+	ui_file = new QFile(":/ui/starter");
+	if (!ui_file->open(QIODevice::ReadOnly))
+		throw std::exception();
 
+	setWindowIcon(QIcon(":/bundle/icon.svg"));
 	setWindowTitle("Sensitive UI - Starter");
 
-	selected = LAGRANGE;
+	/* Load the ui_file */
+	main_layout = new QVBoxLayout(this);
+
+	loader = new QUiLoader();
+	loaded_widget = loader->load(ui_file);
+
+	main_layout->addWidget(loaded_widget);
+
 	setResult(LAGRANGE);
+	selected = LAGRANGE;
 
-	presentation = new QLabel("Select interpolation form");
-	main_layout->addWidget(presentation, Qt::AlignCenter);
 
-	selectors_layout = new QGridLayout();
+	description = loaded_widget->findChild<QTextEdit*>("description");
+	description->setText(LAGRANGE_DESCRIPTION);
 
-	newton_image = new SLabel();
-	newton_image->setPixmap(QPixmap(":/portraits/Newton"));
-	newton_image->setScaledContents(true);
-	newton_image->resize(200, 200);
-	selectors_layout->addWidget(newton_image, 0, 0);
+	/* Connect signals */
+	QDialogButtonBox *box = loaded_widget->findChild<QDialogButtonBox*>("buttonBox");
+	connect(box, SIGNAL(accepted()), this, SLOT(Accept()));
+	connect(box, SIGNAL(rejected()), this, SLOT(reject()));
 
-	vandermonde_image = new SLabel();
-	vandermonde_image->setPixmap(QPixmap(":/portraits/Vandermonde"));
-	vandermonde_image->setScaledContents(true);
-	vandermonde_image->resize(200, 200);
-	selectors_layout->addWidget(vandermonde_image, 0, 1);
+	buttons_list 	<< 	"radio_lagrange"
+					<<	"radio_newton"
+					<<	"radio_vandermonde";
 
-	lagrange_image = new SLabel();
-	lagrange_image->setPixmap(QPixmap(":/portraits/LaGrange"));
-	lagrange_image->setScaledContents(true);
-	lagrange_image->resize(200, 200);
-	selectors_layout->addWidget(lagrange_image, 0, 2);
-
-	selectors_layout->addWidget(new QLabel("<b>Newton</b> Form"), 1, 0);
-	selectors_layout->addWidget(new QLabel("<b>Vandermonde's Matrix"), 1, 1);
-	selectors_layout->addWidget(new QLabel("<b>Lagrange</b> Form"), 1, 2);
-
-	main_layout->addLayout(selectors_layout);
-
-	description = new QTextEdit("Select an interpolation form or click <b>Accept</b> to use the default one (Lagrange's).");
-	description->setReadOnly(true);
-
-	main_layout->addWidget(description);
-
-	accept_button = new QPushButton("Accept");
-
-	main_layout->addWidget(accept_button, Qt::AlignCenter);
-
-	animation = new QPropertyAnimation();
-
-	setFixedSize(main_layout->sizeHint());
-
-	QObject::connect(lagrange_image, SIGNAL(clicked(QWidget*)), this, SLOT(Animate(QWidget*)));
-	QObject::connect(newton_image, SIGNAL(clicked(QWidget*)), this, SLOT(Animate(QWidget*)));
-	QObject::connect(vandermonde_image, SIGNAL(clicked(QWidget*)), this, SLOT(Animate(QWidget*)));
-
-	QObject::connect(animation, SIGNAL(finished()), this, SLOT(RestoreAnimations()));
-
-	QObject::connect(accept_button, SIGNAL(clicked()), this, SLOT(AcceptClicked()));
-}
-
-Starter::~Starter() {
+	for (int i = 0; i < buttons_list.size(); i++) {
+		QRadioButton *button = loaded_widget->findChild<QRadioButton*>(buttons_list.at(i));
+		connect(button, SIGNAL(clicked()), this, SLOT(RadioClicked()));
+	}
 
 }
 
+void Starter::Accept() {
+	done(selected);
+}
 
-void Starter::Animate(QWidget* target) {
-	animation->setTargetObject(target);
-	animation->setPropertyName("size");
-	animation->setDuration(1000);
+void Starter::RadioClicked() {
+	QRadioButton *radio_lagrange = loaded_widget->findChild<QRadioButton*>("radio_lagrange");
+	QRadioButton *radio_newton = loaded_widget->findChild<QRadioButton*>("radio_newton");
+	QRadioButton *radio_vandermonde = loaded_widget->findChild<QRadioButton*>("radio_vandermonde");
 
-	animation->setStartValue(target->size());
-	animation->setEndValue(target->size());
-	animation->setKeyValueAt(0.2, QSize(target->size().width(), 0));
-
-	animation->setEasingCurve(QEasingCurve::OutBounce);
-
-	if (target == newton_image) {
-		selected = NEWTON;
-		description->setText(NEWTON_DESCRIPTION);
-	}
-	else if (target == vandermonde_image) {
-		selected = VANDERMONDE;
-		description->setText(VANDERMONDE_DESCRIPTION);
-	}
-	else {
+	if (radio_lagrange->isChecked()) {
 		selected = LAGRANGE;
 		description->setText(LAGRANGE_DESCRIPTION);
 	}
 
+	else if (radio_newton->isChecked()) {
+		selected = NEWTON;
+		description->setText(NEWTON_DESCRIPTION);
+	}
+
+	else {
+		selected = VANDERMONDE;
+		description->setText(VANDERMONDE_DESCRIPTION);
+	}
+
 	setResult(selected);
-
-	QObject::disconnect(lagrange_image, SIGNAL(clicked(QWidget*)), this, SLOT(Animate(QWidget*)));
-	QObject::disconnect(newton_image, SIGNAL(clicked(QWidget*)), this, SLOT(Animate(QWidget*)));
-	QObject::disconnect(vandermonde_image, SIGNAL(clicked(QWidget*)), this, SLOT(Animate(QWidget*)));
-
-	animation->start();
 }
 
-void Starter::RestoreAnimations() {
-	QObject::connect(lagrange_image, SIGNAL(clicked(QWidget*)), this, SLOT(Animate(QWidget*)));
-	QObject::connect(newton_image, SIGNAL(clicked(QWidget*)), this, SLOT(Animate(QWidget*)));
-	QObject::connect(vandermonde_image, SIGNAL(clicked(QWidget*)), this, SLOT(Animate(QWidget*)));
-}
+Starter::~Starter() {
 
-void Starter::AcceptClicked() {
-	done(selected);
 }
 
 }

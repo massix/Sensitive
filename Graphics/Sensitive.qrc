@@ -10,4 +10,7 @@
     <file alias="logo-about">images/logo-about.png</file>
     <file alias="logo-about-svg">images/logo-about.svg</file>
   </qresource>
+  <qresource prefix="ui">
+	<file alias="starter">starter.ui</file>
+  </qresource>
 </RCC>

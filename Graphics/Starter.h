@@ -26,6 +26,7 @@
 
 #include <QtGui>
 #include <QtCore>
+#include <QUiLoader>
 
 namespace Graphics {
 
@@ -44,26 +45,23 @@ public:
 	virtual ~Starter();
 
 private:
-	QVBoxLayout *main_layout;
-	QGridLayout *selectors_layout;
+	QUiLoader		*loader;
+	QFile			*ui_file;
+	QWidget			*loaded_widget;
+	QVBoxLayout		*main_layout;
+	QTextEdit		*description;
 
-	QLabel		*presentation;
-	SLabel		*newton_image;
-	SLabel		*lagrange_image;
-	SLabel		*vandermonde_image;
+	QList<QString>	buttons_list;
 
-	QTextEdit	*description;
-
-	QPushButton	*accept_button;
 
 	InterpolationForm selected;
 
 	QPropertyAnimation		*animation;
 
 private slots:
-	void		Animate(QWidget *target);
-	void		RestoreAnimations();
-	void		AcceptClicked();
+	void	Accept();
+	void	RadioClicked();
+
 };
 
 }
