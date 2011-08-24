@@ -92,12 +92,12 @@ $(UTILS): $(UTILS:.h=_in.h)
 	@echo "Generating $@"
 	@sed "s:QWT_CHANGE_ME:$(QWT_PATH)/lib:g" $< > $@
 	@sed -i "s:SNS_CHANGE_ME:$(DESTDIR):g" $@
-	@sed -i "s:SN_CHANGE_ME"$(SN_DIR):g" $@
+	@sed -i "s:SN_CHANGE_ME:$(SN_DIR)/lib:g" $@
 
 regen:
 	rm -fr $(SCRIPTFILES) $(DESKTOP)
 
-install: regen $(SCRIPTFILES) $(DESKTOP)
+install: all regen $(SCRIPTFILES) $(DESKTOP)
 	mkdir -p $(DESTDIR)
 	mkdir -p $(BINDIR)
 	mkdir -p $(LIBDIR)
