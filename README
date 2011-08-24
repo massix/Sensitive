@@ -28,6 +28,7 @@ Qt >= 4.7.0				(http://qt.nokia.com)
 Qwt >= 6.0.0			(http://qwt.sourceforge.net)
 Eol-BSpline >= 1.5		(http://www.eol.ucar.edu/~granger/bspline)
 g++ >= 4.5.0			(not my fault, Qt 4.7 requires g++ >= 4.5)
+snappy >= 1.0.3			(http://code.google.com/p/snappy)
 
 mingw && msys to compile under Windows_NT.
 
