@@ -28,6 +28,8 @@
 #include <exception>
 #include <cmath>
 
+#include <snappy.h>
+
 #define MAX(a, b) (a > b? a : b)
 #define MIN(a, b) (a < b? a : b)
 
@@ -130,6 +132,8 @@ void MainUI::Press() {
 }
 
 void MainUI::SaveFile() {
+	using std::string;
+
 	QString filename = QFileDialog::getSaveFileName(this, "Save as SNS", QDir::homePath(), "Sensitive Files (*.sns)");
 
 	if (filename.isNull() || filename.isEmpty())
@@ -140,9 +144,15 @@ void MainUI::SaveFile() {
 	if (!file.open(QFile::WriteOnly))
 		return;
 
-	QTextStream stream(&file);
+	QDataStream stream(&file);
 
-	stream << edit->toPlainText();
+	QString input_string = edit->toPlainText().replace('\r', ' ');
+	string compressed;
+
+	snappy::Compress(input_string.toStdString().c_str(), input_string.size(), &compressed);
+
+	stream.setVersion(QDataStream::Qt_4_0);
+	stream.writeRawData(compressed.c_str(), compressed.length());
 
 	file.close();
 }

@@ -3,8 +3,8 @@
 
 include ../Qwt_qt_config.makefile
 
-INCLUDE		=
-LIBS		=
+INCLUDE		=	$(SN_INCLUDE)
+LIBS		=	$(SN_LIBS)
 
 QT_CFLAGS	+=	-I$(QT_INCLUDE)/QtUiTools
 
