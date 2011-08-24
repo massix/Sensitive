@@ -57,6 +57,10 @@ else
 	QWT_INCLUDE	=	$(QWT_PATH)/include
 	QWT_LIBS	=	$(QWT_PATH)/lib
 
+	SN_DIR		=	$(HOME)/snappy-bin
+	SN_INCLUDE	=	-I$(SN_DIR)/include
+	SN_LIBS		=	-L$(SN_DIR)/lib -lsnappy
+
 	QT_LDFLAGS 	=	-L$(QT_LIBS) -lQtUiTools -lQtGui -lQtCore -lQtSvg
 	QT_NETWORK	=	-L$(QT_LIBS) -lQtNetwork
 

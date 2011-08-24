@@ -3,8 +3,8 @@
 
 include ../Qwt_qt_config.makefile
 
-INCLUDE		=	-I$(QT_INCLUDE)/QtUiTools -I.. $(BS_INCLUDE)
-LIBS		=	-L../Renal -lrenal -L../SensitiveProtocol -lsnsprotocol
+INCLUDE		=	-I$(QT_INCLUDE)/QtUiTools -I.. $(BS_INCLUDE) $(SN_INCLUDE)
+LIBS		=	-L../Renal -lrenal -L../SensitiveProtocol -lsnsprotocol $(SN_LIBS)
 
 LDFLAGS		=
 

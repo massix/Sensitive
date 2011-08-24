@@ -6,7 +6,7 @@ include Qwt_qt_config.makefile
 LDFLAGS		=  $(OS_LDFLAGS)
 
 INCLUDE		= -I. $(BS_INCLUDE)
-LIBS		= -LRenal -LGraphics -LSensitiveProtocol -lgraphics -lrenal -lsnsprotocol
+LIBS		= -LRenal -LGraphics -LSensitiveProtocol -lgraphics -lrenal -lsnsprotocol $(SN_LIBS)
 
 ifeq ($(OS),Windows_NT)
 	RESOURCES	= Sensitive.res
@@ -92,6 +92,7 @@ $(UTILS): $(UTILS:.h=_in.h)
 	@echo "Generating $@"
 	@sed "s:QWT_CHANGE_ME:$(QWT_PATH)/lib:g" $< > $@
 	@sed -i "s:SNS_CHANGE_ME:$(DESTDIR):g" $@
+	@sed -i "s:SN_CHANGE_ME"$(SN_DIR):g" $@
 
 regen:
 	rm -fr $(SCRIPTFILES) $(DESKTOP)
