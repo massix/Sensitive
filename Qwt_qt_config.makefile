@@ -25,6 +25,10 @@ ifeq ($(OS),Windows_NT)
 	QWT_INCLUDE	=	$(QWT_PATH)\include
 	QWT_LIBS	=	$(QWT_PATH)\lib
 
+	SN_DIR		=	C:\Users\Massi\Desktop\snappy-bin
+	SN_INCLUDE	=	-I$(SN_DIR)/include
+	SN_LIBS		=	-L$(SN_DIR)/lib -lsnappy
+
 	QT_LDFLAGS	=	-L$(QT_LIBS) -lQtUiTools -lQtGui4 -lQtCore4 -lQtSvg4
 	QT_NETWORK	=	-L$(QT_LIBS) -lQtNetwork4 -lQtCore4
 
