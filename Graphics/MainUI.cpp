@@ -574,7 +574,7 @@ void MainUI::ExportPDF() {
 	htmlPage.append("</table><br />");
 
 	if (reduced)
-		htmlPage.append(QString("<i>Showing only %0 pts<br />out of %1 provided.").arg(max - min).arg(coords_table->rowCount()));
+		htmlPage.append(QString("<i>Showing only %0 pts<br />out of %1 provided.</i>").arg(max - min).arg(coords_table->rowCount()));
 
 	/* "Interesting points" */
 	htmlPage.append("<h2>Interesting pts</h2>");
